@@ -1,0 +1,403 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 271 89% 54%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 168 84% 56%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 271 89% 54%;
+    --radius: 0.5rem;
+  }
+ 
+  .dark {
+    /* Base principal: #151c2a (azul-acinzentado escuro) */
+    --background: 218 34% 12%;
+    --foreground: 0 0% 98%;
+
+    /* Cinza Chumbo Azulado: #2a2a33 para elementos principais */
+    --card: 240 10% 18%;
+    --card-foreground: 0 0% 98%;
+
+    /* Roxo Escuro Sutil: #201a30 para elementos secundários */
+    --popover: 255 28% 15%;
+    --popover-foreground: 0 0% 98%;
+
+    /* Azul Petróleo Escuro: #121f40 para elementos primários */
+    --primary: 222 55% 16%;
+    --primary-foreground: 0 0% 98%;
+
+    /* Destaque Escuro Vibrante: #1a2545 para destaques e acentos */
+    --secondary: 222 45% 19%;
+    --secondary-foreground: 0 0% 98%;
+
+    /* Roxo Escuro Sutil: #201a30 para elementos mudos */
+    --muted: 255 28% 15%;
+    --muted-foreground: 0 0% 75%;
+
+    /* Destaque Escuro Vibrante: #1a2545 para acentos */
+    --accent: 222 45% 19%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    /* Roxo Escuro Sutil: #201a30 para bordas e inputs */
+    --border: 255 28% 15%;
+    --input: 255 28% 15%;
+    
+    /* Azul Petróleo Escuro: #121f40 para anéis de foco */
+    --ring: 222 55% 16%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  html,
+  body {
+    @apply bg-background text-foreground overflow-x-hidden;
+    width: 100%;
+    position: relative;
+  }
+  
+  /* Prevenir movimento indesejado durante a troca de tema */
+  html.overflow-x-hidden,
+  body.overflow-x-hidden {
+    overflow-x: hidden !important;
+    width: 100%;
+    position: relative;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-neoverse font-bold tracking-tight;
+  }
+  
+  h1 {
+    @apply text-4xl md:text-5xl lg:text-6xl;
+  }
+  
+  h2 {
+    @apply text-3xl md:text-4xl;
+  }
+  
+  h3 {
+    @apply text-2xl md:text-3xl;
+  }
+  
+  h4 {
+    @apply text-xl md:text-2xl;
+  }
+  
+  p {
+    @apply leading-7 font-inter;
+  }
+}
+
+@layer components {
+  .font-neoverse {
+    font-family: var(--font-neoverse), sans-serif;
+  }
+  
+  .font-inter {
+    font-family: var(--font-inter), sans-serif;
+  }
+  
+  .hero-gradient {
+    background: linear-gradient(187deg, #6422f2 0%, #2a2451 100%);
+  }
+  
+  .hero-gradient-accent {
+    background: linear-gradient(187deg, #6422f2 0%, #2a2451 100%);
+  }
+  
+  .text-gradient {
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-image: linear-gradient(90deg, #6620F2, #31EBCB);
+  }
+  
+  .card {
+    @apply font-inter;
+  }
+  
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+  }
+  
+  .nav-link {
+    @apply relative inline-block py-2 transition-colors duration-300 hover:text-primary;
+  }
+  
+  .nav-link::after {
+    @apply absolute bottom-0 left-0 h-0.5 w-0 bg-secondary transition-all duration-300 content-[''];
+  }
+  
+  .nav-link:hover::after {
+    @apply w-full;
+  }
+  
+  .container-custom {
+    @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+  
+  .btn-primary {
+    @apply inline-flex items-center justify-center whitespace-nowrap rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50;
+  }
+  
+  .btn-secondary {
+    @apply inline-flex items-center justify-center whitespace-nowrap rounded-md bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground shadow transition-colors hover:bg-secondary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50;
+  }
+  
+  .section-padding {
+    @apply py-12 md:py-16 lg:py-24;
+  }
+
+  /* Classes específicas para o tema dark sofisticado */
+  .dark .syntax-keyword {
+    color: #1a2545; /* Destaque Escuro Vibrante para palavras-chave */
+  }
+
+
+  
+  .dark .syntax-string {
+    color: #201a30; /* Roxo Escuro Sutil para strings */
+  }
+  
+  .dark .syntax-comment {
+    color: #454555; /* Cinza mais claro baseado no Cinza Chumbo para comentários */
+  }
+  
+  .dark .syntax-function {
+    color: #121f40; /* Azul Petróleo Escuro para funções */
+  }
+  
+  .dark .syntax-number {
+    color: #2a2a33; /* Cinza Chumbo Azulado para números */
+  }
+  
+  .dark .syntax-variable {
+    color: #80858f; /* Cor clara para variáveis */
+  }
+  
+  .dark .editor-active-line {
+    background: rgba(42, 42, 51, 0.2); /* Cinza Chumbo Azulado com transparência */
+  }
+  
+  .dark .editor-selection {
+    background: rgba(26, 37, 69, 0.3); /* Destaque Escuro Vibrante com transparência */
+  }
+  
+  .dark .editor-cursor {
+    background: #1a2545; /* Destaque Escuro Vibrante para cursor */
+    border-color: #1a2545;
+  }
+  
+  .dark .editor-gutter {
+    background: #151c2a; /* Cor Base Principal para gutter */
+    border-right: 1px solid #201a30; /* Roxo Escuro Sutil para borda */
+  }
+  
+  .dark .editor-indent-guide {
+    border-color: rgba(32, 26, 48, 0.3); /* Roxo Escuro Sutil com transparência */
+  }
+  
+  .dark .editor-container {
+    background-color: #151c2a;
+    border: 1px solid #201a30;
+    border-radius: var(--radius);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+  }
+  
+  .dark .editor-sidebar {
+    background-color: #151c2a;
+    border-right: 1px solid #201a30;
+  }
+  
+  .dark .editor-tab {
+    background-color: #151c2a;
+    color: #80858f;
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+  }
+  
+  .dark .editor-tab-active {
+    background-color: #1a2545;
+    color: #f8fafc;
+    border-bottom: 2px solid #121f40;
+  }
+  
+  .dark .editor-tab:hover:not(.editor-tab-active) {
+    background-color: #201a30;
+    border-bottom: 2px solid #201a30;
+  }
+  
+  .dark .editor-statusbar {
+    background-color: #151c2a;
+    color: #80858f;
+    border-top: 1px solid #201a30;
+  }
+  
+  .dark .editor-button {
+    background-color: #121f40;
+    color: #f8fafc;
+    transition: all 0.2s ease;
+  }
+  
+  .dark .editor-button:hover {
+    background-color: #1a2545;
+  }
+  
+  .dark .editor-scrollbar {
+    background-color: #151c2a;
+  }
+  
+  .dark .editor-scrollbar-thumb {
+    background-color: #201a30;
+    border-radius: 4px;
+  }
+  
+  .dark .editor-scrollbar-thumb:hover {
+    background-color: #2a2a33;
+  }
+  
+  .dark .editor-tooltip {
+    background-color: #1a2545;
+    color: #f8fafc;
+    border: 1px solid #201a30;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+  }
+  
+  .dark .editor-search-highlight {
+    background-color: rgba(26, 37, 69, 0.3);
+    border: 1px solid #121f40;
+  }
+  
+  .dark .editor-error {
+    border-bottom: 2px wavy #ff5757;
+  }
+  
+  .dark .editor-warning {
+    border-bottom: 2px wavy #ffb757;
+  }
+  
+  .dark .editor-file-explorer-item:hover {
+    background-color: #201a30;
+  }
+  
+  .dark .editor-file-explorer-item-selected {
+    background-color: #1a2545;
+  }
+  
+  .dark .editor-terminal {
+    background-color: #151c2a;
+    color: #f8fafc;
+    border-top: 1px solid #201a30;
+  }
+  
+  .dark .editor-terminal-input {
+    background-color: transparent;
+    color: #f8fafc;
+    border: none;
+  }
+  
+  .dark .editor-terminal-prompt {
+    color: #121f40;
+  }
+  
+  .dark .editor-bracket-match {
+    background-color: rgba(26, 37, 69, 0.3);
+    border: 1px solid #1a2545;
+  }
+  
+  .dark .editor-find-replace {
+    background-color: #151c2a;
+    border: 1px solid #201a30;
+  }
+  
+  .dark .editor-diff-added {
+    background-color: rgba(34, 197, 94, 0.1);
+    border-left: 3px solid #22c55e;
+  }
+  
+  .dark .editor-diff-removed {
+    background-color: rgba(239, 68, 68, 0.1);
+    border-left: 3px solid #ef4444;
+  }
+  
+  .dark .editor-diff-modified {
+    background-color: rgba(59, 130, 246, 0.1);
+    border-left: 3px solid #3b82f6;
+  }
+  
+  /* Estilos para placeholders no tema dark */
+  .dark input::placeholder,
+  .dark textarea::placeholder,
+  .dark select::placeholder {
+    color: #6b7280;
+    opacity: 0.7;
+  }
+  
+  /* Estilos personalizados para campos de formulário no tema dark */
+  .dark input:focus,
+  .dark textarea:focus,
+  .dark select:focus {
+    border-color: #121f40;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(18, 31, 64, 0.2);
+  }
+  
+  .dark input:-webkit-autofill,
+  .dark input:-webkit-autofill:hover,
+  .dark input:-webkit-autofill:focus {
+    -webkit-text-fill-color: #f8fafc;
+    -webkit-box-shadow: 0 0 0px 1000px #151c2a inset;
+    transition: background-color 5000s ease-in-out 0s;
+  }
+}
+
+/* Adicionar no final do arquivo ou em uma seção de variáveis de tema */
+:root {
+  /* Tema Claro */
+  --bg-start-color: theme('colors.blue.100');
+  --bg-end-color: theme('colors.purple.100');
+}
+
+.dark {
+  /* Tema Escuro */
+  --bg-start-color: theme('colors.blue.900');
+  --bg-end-color: theme('colors.purple.900');
+}
+
+@keyframes gradient-x {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.animate-gradient-x {
+  background-size: 200% 200%;
+  animation: gradient-x 15s ease infinite;
+} 

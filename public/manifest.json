@@ -1,0 +1,24 @@
+{
+  "name": "GS Produções - Líder em Acessibilidade e Tradução Multilíngue",
+  "short_name": "GS Produções",
+  "description": "Há 6 anos no mercado como líder em acessibilidade, especializada em tradução multilíngue e LIBRAS",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#151c2a",
+  "theme_color": "#151c2a",
+  "orientation": "portrait-primary",
+  "categories": ["business", "education", "accessibility", "translation", "interpretation"],
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "/images/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/icon-512.png", 
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

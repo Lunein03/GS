@@ -1,0 +1,191 @@
+# Dependências e gerenciadores de pacotes
+node_modules/
+.pnp
+.pnp.js
+.npm
+# Locks (descomente conforme necessário)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+bower_components/
+
+# Arquivos de ambiente e configuração (em QUALQUER diretório)
+**/.env
+**/.env.*
+!**/.env.example
+!**/.env.template
+**/.aws/
+**/.config
+**/config.json
+**/*.pem
+**/*.key
+**/*.cert
+**/*.pfx
+
+# Next.js e builds
+.next/
+out/
+build/
+dist/
+coverage/
+public/sw.js
+public/workbox-*.js
+storybook-static/
+.turbo/
+.swc/
+.vercel
+
+# Logs e dumps
+logs/
+**/*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+.pnpm-debug.log*
+coverage/
+*.lcov
+.nyc_output/
+lib-cov/
+*.dump
+*.stackdump
+crash-report/
+
+# Caches e arquivos temporários
+.cache/
+.temp/
+.tmp/
+tmp/
+temp/
+.eslintcache
+.stylelintcache
+.prettiercache
+.tsbuildinfo
+tsconfig.tsbuildinfo
+.node_repl_history
+.yarn-integrity
+.fusebox/
+.dynamodb/
+.jest/
+.gradle/
+.webpack/
+.parcel-cache/
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+.serverless/
+
+# IDEs e editores
+.idea/
+.project
+.classpath
+.settings/
+.history/
+*.launch
+*.sublime-workspace
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Sistemas operacionais
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# Arquivos grandes e binários
+# Imagens (descomente se necessário)
+# **/*.jpg
+# **/*.jpeg
+# **/*.png
+# **/*.gif
+# **/*.webp
+# **/*.avif
+# **/*.heif
+# **/*.heic
+# Áudio
+**/*.wav
+**/*.mp3
+**/*.flac
+**/*.aac
+**/*.ogg
+**/*.m4a
+# Vídeo
+**/*.mp4
+**/*.mov
+**/*.avi
+**/*.mkv
+**/*.webm
+**/*.flv
+**/*.wmv
+# Arquivos compactados
+**/*.zip
+**/*.rar
+**/*.7z
+**/*.tar
+**/*.gz
+**/*.bz2
+**/*.tgz
+**/*.xz
+# Bancos de dados
+**/*.sqlite
+**/*.db
+**/*.db-shm
+**/*.db-wal
+**/*.sql
+**/*.bak
+**/*.old
+# Documentos gerados
+**/*.pdf
+**/*.doc
+**/*.docx
+**/*.xls
+**/*.xlsx
+**/*.ppt
+**/*.pptx
+
+# Backups e arquivos temporários
+**/*~
+**/*.swp
+**/*.swo
+**/*.bak
+**/*.tmp
+**/.git/
+**/CVS/
+**/.svn/
+**/.hg/
+public/videos/*.mp4
+_temp_videos/
