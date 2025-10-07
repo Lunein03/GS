@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ClipboardCheck, CreditCard, Instagram, Mail, Phone } from 'lucide-react';
+import { Instagram, Mail, Phone } from 'lucide-react';
 import Image from 'next/image';
 
 export function Footer() {
@@ -19,31 +19,8 @@ export function Footer() {
                 className="mr-2"
               />
             </div>
-            {/* <p className="text-slate-300 mb-6">
-              Layout base para uma intranet corporativa moderna. Personalize textos, links e cores conforme as necessidades da sua equipe.
-            </p> */}
+            <p>Espaço dedicado à equipe GS: informações, formulários e recursos internos.</p>
           </div>
-
-          {/* <div className="text-center md:text-left">
-            <h4 className="text-xl font-neoverse-bold mb-4 text-white">Links Rápidos</h4>
-            <ul className="space-y-2">
-              {[
-                { href: '#services', label: 'Serviços' },
-                { href: '#portfolio', label: 'Portfólio' },
-                { href: '#studio', label: 'Estúdio' },
-                { href: '#contact', label: 'Contato' },
-              ].map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-slate-300 hover:text-secondary transition-all duration-300 hover:translate-x-1 inline-block"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div> */}
 
            <div className="text-center md:text-left">
             <h4 className="text-xl font-neoverse-bold mb-4 text-white">Normas da empresa</h4>
@@ -79,37 +56,15 @@ export function Footer() {
 
           <div className="text-center md:text-left">
             <h4 className="text-xl font-neoverse-bold mb-4 text-white">Formulários</h4>
-            <ul className="space-y-3">
-              <li>
-                <Link
-                  href="/formularios/horas-extras"
-                  className="text-slate-300 hover:text-secondary transition-all duration-300 hover:translate-x-1 inline-block flex items-center gap-2"
-                >
-                  <ClipboardCheck className="h-4 w-4" />
-                  Registro de Horas Extras
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/formularios/prestacao-contas"
-                  className="text-slate-300 hover:text-secondary transition-all duration-300 hover:translate-x-1 inline-block flex items-center gap-2"
-                >
-                  <CreditCard className="h-4 w-4" />
-                  Prestação de Contas
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/formularios"
-                  className="text-slate-300 hover:text-secondary transition-all duration-300 hover:translate-x-1 inline-block"
-                >
-                  Ver todos os formulários →
-                </Link>
-              </li>
-            </ul>
-            <p className="text-slate-400 text-xs mt-4 leading-relaxed">
+            <p className="text-slate-400 text-sm mb-4 leading-relaxed">
               Registre atividades e mantenha processos rastreáveis
             </p>
+            <Link
+              href="/formularios"
+              className="text-slate-300 hover:text-secondary transition-all duration-300 hover:translate-x-1 inline-block"
+            >
+              Ver todos os formulários →
+            </Link>
           </div> 
 
           <div className="text-center md:text-left">
@@ -157,7 +112,7 @@ export function Footer() {
         </div>
 
         <div className="border-t border-slate-800 mt-12 pt-8 text-center text-slate-400 text-sm">
-          <p>&copy; {currentYear} Sua Empresa. Personalize este rodapé com as informações oficiais da intranet.</p>
+          <p>&copy; {currentYear} GS Produções. Todos os direitos reservados.</p>
         </div>
       </div>
     </footer>

@@ -1,10 +1,14 @@
 import type { ReactNode } from 'react';
 import { HeroSection } from '@/components/hero-section';
+import { PatrimonioSection } from '@/components/patrimonio-section';
 
 export default function HomePage() {
   return <>{getHomeSections()}</>;
 }
 
 function getHomeSections(): ReactNode[] {
-  return [<HeroSection key="hero" />];
+  return [
+    <HeroSection key="hero" />,
+    <PatrimonioSection key="patrimonio" />
+  ];
 }

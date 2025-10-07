@@ -13,6 +13,11 @@ import {
   User,
 } from 'lucide-react';
 
+import { cn } from '@/lib/utils';
+import { DatePicker } from '@/components/ui/date-picker';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+
 export default function FormularioPrestacaoContas() {
   const [formData, setFormData] = useState({
     nomeColaborador: '',
@@ -29,13 +34,64 @@ export default function FormularioPrestacaoContas() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
-  const handleChange = (
+  const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    
+    // Limpar campos relacionados quando a categoria for alterada
+    if (name === 'categoriaUso') {
+      setFormData((prev) => ({ 
+        ...prev, 
+        [name]: value,
+        categoriaOutro: '',
+        transporte: '',
+        transporteOutro: ''
+      }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
+    
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: '' }));
+    }
+  };
+
+  // Função para formatar valor monetário brasileiro
+  const formatCurrency = (value: string): string => {
+    // Remove tudo que não é número
+    const numbers = value.replace(/\D/g, '');
+    
+    // Se não há números, retorna string vazia
+    if (!numbers) return '';
+    
+    // Converte para número e divide por 100 (para centavos)
+    const numberValue = parseInt(numbers, 10) / 100;
+    
+    // Formata como moeda brasileira
+    return numberValue.toLocaleString('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+      minimumFractionDigits: 2
+    });
+  };
+
+  // Handler específico para o campo de valor
+  const handleCurrencyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    const formattedValue = formatCurrency(value);
+    
+    setFormData((prev) => ({ ...prev, valorGasto: formattedValue }));
+    
+    if (errors.valorGasto) {
+      setErrors((prev) => ({ ...prev, valorGasto: '' }));
+    }
+  };
+
+  const handleDateChange = (value: string) => {
+    setFormData((prev) => ({ ...prev, dataUso: value }));
+    if (errors.dataUso) {
+      setErrors((prev) => ({ ...prev, dataUso: '' }));
     }
   };
 
@@ -52,12 +108,13 @@ export default function FormularioPrestacaoContas() {
       newErrors.categoriaUso = 'Categoria de uso é obrigatória';
     }
     if (formData.categoriaUso === 'Outro' && !formData.categoriaOutro.trim()) {
-      newErrors.categoriaOutro = 'Especifique a categoria';
+      newErrors.categoriaOutro = 'Descrição da despesa é obrigatória';
     }
     if (!formData.nomeEvento.trim()) {
       newErrors.nomeEvento = 'Nome do evento é obrigatório';
     }
-    if (!formData.transporte) {
+    // Validação condicional do campo transporte: apenas obrigatório se categoria for 'Uber'
+    if (formData.categoriaUso === 'Uber' && !formData.transporte) {
       newErrors.transporte = 'Informação de transporte é obrigatória';
     }
     if (formData.transporte === 'Outro' && !formData.transporteOutro.trim()) {
@@ -65,6 +122,16 @@ export default function FormularioPrestacaoContas() {
     }
     if (!formData.valorGasto.trim()) {
       newErrors.valorGasto = 'Valor gasto é obrigatório';
+    } else {
+      // Extrai apenas os números para validação
+      const numericValue = formData.valorGasto.replace(/\D/g, '');
+      const value = parseInt(numericValue, 10) / 100;
+      
+      if (value <= 0) {
+        newErrors.valorGasto = 'Digite um valor maior que zero';
+      } else if (value > 999999.99) {
+        newErrors.valorGasto = 'Valor não pode ser maior que R$ 999.999,99';
+      }
     }
 
     setErrors(newErrors);
@@ -81,8 +148,16 @@ export default function FormularioPrestacaoContas() {
     setIsSubmitting(true);
 
     try {
+      // Prepara os dados para envio, convertendo o valor formatado para número
+      const submissionData = {
+        ...formData,
+        valorGasto: formData.valorGasto ? 
+          (parseInt(formData.valorGasto.replace(/\D/g, ''), 10) / 100).toFixed(2) : 
+          ''
+      };
+
       await new Promise((resolve) => setTimeout(resolve, 1500));
-      console.log('Form submitted:', formData);
+      console.log('Form submitted:', submissionData);
       setSubmitSuccess(true);
       setFormData({
         nomeColaborador: '',
@@ -197,64 +272,84 @@ export default function FormularioPrestacaoContas() {
                         <User className="h-4 w-4 text-secondary" />
                         Nome do colaborador: <span className="text-red-500">*</span>
                       </label>
-                      <input
+                      <Input
                         type="text"
                         id="nomeColaborador"
                         name="nomeColaborador"
                         value={formData.nomeColaborador}
-                        onChange={handleChange}
-                        className="w-full px-4 py-3 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-secondary"
+                        onChange={handleInputChange}
+                        aria-invalid={Boolean(errors.nomeColaborador)}
+                        aria-describedby={errors.nomeColaborador ? 'nomeColaborador-error' : undefined}
                         placeholder="Digite seu nome completo"
+                        className={cn(
+                          'h-12 rounded-lg border border-border bg-background px-4 text-base text-foreground shadow-sm focus-visible:ring-2 focus-visible:ring-secondary',
+                          errors.nomeColaborador &&
+                            'border-red-500 focus-visible:ring-red-500 focus-visible:ring-offset-2'
+                        )}
                       />
                       {errors.nomeColaborador && (
-                        <p className="text-xs text-red-500">{errors.nomeColaborador}</p>
+                        <p id="nomeColaborador-error" className="text-xs text-red-500">{errors.nomeColaborador}</p>
                       )}
                     </div>
 
-                    <div className="space-y-2">
-                      <label
-                        htmlFor="dataUso"
-                        className="text-sm font-semibold text-foreground flex items-center gap-2"
-                      >
-                        <CalendarClock className="h-4 w-4 text-secondary" />
-                        Data de uso: <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="date"
-                        id="dataUso"
-                        name="dataUso"
-                        value={formData.dataUso}
-                        onChange={handleChange}
-                        className="w-full px-4 py-3 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-secondary"
-                      />
-                      {errors.dataUso && (
-                        <p className="text-xs text-red-500">{errors.dataUso}</p>
-                      )}
-                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <label
+                          htmlFor="dataUso"
+                          className="text-sm font-semibold text-foreground flex items-center gap-2"
+                        >
+                          <CalendarClock className="h-4 w-4 text-secondary" />
+                          Data de uso: <span className="text-red-500">*</span>
+                        </label>
+                        <DatePicker
+                          id="dataUso"
+                          name="dataUso"
+                          value={formData.dataUso}
+                          onChange={handleDateChange}
+                          placeholder="dd/mm/aaaa"
+                          ariaInvalid={Boolean(errors.dataUso)}
+                          ariaDescribedBy={errors.dataUso ? 'dataUso-error' : undefined}
+                          className={cn(
+                            'h-12 rounded-lg border border-border bg-background text-base font-medium text-foreground',
+                            errors.dataUso &&
+                              'border-red-500 focus-visible:ring-red-500 focus-visible:ring-offset-2'
+                          )}
+                        />
+                        {errors.dataUso && (
+                          <p id="dataUso-error" className="text-xs text-red-500">{errors.dataUso}</p>
+                        )}
+                      </div>
 
-                    <div className="space-y-2">
-                      <label
-                        htmlFor="categoriaUso"
-                        className="text-sm font-semibold text-foreground flex items-center gap-2"
-                      >
-                        <CreditCard className="h-4 w-4 text-secondary" />
-                        Categoria de uso: <span className="text-red-500">*</span>
-                      </label>
-                      <select
-                        id="categoriaUso"
-                        name="categoriaUso"
-                        value={formData.categoriaUso}
-                        onChange={handleChange}
-                        className="w-full px-4 py-3 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-secondary"
-                      >
-                        <option value="">Selecione uma categoria</option>
-                        <option value="Uber">Uber</option>
-                        <option value="Alimentação">Alimentação</option>
-                        <option value="Outro">Outro</option>
-                      </select>
-                      {errors.categoriaUso && (
-                        <p className="text-xs text-red-500">{errors.categoriaUso}</p>
-                      )}
+                      <div className="space-y-2">
+                        <label
+                          htmlFor="categoriaUso"
+                          className="text-sm font-semibold text-foreground flex items-center gap-2"
+                        >
+                          <CreditCard className="h-4 w-4 text-secondary" />
+                          Categoria de uso: <span className="text-red-500">*</span>
+                        </label>
+                        <select
+                          id="categoriaUso"
+                          name="categoriaUso"
+                          value={formData.categoriaUso}
+                          onChange={handleInputChange}
+                          aria-invalid={Boolean(errors.categoriaUso)}
+                          aria-describedby={errors.categoriaUso ? 'categoriaUso-error' : undefined}
+                          className={cn(
+                            'h-12 w-full rounded-lg border border-border bg-background px-4 text-base text-foreground shadow-sm focus-visible:ring-2 focus-visible:ring-secondary',
+                            errors.categoriaUso &&
+                              'border-red-500 focus-visible:ring-red-500 focus-visible:ring-offset-2'
+                          )}
+                        >
+                          <option value="">Selecione uma categoria</option>
+                          <option value="Uber">Uber</option>
+                          <option value="Alimentação">Alimentação</option>
+                          <option value="Outro">Outro</option>
+                        </select>
+                        {errors.categoriaUso && (
+                          <p id="categoriaUso-error" className="text-xs text-red-500">{errors.categoriaUso}</p>
+                        )}
+                      </div>
                     </div>
 
                     {formData.categoriaUso === 'Outro' && (
@@ -263,67 +358,116 @@ export default function FormularioPrestacaoContas() {
                           htmlFor="categoriaOutro"
                           className="text-sm font-semibold text-foreground"
                         >
-                          Especifique a categoria: <span className="text-red-500">*</span>
+                          Descrição da Despesa: <span className="text-red-500">*</span>
                         </label>
-                        <input
-                          type="text"
+                        <Textarea
                           id="categoriaOutro"
                           name="categoriaOutro"
                           value={formData.categoriaOutro}
-                          onChange={handleChange}
-                          className="w-full px-4 py-3 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-secondary"
-                          placeholder="Descreva a categoria"
+                          onChange={handleInputChange}
+                          rows={3}
+                          aria-invalid={Boolean(errors.categoriaOutro)}
+                          aria-describedby={errors.categoriaOutro ? 'categoriaOutro-error' : undefined}
+                          placeholder="Descreva detalhadamente o motivo e tipo da despesa realizada"
+                          className={cn(
+                            'rounded-lg border border-border bg-background text-base text-foreground shadow-sm focus-visible:ring-2 focus-visible:ring-secondary resize-none',
+                            errors.categoriaOutro &&
+                              'border-red-500 focus-visible:ring-red-500 focus-visible:ring-offset-2'
+                          )}
                         />
                         {errors.categoriaOutro && (
-                          <p className="text-xs text-red-500">{errors.categoriaOutro}</p>
+                          <p id="categoriaOutro-error" className="text-xs text-red-500">{errors.categoriaOutro}</p>
                         )}
                       </div>
                     )}
 
-                    <div className="space-y-2">
-                      <label
-                        htmlFor="nomeEvento"
-                        className="text-sm font-semibold text-foreground"
-                      >
-                        Nome do evento: <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        id="nomeEvento"
-                        name="nomeEvento"
-                        value={formData.nomeEvento}
-                        onChange={handleChange}
-                        className="w-full px-4 py-3 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-secondary"
-                        placeholder="Ex: Reunião com cliente, Gravação externa, etc."
-                      />
-                      {errors.nomeEvento && (
-                        <p className="text-xs text-red-500">{errors.nomeEvento}</p>
-                      )}
-                    </div>
+                    {formData.categoriaUso === 'Uber' ? (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                          <label
+                            htmlFor="nomeEvento"
+                            className="text-sm font-semibold text-foreground"
+                          >
+                            Nome do evento: <span className="text-red-500">*</span>
+                          </label>
+                          <Input
+                            type="text"
+                            id="nomeEvento"
+                            name="nomeEvento"
+                            value={formData.nomeEvento}
+                            onChange={handleInputChange}
+                            aria-invalid={Boolean(errors.nomeEvento)}
+                            aria-describedby={errors.nomeEvento ? 'nomeEvento-error' : undefined}
+                            placeholder="Ex: Reunião com cliente, Gravação externa, etc."
+                            className={cn(
+                              'h-12 rounded-lg border border-border bg-background px-4 text-base text-foreground shadow-sm focus-visible:ring-2 focus-visible:ring-secondary',
+                              errors.nomeEvento &&
+                                'border-red-500 focus-visible:ring-red-500 focus-visible:ring-offset-2'
+                            )}
+                          />
+                          {errors.nomeEvento && (
+                            <p id="nomeEvento-error" className="text-xs text-red-500">{errors.nomeEvento}</p>
+                          )}
+                        </div>
 
-                    <div className="space-y-2">
-                      <label
-                        htmlFor="transporte"
-                        className="text-sm font-semibold text-foreground"
-                      >
-                        Transporte: <span className="text-red-500">*</span>
-                      </label>
-                      <select
-                        id="transporte"
-                        name="transporte"
-                        value={formData.transporte}
-                        onChange={handleChange}
-                        className="w-full px-4 py-3 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-secondary"
-                      >
-                        <option value="">Selecione uma opção</option>
-                        <option value="Casa para o trabalho">O transporte foi de casa para o trabalho?</option>
-                        <option value="Trabalho para casa">O transporte foi do trabalho para casa?</option>
-                        <option value="Outro">Outro</option>
-                      </select>
-                      {errors.transporte && (
-                        <p className="text-xs text-red-500">{errors.transporte}</p>
-                      )}
-                    </div>
+                        <div className="space-y-2">
+                          <label
+                            htmlFor="transporte"
+                            className="text-sm font-semibold text-foreground"
+                          >
+                            Transporte: <span className="text-red-500">*</span>
+                          </label>
+                          <select
+                            id="transporte"
+                            name="transporte"
+                            value={formData.transporte}
+                            onChange={handleInputChange}
+                            aria-invalid={Boolean(errors.transporte)}
+                            aria-describedby={errors.transporte ? 'transporte-error' : undefined}
+                            className={cn(
+                              'h-12 w-full rounded-lg border border-border bg-background px-4 text-base text-foreground shadow-sm focus-visible:ring-2 focus-visible:ring-secondary',
+                              errors.transporte &&
+                                'border-red-500 focus-visible:ring-red-500 focus-visible:ring-offset-2'
+                            )}
+                          >
+                            <option value="">Selecione uma opção</option>
+                            <option value="Casa para o trabalho">O transporte foi de casa para o trabalho?</option>
+                            <option value="Trabalho para casa">O transporte foi do trabalho para casa?</option>
+                            <option value="Outro">Outro</option>
+                          </select>
+                          {errors.transporte && (
+                            <p id="transporte-error" className="text-xs text-red-500">{errors.transporte}</p>
+                          )}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        <label
+                          htmlFor="nomeEvento"
+                          className="text-sm font-semibold text-foreground"
+                        >
+                          Nome do evento: <span className="text-red-500">*</span>
+                        </label>
+                        <Input
+                          type="text"
+                          id="nomeEvento"
+                          name="nomeEvento"
+                          value={formData.nomeEvento}
+                          onChange={handleInputChange}
+                          aria-invalid={Boolean(errors.nomeEvento)}
+                          aria-describedby={errors.nomeEvento ? 'nomeEvento-error' : undefined}
+                          placeholder="Ex: Reunião com cliente, Gravação externa, etc."
+                          className={cn(
+                            'h-12 rounded-lg border border-border bg-background px-4 text-base text-foreground shadow-sm focus-visible:ring-2 focus-visible:ring-secondary',
+                            errors.nomeEvento &&
+                              'border-red-500 focus-visible:ring-red-500 focus-visible:ring-offset-2'
+                          )}
+                        />
+                        {errors.nomeEvento && (
+                          <p id="nomeEvento-error" className="text-xs text-red-500">{errors.nomeEvento}</p>
+                        )}
+                      </div>
+                    )}
 
                     {formData.transporte === 'Outro' && (
                       <div className="space-y-2">
@@ -333,17 +477,23 @@ export default function FormularioPrestacaoContas() {
                         >
                           Especifique o transporte: <span className="text-red-500">*</span>
                         </label>
-                        <input
+                        <Input
                           type="text"
                           id="transporteOutro"
                           name="transporteOutro"
                           value={formData.transporteOutro}
-                          onChange={handleChange}
-                          className="w-full px-4 py-3 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-secondary"
+                          onChange={handleInputChange}
+                          aria-invalid={Boolean(errors.transporteOutro)}
+                          aria-describedby={errors.transporteOutro ? 'transporteOutro-error' : undefined}
                           placeholder="Descreva o tipo de transporte"
+                          className={cn(
+                            'h-12 rounded-lg border border-border bg-background px-4 text-base text-foreground shadow-sm focus-visible:ring-2 focus-visible:ring-secondary',
+                            errors.transporteOutro &&
+                              'border-red-500 focus-visible:ring-red-500 focus-visible:ring-offset-2'
+                          )}
                         />
                         {errors.transporteOutro && (
-                          <p className="text-xs text-red-500">{errors.transporteOutro}</p>
+                          <p id="transporteOutro-error" className="text-xs text-red-500">{errors.transporteOutro}</p>
                         )}
                       </div>
                     )}
@@ -356,17 +506,24 @@ export default function FormularioPrestacaoContas() {
                         <DollarSign className="h-4 w-4 text-secondary" />
                         Valor gasto: <span className="text-red-500">*</span>
                       </label>
-                      <input
+                      <Input
                         type="text"
                         id="valorGasto"
                         name="valorGasto"
                         value={formData.valorGasto}
-                        onChange={handleChange}
-                        className="w-full px-4 py-3 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-secondary"
-                        placeholder="Ex: R$ 25,50"
+                        onChange={handleCurrencyChange}
+                        aria-invalid={Boolean(errors.valorGasto)}
+                        aria-describedby={errors.valorGasto ? 'valorGasto-error' : undefined}
+                        placeholder="Digite o valor gasto"
+                        inputMode="numeric"
+                        className={cn(
+                          'h-12 rounded-lg border border-border bg-background px-4 text-base text-foreground shadow-sm focus-visible:ring-2 focus-visible:ring-secondary',
+                          errors.valorGasto &&
+                            'border-red-500 focus-visible:ring-red-500 focus-visible:ring-offset-2'
+                        )}
                       />
                       {errors.valorGasto && (
-                        <p className="text-xs text-red-500">{errors.valorGasto}</p>
+                        <p id="valorGasto-error" className="text-xs text-red-500">{errors.valorGasto}</p>
                       )}
                     </div>
 

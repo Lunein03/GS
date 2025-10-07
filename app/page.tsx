@@ -1,10 +1,5 @@
 import { HeroSection } from "@/components/hero-section";
-import { TrustedBySection } from "@/components/trusted-by-section";
-import { ServicesSection } from "@/components/services-section";
-import { PortfolioPreview } from "@/components/portfolio-preview";
-import { StudioPreview } from "@/components/studio-preview";
-import { CtaSection } from "@/components/cta-section";
-import { ContactSection } from "@/components/contact-section";
+import { PatrimonioSection } from "@/components/patrimonio-section";
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -16,12 +11,7 @@ export default function Home() {
   return (
     <>
       <HeroSection />
-      {/* <ServicesSection /> */}
-      {/* <PortfolioPreview />
-      <StudioPreview />
-      <TrustedBySection />
-      <CtaSection />
-      <ContactSection /> */}
+      <PatrimonioSection />
     </>
   );
-}
+}ss
