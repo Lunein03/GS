@@ -7,7 +7,11 @@ import { useEquipment } from '@/app/patrimonio/context/equipment-provider';
 import { EQUIPMENT_STATUS_LABEL, EQUIPMENT_STATUS_STYLES } from '@/app/patrimonio/lib/equipment-status';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
+
+// Função auxiliar local para combinar classes
+function cn(...classes: (string | undefined | null | false)[]): string {
+  return classes.filter(Boolean).join(' ');
+}
 
 export function DashboardContent() {
   const { equipment, events, isHydrated } = useEquipment();
@@ -47,13 +51,13 @@ export function DashboardContent() {
     .slice(0, 3);
 
   return (
-    <div className="space-y-8">
-      <header>
-        <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
-        <p className="text-muted-foreground">Visão geral do patrimônio da empresa</p>
+    <div className="space-y-6 sm:space-y-8">
+      <header className="space-y-2">
+        <h1 className="text-2xl font-bold text-foreground sm:text-3xl">Dashboard</h1>
+        <p className="text-sm text-muted-foreground sm:text-base">Visão geral do patrimônio da empresa</p>
       </header>
 
-      <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <section className="grid gap-4 sm:gap-6 md:grid-cols-2 xl:grid-cols-4">
         <DashboardStatCard
           title="Total de Equipamentos"
           value={stats.total}
@@ -79,27 +83,27 @@ export function DashboardContent() {
         />
       </section>
 
-      <section className="grid gap-6 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between text-base font-semibold">
+      <section className="grid gap-6 lg:grid-cols-2">
+        <Card className="order-1">
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center justify-between text-base font-semibold sm:text-lg">
               Equipamentos recentes
               <Button asChild variant="ghost" size="sm">
                 <Link href="/patrimonio/equipamentos">Ver todos</Link>
               </Button>
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-0">
             {recentEquipment.length === 0 ? (
               <p className="py-8 text-center text-sm text-muted-foreground">
                 Nenhum equipamento cadastrado ainda
               </p>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-2 sm:space-y-3">
                 {recentEquipment.map((item) => (
                   <article
                     key={item.id}
-                    className="flex items-center justify-between rounded-lg bg-muted/50 p-3 transition-colors hover:bg-muted"
+                    className="flex items-center justify-between rounded-lg bg-muted/50 p-3 transition-colors hover:bg-muted sm:p-4"
                   >
                     <div>
                       <p className="text-sm font-medium text-foreground">{item.name}</p>
@@ -120,26 +124,26 @@ export function DashboardContent() {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between text-base font-semibold">
+        <Card className="order-2">
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center justify-between text-base font-semibold sm:text-lg">
               Próximos eventos
               <Button asChild variant="ghost" size="sm">
                 <Link href="/patrimonio/eventos">Ver todos</Link>
               </Button>
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-0">
             {upcomingEvents.length === 0 ? (
               <p className="py-8 text-center text-sm text-muted-foreground">
                 Nenhum evento programado
               </p>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-2 sm:space-y-3">
                 {upcomingEvents.map((event) => (
                   <article
                     key={event.id}
-                    className="flex items-start gap-3 rounded-lg bg-muted/50 p-3 transition-colors hover:bg-muted"
+                    className="flex items-start gap-3 rounded-lg bg-muted/50 p-3 transition-colors hover:bg-muted sm:p-4"
                   >
                     <Calendar className="mt-1 h-5 w-5 text-primary" aria-hidden="true" />
                     <div className="min-w-0 flex-1">
@@ -171,13 +175,15 @@ interface DashboardStatCardProps {
 
 function DashboardStatCard({ title, value, icon, accentClass }: DashboardStatCardProps) {
   return (
-    <Card className={cn('border-l-4', accentClass ?? 'border-l-primary')}>
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
-        {icon}
+    <Card className={cn('border-l-4 transition-all hover:shadow-md', accentClass ?? 'border-l-primary')}>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-xs font-medium text-muted-foreground sm:text-sm">{title}</CardTitle>
+        <div className="shrink-0">
+          {icon}
+        </div>
       </CardHeader>
-      <CardContent>
-        <p className="text-3xl font-bold text-foreground">{value}</p>
+      <CardContent className="pt-0">
+        <p className="text-2xl font-bold text-foreground sm:text-3xl">{value}</p>
       </CardContent>
     </Card>
   );

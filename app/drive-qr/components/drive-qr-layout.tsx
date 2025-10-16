@@ -5,9 +5,9 @@ import { useState } from 'react'
 import { Menu } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
-import { PatrimonioSidebar } from './patrimonio-sidebar'
+import { DriveQrSidebar } from './drive-qr-sidebar'
 
-export function PatrimonioLayout({ children }: PatrimonioLayoutProps) {
+export function DriveQrLayout({ children }: DriveQrLayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
   const handleToggleSidebar = () => {
@@ -20,7 +20,7 @@ export function PatrimonioLayout({ children }: PatrimonioLayoutProps) {
 
   return (
     <div className="min-h-screen bg-background">
-      <PatrimonioSidebar isOpen={isSidebarOpen} onClose={handleCloseSidebar} />
+      <DriveQrSidebar isOpen={isSidebarOpen} onClose={handleCloseSidebar} />
 
       {/* Botão flutuante de menu para mobile */}
       <Button
@@ -46,6 +46,6 @@ export function PatrimonioLayout({ children }: PatrimonioLayoutProps) {
   )
 }
 
-interface PatrimonioLayoutProps {
+interface DriveQrLayoutProps {
   children: ReactNode
 }

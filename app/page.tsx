@@ -1,3 +1,4 @@
+import { DriveQrSection } from "@/components/drive-qr-section";
 import { HeroSection } from "@/components/hero-section";
 import { PatrimonioSection } from "@/components/patrimonio-section";
 import type { Metadata } from 'next';
@@ -11,7 +12,8 @@ export default function Home() {
   return (
     <>
       <HeroSection />
+      <DriveQrSection />
       <PatrimonioSection />
     </>
   );
-}ss
+}

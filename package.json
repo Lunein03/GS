@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "db:generate": "drizzle-kit generate --config drizzle.config.ts",
+    "db:migrate": "drizzle-kit migrate --config drizzle.config.ts",
+    "db:push": "drizzle-kit push --config drizzle.config.ts"
   },
   "dependencies": {
     "@next/swc-wasm-nodejs": "13.5.1",
@@ -41,20 +44,25 @@
     "@types/react": "18.2.22",
     "@types/react-dom": "18.2.7",
     "autoprefixer": "10.4.15",
+    "cheerio": "^1.0.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",
     "date-fns": "^3.6.0",
+    "drizzle-orm": "^0.35.3",
     "embla-carousel-autoplay": "^8.6.0",
     "embla-carousel-react": "^8.3.0",
     "eslint": "8.49.0",
     "eslint-config-next": "13.5.1",
     "framer-motion": "^11.0.8",
     "input-otp": "^1.2.4",
+    "jsqr": "^1.4.0",
     "lucide-react": "^0.446.0",
     "nanoid": "^5.1.5",
     "next": "^15.3.2",
+    "next-safe-action": "^5.1.1",
     "next-themes": "^0.3.0",
+    "pg": "^8.11.5",
     "postcss": "^8.4.31",
     "react": "18.2.0",
     "react-day-picker": "^8.10.1",
@@ -70,9 +78,12 @@
     "tailwindcss-animate": "^1.0.7",
     "typescript": "5.2.2",
     "vaul": "^0.9.9",
+    "zod": "^3.23.8",
     "zustand": "^5.0.4"
   },
   "devDependencies": {
-    "critters": "^0.0.23"
+    "@types/pg": "^8.15.5",
+    "critters": "^0.0.23",
+    "drizzle-kit": "^0.18.1"
   }
 }

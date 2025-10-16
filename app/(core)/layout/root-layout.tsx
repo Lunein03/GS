@@ -4,8 +4,8 @@ import { Inter } from 'next/font/google';
 import localFont from 'next/font/local';
 import '../styles/globals.css';
 import { ThemeProvider } from '@/components/ui/theme-provider';
-import { Navbar } from '@/components/navbar';
-import { Footer } from '@/components/footer';
+import { ConditionalNavbar } from './conditional-navbar';
+import { ConditionalFooter } from './conditional-footer';
 
 const neoverse = localFont({
   src: '../../../public/fonts/neoversesans-regular.woff2',
@@ -72,9 +72,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body className={`${neoverse.variable} ${neoverseBold.variable} ${inter.variable} font-sans overflow-x-hidden`}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
           <div className="flex min-h-screen flex-col overflow-x-hidden">
-            <Navbar />
+            <ConditionalNavbar />
             <main className="flex-1">{children}</main>
-            <Footer />
+            <ConditionalFooter />
           </div>
         </ThemeProvider>
       </body>
