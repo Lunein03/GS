@@ -99,16 +99,40 @@ export const activities = pgTable('activities', {
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });
 
-// Clients (Clientes)
+// Clients (Clientes - Cadastro Completo)
 export const clients = pgTable('clients', {
   id: uuid('id').primaryKey().defaultRandom(),
-  name: text('name').notNull(),
+  tipo: empresaTipoEnum('tipo').notNull(),
+  cpfCnpj: text('cpf_cnpj').notNull().unique(),
+  nome: text('nome'), // Nome completo (PF) ou Nome/Empresa (PJ)
+  cargo: text('cargo'), // Cargo do contato principal
+  // Endereço
+  cep: text('cep').notNull(),
+  endereco: text('endereco').notNull(),
+  numero: text('numero').notNull(),
+  complemento: text('complemento'),
+  bairro: text('bairro').notNull(),
+  cidade: text('cidade').notNull(),
+  estado: text('estado').notNull(),
+  // Contato Principal
+  contatoNome: text('contato_nome').notNull(),
+  contatoEmail: text('contato_email').notNull(),
+  contatoTelefone: text('contato_telefone').notNull(),
+  // Metadados
+  ativo: integer('ativo').notNull().default(1), // 1 = ativo, 0 = inativo
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+  deletedAt: timestamp('deleted_at'), // Soft delete
+});
+
+// Client Secondary Contacts (Contatos Secundários dos Clientes)
+export const clientSecondaryContacts = pgTable('client_secondary_contacts', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  clientId: uuid('client_id').notNull().references(() => clients.id, { onDelete: 'cascade' }),
+  nome: text('nome').notNull(),
   email: text('email'),
-  phone: text('phone'),
-  company: text('company'),
-  address: text('address'),
-  notes: text('notes'),
-  tags: text('tags').array(),
+  telefone: text('telefone'),
+  cargo: text('cargo'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });
