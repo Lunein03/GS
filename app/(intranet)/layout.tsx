@@ -14,8 +14,17 @@ export default function IntranetLayout({ children }: { children: ReactNode }) {
     <section
       aria-label={getIntranetAriaLabel()}
       role="region"
-      className="flex w-full flex-col"
+      className="flex w-full flex-col noise-background relative"
     >
+      {/* Luzes flutuantes */}
+      <div className="floating-lights-container">
+        <div className="floating-light floating-light-1" />
+        <div className="floating-light floating-light-2" />
+        <div className="floating-light floating-light-3" />
+        <div className="floating-light floating-light-4" />
+        <div className="floating-light floating-light-5" />
+      </div>
+
       {children}
     </section>
   );

@@ -1,0 +1,52 @@
+{
+  "mcpServers": {
+    "Context7": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@upstash/context7-mcp",
+        "--api-key",
+        "ctx7sk-71d000cc-c3a5-4ace-afc6-7dd087e788b1"
+      ],
+      "env": {},
+      "disabled": false,
+      "autoApprove": []
+    },
+    "magic": {
+      "command": "cmd",
+      "args": [
+        "/c",
+        "npx",
+        "-y",
+        "@21st-dev/magic@latest"
+      ],
+      "env": {
+        "API_KEY": "33d2b4f268564f2d568a1ec90f20710dcf85c231fc193404bc7eaae2cb6cca5e"
+      },
+      "disabled": false,
+      "autoApprove": []
+    },
+    "chrome-devtools": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "chrome-devtools-mcp@latest",
+        "--url",
+        "http://localhost:3000/"
+      ],
+      "disabled": false,
+      "autoApprove": [
+        "take_screenshot",
+        "evaluate_script",
+        "navigate_page",
+        "list_pages",
+        "take_snapshot",
+        "list_console_messages",
+        "resize_page",
+        "emulate_network",
+        "new_page",
+        "wait_for"
+      ]
+    }
+  }
+}

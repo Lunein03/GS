@@ -1,0 +1,34 @@
+# ============================================
+# Dockerfile para Desenvolvimento
+# Hot-reload habilitado com volumes
+# ============================================
+
+FROM node:18-alpine
+
+# Instalar dependências do sistema
+RUN apk add --no-cache \
+    libc6-compat \
+    openssl \
+    postgresql-client \
+    git
+
+WORKDIR /app
+
+# Copiar arquivos de dependências
+COPY package.json package-lock.json* ./
+
+# Instalar todas as dependências (incluindo dev)
+RUN npm ci
+
+# Copiar código fonte
+COPY . .
+
+# Expor porta de desenvolvimento
+EXPOSE 3000
+
+# Variáveis de ambiente para desenvolvimento
+ENV NODE_ENV=development
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Comando de desenvolvimento com hot-reload
+CMD ["npm", "run", "dev"]

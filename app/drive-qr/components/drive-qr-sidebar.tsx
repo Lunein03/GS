@@ -3,9 +3,8 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, ScanQrCode, History, Settings, LogOut, Menu, ArrowLeft } from 'lucide-react'
+import { Menu, ArrowLeft } from 'lucide-react'
 
-import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
 export function DriveQrSidebar({ isOpen, onClose }: DriveQrSidebarProps) {
@@ -50,25 +49,25 @@ export function DriveQrSidebar({ isOpen, onClose }: DriveQrSidebarProps) {
               </div>
             </div>
             {/* Botão de fechar menu no mobile */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="lg:hidden"
+            <button
+              className="rounded-md p-2 text-muted-foreground transition-colors hover:bg-[hsla(263,70%,52%,0.12)] hover:text-foreground lg:hidden"
               onClick={onClose}
               aria-label="Fechar menu de navegação"
             >
               <Menu className="h-5 w-5" />
-            </Button>
+            </button>
           </div>
 
-          {/* Navegação Principal */}
-          <nav className="flex-1 space-y-2 p-4 sm:space-y-3 sm:p-5">
-            {/* Botão de voltar à intranet */}
+          {/* Espaço flexível */}
+          <div className="flex-1" />
+
+          {/* Botão de voltar à intranet no rodapé */}
+          <div className="border-t border-border/60 p-4 sm:p-5">
             <Link
               href="/"
               onClick={onClose}
               className={cn(
-                'group flex items-center gap-3 rounded-xl border border-transparent px-3 py-3 text-sm transition-all duration-200 hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 text-muted-foreground hover:text-foreground sm:px-4 sm:py-3.5',
+                'group flex w-full items-center justify-center gap-3 rounded-xl border border-transparent px-3 py-3 text-sm font-medium transition-all duration-200 hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 text-muted-foreground hover:text-foreground sm:px-4 sm:py-3.5',
                 sidebarBackgroundRingOffsetClass,
                 inactiveItemHoverClass
               )}
@@ -80,60 +79,9 @@ export function DriveQrSidebar({ isOpen, onClose }: DriveQrSidebarProps) {
                 )}
                 aria-hidden="true"
               />
-              <span className="flex-1 truncate">Voltar à Intranet</span>
+              <span>Voltar à Intranet</span>
             </Link>
-            
-            <div className="border-t border-border/60 pt-2 sm:pt-3">
-              {navigation.map((item) => {
-                const Icon = item.icon
-                const isActive = getIsActive(pathname, item.href)
-
-                return (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    onClick={onClose}
-                    className={cn(
-                      'group flex items-center gap-3 rounded-xl border border-transparent px-3 py-3 text-sm transition-all duration-200 hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 sm:px-4 sm:py-3.5',
-                      sidebarBackgroundRingOffsetClass,
-                      isActive
-                        ? cn(
-                          'border-l-4 font-semibold text-foreground shadow-sm',
-                          activeItemBorderColorClass,
-                          activeItemBackgroundClass
-                        )
-                        : cn('text-muted-foreground hover:text-foreground', inactiveItemHoverClass)
-                    )}
-                    aria-current={isActive ? 'page' : undefined}
-                  >
-                    <Icon
-                      className={cn(
-                        'h-4 w-4 transition-colors duration-200 sm:h-5 sm:w-5',
-                        isActive ? activeIconColorClass : inactiveIconColorClass
-                      )}
-                      aria-hidden="true"
-                    />
-                    <span className="flex-1 truncate">{item.name}</span>
-                  </Link>
-                )
-              })}
-            </div>
-          </nav>
-
-          <div className="border-t border-border/60 p-4 sm:p-5">
-            <Button
-              variant="ghost"
-              className={cn(
-                'w-full justify-start rounded-lg border border-transparent text-xs font-medium text-destructive transition-colors duration-200 hover:bg-destructive/15 hover:text-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive/30 focus-visible:ring-offset-2 sm:text-sm',
-                sidebarBackgroundRingOffsetClass
-              )}
-              size="sm"
-              aria-label="Sair da conta"
-            >
-              <LogOut className="mr-2 h-3 w-3 sm:h-4 sm:w-4" />
-              Sair
-            </Button>
-            <div className="mt-3 space-y-1 text-xs text-muted-foreground sm:mt-4 sm:space-y-1.5">
+            <div className="mt-3 space-y-1 text-center text-xs text-muted-foreground sm:mt-4 sm:space-y-1.5">
               <p className="text-xs text-muted-foreground">
                 Drive QR Scanner Integrado
               </p>
@@ -153,33 +101,12 @@ interface DriveQrSidebarProps {
   onClose: () => void
 }
 
-const navigation = [
-  { name: 'Scanner', href: '/drive-qr', icon: Home },
-  { name: 'Escanear QR Code', href: '/drive-qr/scan', icon: ScanQrCode },
-  { name: 'Histórico', href: '/drive-qr/history', icon: History },
-  { name: 'Configurações', href: '/drive-qr/settings', icon: Settings },
-]
-
 const sidebarBackgroundClass = 'bg-[hsl(222.2_47.4%_13%)]'
 
 const sidebarHeaderGradientClass = 'bg-[radial-gradient(circle_at_top,_rgba(120,40,255,0.22),_transparent_65%)]'
 
 const sidebarBackgroundRingOffsetClass = 'focus-visible:ring-offset-[hsl(222.2_47.4%_13%)]'
 
-const activeItemBorderColorClass = 'border-l-[hsl(263_70%_52%)]'
-
-const activeItemBackgroundClass = 'bg-[hsla(263,70%,52%,0.18)]'
-
 const inactiveItemHoverClass = 'hover:bg-[hsla(263,70%,52%,0.12)]'
 
-const activeIconColorClass = 'text-[hsl(263_70%_60%)]'
-
 const inactiveIconColorClass = 'text-muted-foreground'
-
-function getIsActive(pathname: string, href: string) {
-  if (href === '/drive-qr') {
-    return pathname === href
-  }
-
-  return pathname === href || pathname.startsWith(`${href}/`)
-}

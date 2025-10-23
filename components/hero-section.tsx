@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 
+import { BackgroundNoiseOverlay } from "@/components/ui/background-snippets-noise-effect11";
+
 export function HeroSection() {
   const [isVisible, setIsVisible] = useState(false);
 
@@ -12,7 +14,16 @@ export function HeroSection() {
   }, []);
 
   return (
-    <section id="hero" className="relative pt-24 pb-12 md:pt-32 md:pb-24 overflow-hidden">
+    <section id="hero" className="relative pt-24 pb-12 md:pt-32 md:pb-24 overflow-hidden noise-background">
+      {/* Luzes flutuantes */}
+      <div className="floating-lights-container">
+        <div className="floating-light floating-light-1" />
+        <div className="floating-light floating-light-2" />
+        <div className="floating-light floating-light-3" />
+        <div className="floating-light floating-light-4" />
+        <div className="floating-light floating-light-5" />
+      </div>
+
       {/* Background gradient dinâmico */}
       <div 
         className="absolute inset-0 z-0 bg-gradient-to-r animate-gradient-x"
@@ -28,6 +39,11 @@ export function HeroSection() {
       
       {/* Novo background gradient com a classe CSS */}
       <div className="absolute inset-0 hero-gradient-accent opacity-10 z-0" />
+
+      <BackgroundNoiseOverlay
+        className="z-[5] opacity-75 mix-blend-soft-light"
+        patternAlpha={HERO_NOISE_PATTERN_ALPHA}
+      />
       
       {/* Reflexos animados minimalistas */}
       <motion.div
@@ -170,3 +186,5 @@ export function HeroSection() {
     </section>
   );
 }
+
+const HERO_NOISE_PATTERN_ALPHA = 28;

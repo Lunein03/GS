@@ -30,7 +30,16 @@ export function PatrimonioSection() {
   ];
 
   return (
-    <section id="patrimonio" className="py-16 md:py-24 bg-background relative overflow-hidden">
+    <section id="patrimonio" className="py-16 md:py-24 bg-background relative overflow-hidden noise-background">
+      {/* Luzes flutuantes */}
+      <div className="floating-lights-container">
+        <div className="floating-light floating-light-1" />
+        <div className="floating-light floating-light-2" />
+        <div className="floating-light floating-light-3" />
+        <div className="floating-light floating-light-4" />
+        <div className="floating-light floating-light-5" />
+      </div>
+
       {/* Background decorativo */}
       <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent" />
       

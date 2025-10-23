@@ -1,0 +1,120 @@
+# ============================================
+# Docker Compose - Ambiente de Desenvolvimento
+# Hot-reload habilitado com volumes
+# ============================================
+
+version: '3.9'
+
+services:
+  # ==========================================
+  # PostgreSQL Database
+  # ==========================================
+  db:
+    image: postgres:15-alpine
+    container_name: gsproducoes-db-dev
+    restart: unless-stopped
+    
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-gsproducoes_intranet_dev}
+      POSTGRES_USER: ${POSTGRES_USER:-gsproducoes}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-dev123}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    
+    volumes:
+      - postgres_data_dev:/var/lib/postgresql/data
+      # Scripts de inicialização (executados em ordem alfabética)
+      - ../docs/database/00-init-schema.sql:/docker-entrypoint-initdb.d/00-init-schema.sql:ro
+      - ../docs/database/complete-seed.sql:/docker-entrypoint-initdb.d/01-seed.sql:ro
+    
+    ports:
+      - "${POSTGRES_PORT:-5433}:5432"
+    
+    networks:
+      - gsproducoes-dev-network
+    
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-gsproducoes} -d ${POSTGRES_DB:-gsproducoes_intranet_dev}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # ==========================================
+  # Next.js Application - Development Mode
+  # ==========================================
+  app:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.dev
+    
+    container_name: gsproducoes-app-dev
+    restart: unless-stopped
+    
+    environment:
+      # Database
+      DATABASE_URL: postgresql://${POSTGRES_USER:-gsproducoes}:${POSTGRES_PASSWORD:-dev123}@db:5432/${POSTGRES_DB:-gsproducoes_intranet_dev}
+      
+      # Next.js
+      NODE_ENV: development
+      NEXT_TELEMETRY_DISABLED: 1
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
+      
+      # Development
+      WATCHPACK_POLLING: true
+      CHOKIDAR_USEPOLLING: true
+    
+    volumes:
+      # Montar código fonte para hot-reload
+      - ./:/app
+      # Excluir node_modules do host
+      - /app/node_modules
+      - /app/.next
+    
+    ports:
+      - "${APP_PORT:-3000}:3000"
+    
+    depends_on:
+      db:
+        condition: service_healthy
+    
+    networks:
+      - gsproducoes-dev-network
+    
+    command: npm run dev
+
+  # ==========================================
+  # Adminer - Database Management
+  # ==========================================
+  adminer:
+    image: adminer:latest
+    container_name: gsproducoes-adminer-dev
+    restart: unless-stopped
+    
+    environment:
+      ADMINER_DEFAULT_SERVER: db
+      ADMINER_DESIGN: nette
+    
+    ports:
+      - "${ADMINER_PORT:-8080}:8080"
+    
+    depends_on:
+      - db
+    
+    networks:
+      - gsproducoes-dev-network
+
+# ==========================================
+# Networks
+# ==========================================
+networks:
+  gsproducoes-dev-network:
+    driver: bridge
+    name: gsproducoes-dev-network
+
+# ==========================================
+# Volumes
+# ==========================================
+volumes:
+  postgres_data_dev:
+    driver: local
+    name: gsproducoes-postgres-data-dev

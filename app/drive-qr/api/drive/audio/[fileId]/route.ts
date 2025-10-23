@@ -1,3 +1,5 @@
+import '@/lib/polyfills/node-file';
+
 import { NextRequest, NextResponse } from 'next/server';
 
 const USER_AGENT =

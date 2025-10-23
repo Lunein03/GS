@@ -20,7 +20,53 @@ Portal interno desenvolvido com Next.js 15 para centralizar comunicação, formu
 - Node.js 18+.
 - npm (instalado com o Node) ou pnpm/yarn configurados.
 
-## 🚀 Como executar localmente
+## 🚀 Como executar
+
+### Opção 1: Docker (Recomendado) 🐳
+
+**Início rápido - Tudo configurado automaticamente:**
+
+```bash
+# 1. Copiar configuração de ambiente
+cp .env.docker .env
+
+# 2. Iniciar ambiente completo (PostgreSQL + Next.js + Adminer)
+make up
+
+# Pronto! O banco já está criado e populado com dados de exemplo
+```
+
+**Comandos úteis:**
+
+```bash
+make logs          # Ver logs em tempo real
+make down          # Parar ambiente
+make db-reset      # Resetar banco (apaga tudo e recria)
+make shell         # Acessar shell do container
+make db-shell      # Acessar PostgreSQL
+```
+
+**Acessar:**
+- 🌐 Aplicação: http://localhost:3000
+- 🗄️ Adminer (DB): http://localhost:8080
+  - Server: `db`
+  - Username: `gsproducoes`
+  - Password: (conforme .env)
+  - Database: `gsproducoes_intranet`
+
+**O que é criado automaticamente:**
+- ✅ Banco PostgreSQL com todas as tabelas
+- ✅ 12 oportunidades de negócio (pipeline completo)
+- ✅ 6 propostas comerciais
+- ✅ 25 equipamentos cadastrados
+- ✅ 8 eventos com equipamentos alocados
+- ✅ Solicitações de horas extras e prestações de contas
+- ✅ Todos os módulos prontos para uso
+
+📚 **Documentação completa:** [docs/database/README.md](docs/database/README.md)
+
+### Opção 2: Localmente
+
 ```bash
 npm install
 npm run dev

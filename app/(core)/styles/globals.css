@@ -112,6 +112,33 @@
   }
 }
 
+@layer utilities {
+  /* Screen reader only - oculta visualmente mas mantém acessível para leitores de tela */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+  
+  /* Torna elemento visível quando focado (útil para skip links) */
+  .sr-only-focusable:focus {
+    position: static;
+    width: auto;
+    height: auto;
+    padding: inherit;
+    margin: inherit;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+  }
+}
+
 @layer components {
   .font-neoverse {
     font-family: var(--font-neoverse), sans-serif;
@@ -401,3 +428,95 @@
   background-size: 200% 200%;
   animation: gradient-x 15s ease infinite;
 } 
+
+/* Background sem noise effect */
+.noise-background {
+  position: relative;
+  background-color: hsl(var(--background));
+}
+
+/* Floating lights container */
+.floating-lights-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Floating lights */
+.floating-light {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.15;
+  animation: float 20s ease-in-out infinite;
+}
+
+.floating-light-1 {
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.3) 0%, transparent 70%);
+  top: 10%;
+  left: 10%;
+  animation-duration: 25s;
+  animation-delay: 0s;
+}
+
+.floating-light-2 {
+  width: 250px;
+  height: 250px;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.25) 0%, transparent 70%);
+  top: 60%;
+  right: 15%;
+  animation-duration: 30s;
+  animation-delay: 5s;
+}
+
+.floating-light-3 {
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.2) 0%, transparent 70%);
+  bottom: 20%;
+  left: 20%;
+  animation-duration: 22s;
+  animation-delay: 10s;
+}
+
+.floating-light-4 {
+  width: 280px;
+  height: 280px;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.25) 0%, transparent 70%);
+  top: 40%;
+  right: 30%;
+  animation-duration: 28s;
+  animation-delay: 3s;
+}
+
+.floating-light-5 {
+  width: 220px;
+  height: 220px;
+  background: radial-gradient(circle, rgba(147, 51, 234, 0.2) 0%, transparent 70%);
+  bottom: 40%;
+  left: 50%;
+  animation-duration: 26s;
+  animation-delay: 8s;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  25% {
+    transform: translate(30px, -30px) scale(1.1);
+  }
+  50% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+  75% {
+    transform: translate(20px, 30px) scale(1.05);
+  }
+}

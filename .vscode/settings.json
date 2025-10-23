@@ -11,5 +11,12 @@
   },
   "[typescript]": {
     "editor.defaultFormatter": "denoland.vscode-deno"
-  }
+  },
+  "kiroAgent.configureMCP": "Enabled",
+  "terminal.integrated.fontSize": 14,
+  "terminal.integrated.fontFamily": "JetBrainsMono Nerd Font", // Certifique-se que esta fonte está instalada
+  "terminal.integrated.gpuAcceleration": "on",
+  "terminal.integrated.showExitAlert": false,
+  // Recomendo definir seu terminal padrão para Windows (ex: PowerShell, Git Bash, etc.)
+  "terminal.integrated.defaultProfile.windows": "Git Bash",
 }

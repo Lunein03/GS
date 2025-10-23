@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google';
 import localFont from 'next/font/local';
 import '../styles/globals.css';
 import { ThemeProvider } from '@/components/ui/theme-provider';
+import { ParallaxBackground } from '@/components/ui/parallax-background';
 import { ConditionalNavbar } from './conditional-navbar';
 import { ConditionalFooter } from './conditional-footer';
 
@@ -71,9 +72,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       </head>
       <body className={`${neoverse.variable} ${neoverseBold.variable} ${inter.variable} font-sans overflow-x-hidden`}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
+          <ParallaxBackground />
           <div className="flex min-h-screen flex-col overflow-x-hidden">
             <ConditionalNavbar />
-            <main className="flex-1">{children}</main>
+            <main className="flex-1 pt-16">{children}</main>
             <ConditionalFooter />
           </div>
         </ThemeProvider>

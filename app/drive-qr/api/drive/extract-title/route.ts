@@ -1,3 +1,5 @@
+import '@/lib/polyfills/node-file';
+
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 

@@ -19,7 +19,16 @@ export function DriveQrLayout({ children }: DriveQrLayoutProps) {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="relative min-h-screen bg-background noise-background overflow-hidden">
+      {/* Luzes flutuantes */}
+      <div className="floating-lights-container">
+        <div className="floating-light floating-light-1" />
+        <div className="floating-light floating-light-2" />
+        <div className="floating-light floating-light-3" />
+        <div className="floating-light floating-light-4" />
+        <div className="floating-light floating-light-5" />
+      </div>
+
       <DriveQrSidebar isOpen={isSidebarOpen} onClose={handleCloseSidebar} />
 
       {/* Botão flutuante de menu para mobile */}
@@ -35,7 +44,7 @@ export function DriveQrLayout({ children }: DriveQrLayoutProps) {
 
       {/* Área de conteúdo principal */}
       <main
-        className="min-h-screen pt-6 transition-all duration-300 lg:ml-64 lg:pt-8"
+        className="relative z-10 min-h-screen pt-6 transition-all duration-300 lg:ml-64 lg:pt-8"
         role="main"
       >
         <div className="container mx-auto px-4 pb-12 sm:px-6 lg:px-8">

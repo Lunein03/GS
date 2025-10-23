@@ -1,0 +1,122 @@
+# ============================================
+# Docker Compose - GS Produções Intranet
+# Ambiente de Produção
+# ============================================
+
+version: '3.9'
+
+services:
+  # ==========================================
+  # PostgreSQL Database
+  # ==========================================
+  db:
+    image: postgres:15-alpine
+    container_name: gsproducoes-db
+    restart: unless-stopped
+    
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-gsproducoes_intranet}
+      POSTGRES_USER: ${POSTGRES_USER:-gsproducoes}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme123}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    
+    volumes:
+      # Persistência de dados do PostgreSQL
+      - postgres_data:/var/lib/postgresql/data
+      # Scripts de inicialização (executados em ordem alfabética)
+      - ../docs/database/00-init-schema.sql:/docker-entrypoint-initdb.d/00-init-schema.sql:ro
+      - ../docs/database/complete-seed.sql:/docker-entrypoint-initdb.d/01-seed.sql:ro
+    
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    
+    networks:
+      - gsproducoes-network
+    
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-gsproducoes} -d ${POSTGRES_DB:-gsproducoes_intranet}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # ==========================================
+  # Next.js Application (Frontend + Backend)
+  # ==========================================
+  app:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      args:
+        NODE_ENV: production
+    
+    container_name: gsproducoes-app
+    restart: unless-stopped
+    
+    environment:
+      # Database
+      DATABASE_URL: postgresql://${POSTGRES_USER:-gsproducoes}:${POSTGRES_PASSWORD:-changeme123}@db:5432/${POSTGRES_DB:-gsproducoes_intranet}
+      
+      # Next.js
+      NODE_ENV: production
+      NEXT_TELEMETRY_DISABLED: 1
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
+      
+      # Server
+      PORT: 3000
+      HOSTNAME: 0.0.0.0
+    
+    ports:
+      - "${APP_PORT:-3000}:3000"
+    
+    depends_on:
+      db:
+        condition: service_healthy
+    
+    networks:
+      - gsproducoes-network
+    
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/api/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # ==========================================
+  # Adminer - Database Management (Opcional)
+  # Remova se não precisar de interface web para o banco
+  # ==========================================
+  adminer:
+    image: adminer:latest
+    container_name: gsproducoes-adminer
+    restart: unless-stopped
+    
+    environment:
+      ADMINER_DEFAULT_SERVER: db
+      ADMINER_DESIGN: nette
+    
+    ports:
+      - "${ADMINER_PORT:-8080}:8080"
+    
+    depends_on:
+      - db
+    
+    networks:
+      - gsproducoes-network
+
+# ==========================================
+# Networks
+# ==========================================
+networks:
+  gsproducoes-network:
+    driver: bridge
+    name: gsproducoes-network
+
+# ==========================================
+# Volumes
+# ==========================================
+volumes:
+  postgres_data:
+    driver: local
+    name: gsproducoes-postgres-data

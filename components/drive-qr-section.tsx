@@ -6,7 +6,6 @@ import type { LucideIcon } from "lucide-react";
 import { ArrowRight, Cloud, Headphones, Radar, ScanQrCode } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface DriveQrFeature {
   icon: LucideIcon;
@@ -44,53 +43,68 @@ const DRIVE_QR_FEATURES: DriveQrFeature[] = [
 
 export function DriveQrSection() {
   return (
-    <section id="drive-qr" className="relative py-16 md:py-24 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent" aria-hidden="true" />
+    <section id="drive-qr" className="py-16 md:py-24 bg-background relative overflow-hidden noise-background">
+      {/* Luzes flutuantes */}
+      <div className="floating-lights-container">
+        <div className="floating-light floating-light-1" />
+        <div className="floating-light floating-light-2" />
+        <div className="floating-light floating-light-3" />
+        <div className="floating-light floating-light-4" />
+        <div className="floating-light floating-light-5" />
+      </div>
 
-      <div className="container mx-auto px-4 relative z-10">
+      {/* Background decorativo */}
+      <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent" />
+      
+      <div className="relative z-10 container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-12 md:mb-16"
+          className="mb-12 text-center md:mb-16"
         >
-          <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-primary">
-            <ScanQrCode className="h-4 w-4" aria-hidden="true" />
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-primary">
+            <ScanQrCode className="w-4 h-4" />
             <span className="text-sm font-medium">Digitalização inteligente</span>
           </div>
-          <h2 className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-3xl font-bold text-transparent md:text-4xl lg:text-5xl">
+          
+          <h2 className="mb-4 text-3xl font-bold md:text-4xl lg:text-5xl bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
             Drive QR Scanner integrado
           </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-base text-muted-foreground md:text-lg">
-            Concentre o fluxo de leitura de QR codes corporativos em um único lugar, com segurança, acessibilidade e
-            suporte completo ao ecossistema da intranet.
+          
+          <p className="mx-auto max-w-2xl text-lg md:text-xl text-muted-foreground">
+            Concentre o fluxo de leitura de QR codes corporativos em um único lugar, com segurança, acessibilidade e suporte completo ao ecossistema da intranet.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
+        <div className="mb-12 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
           {DRIVE_QR_FEATURES.map((feature, index) => (
             <motion.div
               key={feature.title}
-              initial={{ opacity: 0, y: 24 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.45, delay: index * 0.08 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              className="group"
             >
-              <Card className="h-full border-border/60 bg-card/80 backdrop-blur">
-                <CardHeader className="space-y-4">
-                  <span className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
-                    <feature.icon className="h-6 w-6 text-primary" aria-hidden="true" />
-                  </span>
-                  <CardTitle className="text-lg text-foreground">{feature.title}</CardTitle>
-                  <CardDescription className="text-sm leading-relaxed text-muted-foreground">
-                    {feature.description}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm font-medium text-primary/80">{feature.highlight}</p>
-                </CardContent>
-              </Card>
+              <div className="h-full p-6 rounded-2xl border border-border bg-card hover:bg-accent/50 transition-all duration-300 hover:shadow-lg hover:scale-105">
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+                  <feature.icon className="w-6 h-6 text-primary" />
+                </div>
+                
+                <h3 className="text-lg font-semibold mb-2">
+                  {feature.title}
+                </h3>
+                
+                <p className="text-sm text-muted-foreground">
+                  {feature.description}
+                </p>
+                
+                <p className="mt-4 text-sm font-medium text-foreground/70">
+                  {feature.highlight}
+                </p>
+              </div>
             </motion.div>
           ))}
         </div>
@@ -99,16 +113,20 @@ export function DriveQrSection() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.55, delay: 0.32 }}
-          className="mt-14 text-center"
+          transition={{ duration: 0.5, delay: 0.4 }}
+          className="text-center"
         >
           <Link href="/drive-qr" passHref>
-            <Button size="lg" className="group rounded-xl px-8 py-6 text-lg shadow-lg">
+            <Button 
+              size="lg" 
+              className="group text-lg px-8 py-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+            >
               Acessar Drive QR
-              <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" aria-hidden="true" />
+              <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
             </Button>
           </Link>
-          <p className="mt-3 text-sm text-muted-foreground">
+          
+          <p className="text-sm text-muted-foreground mt-4">
             Disponível para times de produção e operações. Acesse com seu login corporativo.
           </p>
         </motion.div>

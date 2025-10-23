@@ -1,9 +1,8 @@
 'use client';
 
 import { useCallback, useRef, useState, type ChangeEvent, type DragEvent, type KeyboardEvent, type MouseEvent } from 'react';
-import { Upload, Loader2 } from 'lucide-react';
+import { QrCode, Loader2 } from 'lucide-react';
 
-import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { cn } from '@/lib/utils';
 
@@ -83,50 +82,77 @@ export function QRCodeUploader({ isProcessing, onFilesSelect }: QRCodeUploaderPr
   );
 
   return (
-    <div className="space-y-4">
-      <div
-        role="button"
-        tabIndex={0}
-        aria-busy={isProcessing}
-        aria-label="Área para envio de QR codes"
-        onClick={handleOpenFileDialog}
-        onKeyDown={handleKeyDown}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
-        className={cn(
-          'relative flex min-h-[230px] flex-col items-center justify-center gap-6 rounded-3xl border border-primary/50 bg-gradient-to-br from-white/[0.08] via-white/[0.04] to-white/[0.02] px-6 py-12 text-center shadow-[0_25px_60px_-35px_rgba(79,70,229,0.75)] outline-none transition hover:border-primary/80 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#050618]',
-          isDragging && 'border-primary/80 bg-primary/20'
-        )}
-      >
-        <input
-          ref={inputRef}
-          type="file"
-          accept={ACCEPTED_IMAGE_TYPES}
-          multiple
-          className="hidden"
-          onChange={handleChange}
-        />
-        <span className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-primary/20 text-primary-foreground shadow-[0_0_30px_-12px_rgba(99,102,241,1)]">
-          {isProcessing ? <Loader2 className="h-7 w-7 animate-spin" aria-hidden="true" /> : <Upload className="h-7 w-7" aria-hidden="true" />}
-        </span>
-        <div className="space-y-1">
-          <p className="text-lg font-semibold text-white">Arraste e solte seus QR codes</p>
-          <p className="text-sm text-slate-300">
-            Suporta múltiplas imagens simultâneas. Clique ou pressione Enter para selecionar manualmente.
-          </p>
+    <div
+      role="button"
+      tabIndex={0}
+      aria-busy={isProcessing}
+      aria-label="Área para envio de QR codes"
+      onClick={handleOpenFileDialog}
+      onKeyDown={handleKeyDown}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+      className={cn(
+  'group relative flex min-h-[320px] cursor-pointer flex-col items-center justify-center gap-5 rounded-2xl border-2 border-border bg-muted/30 px-8 py-12 text-center outline-none transition-all duration-200 hover:scale-[1.01] hover:border-foreground/30 hover:bg-muted/50 hover:shadow-md focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+        isDragging && 'scale-[1.02] border-solid border-foreground/40 bg-muted/70 shadow-lg',
+        isProcessing && 'pointer-events-none opacity-60'
+      )}
+    >
+      <input
+        ref={inputRef}
+        type="file"
+        accept={ACCEPTED_IMAGE_TYPES}
+        multiple
+        className="hidden"
+        onChange={handleChange}
+      />
+      
+      {/* Efeito de glow quando dragging */}
+      {isDragging && (
+        <div className="absolute inset-0 -z-10 animate-pulse rounded-2xl bg-foreground/5 blur-xl" />
+      )}
+      
+      {/* Ícone QR Code com animação */}
+      <div className="relative">
+        {/* Efeito de bounce no ícone quando dragging */}
+        <div className={cn(
+          'transition-transform duration-1500',
+          isDragging && 'animate-bounce'
+        )}>
+          <div className={cn(
+            'absolute -inset-4 rounded-full bg-foreground/10 blur-md transition-opacity duration-300',
+            isDragging ? 'opacity-100' : 'opacity-0'
+          )} />
+          {isProcessing ? (
+            <Loader2 className="relative h-20 w-20 animate-spin text-foreground drop-shadow-sm" aria-hidden="true" />
+          ) : (
+            <QrCode className={cn(
+              'relative h-20 w-20 drop-shadow-sm transition-colors duration-300',
+              isDragging ? 'text-foreground' : 'text-muted-foreground group-hover:text-foreground'
+            )} aria-hidden="true" />
+          )}
         </div>
-        <Button
-          type="button"
-          variant="default"
-          className="mt-2 bg-gradient-to-r from-primary to-indigo-500 text-primary-foreground shadow-lg shadow-indigo-500/30 hover:from-primary/90 hover:to-indigo-500/90"
-          onClick={handleButtonClick}
-          disabled={isProcessing}
-        >
-          Escolher arquivos
-        </Button>
       </div>
-      <p className="text-xs text-slate-400">Formatos suportados: PNG, JPG, JPEG, WEBP.</p>
+      
+      {/* Textos */}
+      <div className="space-y-2">
+        <h3 className="font-inter text-xl font-semibold text-foreground md:text-2xl">
+          {isDragging ? 'Solte os arquivos aqui' : 'Arraste e solte seus QR codes'}
+        </h3>
+        <p className="mx-auto max-w-md text-base text-muted-foreground md:text-lg">
+          {isDragging ? (
+            <span className="font-medium text-foreground">Solte para fazer upload</span>
+          ) : (
+            <>
+              Drag & drop files here, or{' '}
+              <span className="font-medium text-foreground">browse</span>
+            </>
+          )}
+        </p>
+        <p className="text-sm text-muted-foreground">
+          Formatos: PNG, JPG, JPEG, WEBP
+        </p>
+      </div>
     </div>
   );
 }

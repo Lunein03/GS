@@ -6,7 +6,7 @@ import { Navbar } from '@/components/navbar'
 export function ConditionalNavbar() {
   const pathname = usePathname()
   
-  const hideNavbarOnModules = ['/patrimonio', '/drive-qr']
+  const hideNavbarOnModules = ['/patrimonio', '/drive-qr', '/gs-propostas']
   const shouldHideNavbar = hideNavbarOnModules.some((routePrefix) => pathname?.startsWith(routePrefix))
   
   if (shouldHideNavbar) {

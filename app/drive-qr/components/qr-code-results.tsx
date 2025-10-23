@@ -1,20 +1,27 @@
 'use client';
 
 import Image from 'next/image';
-import { AlertCircle, CheckCircle2, ExternalLink, FileImage, HardDrive, Loader2, Volume2, XCircle } from 'lucide-react';
+import { AlertCircle, CheckCircle2, ExternalLink, HardDrive, Loader2, Volume2, XCircle } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 
 import type { DriveQrResult } from '../types';
+import { CustomAudioPlayer } from './custom-audio-player';
 
 export function QRCodeResults({ results }: QRCodeResultsProps) {
   if (results.length === 0) {
     return null;
   }
 
+  const isSingleResult = results.length === 1;
+
   return (
-    <section aria-live="polite" aria-label="Lista de resultados" className="space-y-5">
+    <section 
+      aria-live="polite" 
+      aria-label="Lista de resultados" 
+      className={isSingleResult ? 'space-y-5' : 'grid gap-5 lg:grid-cols-2'}
+    >
       {results.map((result) => (
         <ResultCard key={result.id} result={result} />
       ))}
@@ -30,87 +37,87 @@ function ResultCard({ result }: ResultCardProps) {
   const statusBadge = renderStatusBadge(result.status);
 
   return (
-    <Card className="flex h-full flex-col gap-5 rounded-[28px] border border-white/5 bg-white/[0.04] p-6 shadow-[0_20px_70px_-40px_rgba(99,102,241,0.9)]">
-      <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
-        <div className="flex flex-1 items-start gap-4">
-          {result.imageUrl ? (
-            <figure className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl border border-white/10 bg-white/5">
-              <Image
-                src={result.imageUrl}
-                alt={`QR code do arquivo ${result.fileName}`}
-                width={96}
-                height={96}
-                className="h-full w-full object-cover"
-                unoptimized
-              />
-            </figure>
-          ) : null}
-          <div className="flex min-w-0 flex-1 flex-col gap-3">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-              <div className="space-y-1">
-                <p className="text-lg font-semibold text-white">{result.fileName}</p>
-                {result.title && result.title !== result.fileName ? (
-                  <p className="flex items-center gap-2 text-sm text-slate-300">
-                    <HardDrive className="h-4 w-4 text-indigo-300" aria-hidden="true" />
-                    <span className="font-medium text-white">Google Drive</span>
-                    <span className="truncate" title={result.title}>
-                      {result.title}
-                    </span>
-                  </p>
-                ) : null}
-              </div>
-              {statusBadge}
-            </div>
-
-            <div className="grid gap-2 text-sm text-slate-300 sm:grid-cols-2">
-              <p className="flex items-center gap-2">
-                <FileImage className="h-4 w-4 text-indigo-300" aria-hidden="true" />
-                <span className="truncate" title={result.fileName}>
-                  {result.fileName}
-                </span>
-              </p>
-              {result.link ? (
-                <a
-                  href={result.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-xs text-primary hover:text-primary/80 hover:underline"
-                >
-                  <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
-                  <span className="truncate max-w-[260px] sm:max-w-none">{result.link}</span>
-                </a>
-              ) : (
-                <span className="text-xs text-slate-500">Nenhum link detectado</span>
-              )}
-            </div>
+    <Card className="group flex h-full flex-col gap-5 overflow-hidden rounded-2xl border border-border bg-card p-6 transition-all hover:border-border/80 hover:shadow-lg">
+      <div className="flex items-start gap-4">
+        {result.imageUrl ? (
+          <figure className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl border border-border bg-muted">
+            <Image
+              src={result.imageUrl}
+              alt={`QR code do arquivo ${result.fileName}`}
+              width={80}
+              height={80}
+              className="h-full w-full object-cover"
+              unoptimized
+            />
+          </figure>
+        ) : null}
+        
+        <div className="min-w-0 flex-1 space-y-3">
+          <div className="flex items-start gap-3">
+            <h3 className="min-w-0 flex-1 font-inter text-lg font-semibold text-foreground">{result.fileName}</h3>
+            {statusBadge}
           </div>
+          
+          {result.title && result.title !== result.fileName ? (
+            <div className="flex items-center gap-2 text-sm">
+              <HardDrive className="h-4 w-4 flex-shrink-0 text-muted-foreground" aria-hidden="true" />
+              <span className="font-medium text-muted-foreground">Google Drive:</span>
+              <span className="min-w-0 truncate text-foreground" title={result.title}>
+                {result.title}
+              </span>
+            </div>
+          ) : null}
+          
+          {result.link ? (
+            <a
+              href={result.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group inline-flex items-center gap-2 rounded-lg border border-border bg-muted/50 px-3 py-2 text-sm font-medium transition-all hover:border-border/80 hover:bg-muted"
+            >
+              <ExternalLink className="h-4 w-4 flex-shrink-0 text-muted-foreground group-hover:text-foreground" aria-hidden="true" />
+              <span className="text-foreground">Abrir no Google Drive</span>
+            </a>
+          ) : (
+            <div className="flex items-center gap-2 rounded-lg border border-border bg-muted/30 px-3 py-2 text-sm text-muted-foreground">
+              <AlertCircle className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
+              <span>Nenhum link detectado</span>
+            </div>
+          )}
         </div>
       </div>
 
       {result.status === 'error' ? (
-        <div className="flex items-start gap-3 rounded-2xl border border-rose-500/30 bg-rose-500/10 p-4 text-sm text-rose-200">
-          <XCircle className="h-4 w-4" aria-hidden="true" />
-          <span>{result.errorMessage ?? 'Não foi possível ler este QR code.'}</span>
+        <div className="flex items-start gap-3 rounded-xl border border-border bg-muted/50 p-4">
+          <XCircle className="h-5 w-5 flex-shrink-0 text-muted-foreground" aria-hidden="true" />
+          <div className="space-y-1">
+            <p className="text-sm font-medium text-foreground">Erro no processamento</p>
+            <p className="text-sm text-muted-foreground">{result.errorMessage ?? 'Não foi possível ler este QR code.'}</p>
+          </div>
         </div>
       ) : null}
 
       {result.content ? (
-        <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-sm text-slate-200">
-          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">Texto extraído</p>
-          <p className="whitespace-pre-wrap break-words leading-relaxed text-slate-100">{result.content}</p>
+        <div className="rounded-xl border border-border bg-muted/50 p-4">
+          <div className="space-y-2">
+            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Texto extraído</p>
+            <p className="whitespace-pre-wrap break-words text-sm leading-relaxed text-foreground">{result.content}</p>
+          </div>
         </div>
       ) : null}
 
       {result.audio ? (
-        <div className="space-y-3 rounded-2xl border border-indigo-500/30 bg-indigo-500/10 p-4">
-          <div className="flex items-center gap-2 text-sm font-semibold text-indigo-100">
-            <Volume2 className="h-4 w-4" aria-hidden="true" />
-            <span>Prévia em áudio</span>
+        <div className="space-y-3">
+          <div className="flex items-center gap-2.5 px-1">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-muted">
+              <Volume2 className="h-4 w-4 text-foreground" aria-hidden="true" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-foreground">Prévia em áudio</p>
+              <p className="text-xs text-muted-foreground">Ouça o título extraído do Google Drive</p>
+            </div>
           </div>
-          <audio controls preload="none" className="w-full" aria-label={`Prévia em áudio para ${result.fileName}`}>
-            <source src={result.audio.url} type={result.audio.type ?? 'audio/mpeg'} />
-            Seu navegador não suporta a reprodução de áudio.
-          </audio>
+          <CustomAudioPlayer src={result.audio.url} title={result.title || result.fileName} />
         </div>
       ) : null}
     </Card>
@@ -120,7 +127,7 @@ function ResultCard({ result }: ResultCardProps) {
 function renderStatusBadge(status: DriveQrResult['status']) {
   if (status === 'processing') {
     return (
-      <Badge variant="outline" className="inline-flex items-center gap-1 text-xs">
+      <Badge variant="outline" className="inline-flex items-center gap-1.5 text-xs">
         <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
         Processando
       </Badge>
@@ -129,7 +136,7 @@ function renderStatusBadge(status: DriveQrResult['status']) {
 
   if (status === 'success') {
     return (
-      <Badge className="inline-flex items-center gap-1 bg-emerald-500/90 text-white">
+      <Badge className="inline-flex items-center gap-1.5 bg-foreground text-xs text-background">
         <CheckCircle2 className="h-3.5 w-3.5" aria-hidden="true" />
         Concluído
       </Badge>
@@ -137,7 +144,7 @@ function renderStatusBadge(status: DriveQrResult['status']) {
   }
 
   return (
-    <Badge className="inline-flex items-center gap-1 bg-rose-500/80 text-rose-50">
+    <Badge variant="outline" className="inline-flex items-center gap-1.5 border-rose-500/50 text-xs text-rose-600 dark:text-rose-400">
       <AlertCircle className="h-3.5 w-3.5" aria-hidden="true" />
       Erro
     </Badge>

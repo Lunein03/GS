@@ -19,7 +19,16 @@ export function PatrimonioLayout({ children }: PatrimonioLayoutProps) {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background noise-background">
+      {/* Luzes flutuantes */}
+      <div className="floating-lights-container">
+        <div className="floating-light floating-light-1" />
+        <div className="floating-light floating-light-2" />
+        <div className="floating-light floating-light-3" />
+        <div className="floating-light floating-light-4" />
+        <div className="floating-light floating-light-5" />
+      </div>
+
       <PatrimonioSidebar isOpen={isSidebarOpen} onClose={handleCloseSidebar} />
 
       {/* Botão flutuante de menu para mobile */}

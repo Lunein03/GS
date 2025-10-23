@@ -1,0 +1,20 @@
+{
+  "enabled": true,
+  "name": "Global Directives Enforcer",
+  "description": "Monitors all file changes and ensures compliance with global directives including MCP usage, Portuguese responses, TO-DO conventions, React/Next.js best practices, error handling patterns, and code quality standards",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "**/*.{ts",
+      "tsx",
+      "js",
+      "jsx",
+      "md}"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Files have been modified. Review the changes and ensure they comply with ALL global directives:\n\n1. **Language**: Respond in Portuguese to the user\n2. **MCP Usage**: All system actions must use MCP tools with mandatory prior analysis via sequential thinking\n3. **TO-DO Standards**: Check for proper TO-DO formatting with context, priority, and specificity\n4. **React/Next.js Conventions**: \n   - Verify functional components with TypeScript\n   - Ensure minimal 'use client' usage\n   - Check Server Actions use next-safe-action with ActionResponse type\n   - Validate Zod schemas for form validation\n5. **Error Handling**: Confirm expected errors are modeled as return values, not try/catch\n6. **Code Quality**: \n   - Verify early returns for error conditions\n   - Check descriptive variable names with 'handle' prefix for event handlers\n   - Ensure Tailwind classes are used for styling\n   - Validate accessibility features (aria-labels, tabindex, etc.)\n7. **Documentation**: Ensure no unnecessary .md files were created unless explicitly requested\n8. **Commit Message**: Suggest appropriate commit message with correct prefix (Feat/Fix/Docs/Refactor/Style/Test/Chore)\n\nAnalyze the modified files and provide feedback on compliance, suggesting corrections where needed."
+  }
+}

@@ -1,7 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  output: 'export',
+  // Output standalone para Docker (gera servidor Node.js otimizado)
+  output: 'standalone',
   eslint: {
     ignoreDuringBuilds: true,
   },
@@ -19,6 +20,29 @@ const nextConfig = {
   },
   experimental: {
     optimizeCss: true,
+  },
+  // Configuração para evitar bundling de módulos do servidor no cliente
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      // Não incluir módulos do Node.js no bundle do cliente
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        net: false,
+        tls: false,
+        crypto: false,
+        stream: false,
+        url: false,
+        zlib: false,
+        http: false,
+        https: false,
+        assert: false,
+        os: false,
+        path: false,
+      };
+    }
+
+    return config;
   },
 };
 
