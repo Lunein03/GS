@@ -17,6 +17,7 @@
     --popover-foreground: 240 3% 11%;
     /* #6422F2 - Roxo Primário (CTAs e Destaques) */
     --primary: 264 89% 54%;
+  --primary-glow: 263 88% 68%;
     --primary-foreground: 0 0% 100%;
     /* #2A2451 - Roxo Secundário (Títulos e Seções Premium) */
     --secondary: 257 37% 23%;
@@ -48,48 +49,60 @@
     --surface-muted: 0 0% 85%;
     --surface-inset: 0 0% 90%;
     --shadow-soft: 240 3% 11% / 0.03;
+
+    /* Status tokens */
+    --status-available: 150 69% 38%;
+    --status-available-foreground: 150 35% 18%;
+    --status-in-use: 217 88% 60%;
+    --status-in-use-foreground: 217 70% 18%;
+    --status-maintenance: 10 84% 57%;
+    --status-maintenance-foreground: 0 0% 100%;
+    --status-retired: 255 6% 52%;
+    --status-retired-foreground: 255 10% 22%;
   }
  
   .dark {
     /* Paleta Oficial - Dark Mode */
     /* #1D1D1F - Preto Neutro (Fundo Principal) */
     --background: 240 3% 11%;
-    /* #F0EEEF - Branco Suave (Texto) */
-    --foreground: 300 11% 94%;
+    /* Texto branco puro */
+    --foreground: 0 0% 100%;
 
-    /* #2A2451 - Roxo Secundário (Cards e Seções) */
-    --card: 257 37% 23%;
-    --card-foreground: 300 11% 94%;
+    /* Cards com fundo cinza médio para contraste */
+    --card: 0 0% 25%;
+    --card-foreground: 0 0% 100%;
 
-    /* Popover usa roxo secundário */
-    --popover: 257 37% 23%;
-    --popover-foreground: 300 11% 94%;
+    /* Popover com fundo cinza escuro claro */
+    --popover: 0 0% 15%;
+    --popover-foreground: 0 0% 100%;
 
     /* #6422F2 - Roxo Primário (CTAs e Destaques) */
     --primary: 264 89% 54%;
-    --primary-foreground: 300 11% 94%;
+    --primary-foreground: 0 0% 100%;
 
     /* Roxo secundário para elementos secundários */
     --secondary: 257 37% 23%;
-    --secondary-foreground: 300 11% 94%;
+    --secondary-foreground: 0 0% 100%;
 
-    /* Muted usa roxo secundário escurecido */
-    --muted: 257 37% 20%;
-    --muted-foreground: 0 0% 75%;
+    /* Muted usa cinza escuro */
+    --muted: 0 0% 20%;
+    --muted-foreground: 0 0% 85%;
 
-    /* Accent usa roxo secundário */
-    --accent: 257 37% 23%;
-    --accent-foreground: 300 11% 94%;
+    /* Accent usa cinza escuro */
+    --accent: 0 0% 20%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 300 11% 94%;
+    --destructive-foreground: 0 0% 100%;
 
-    /* #DADADA com alpha para bordas sutis */
-    --border: 0 0% 85% / 0.06;
-    --input: 257 37% 20%;
+    /* Bordas sutis com mais contraste */
+    --border: 0 0% 25%;
+    --input: 0 0% 15%;
     
     /* Roxo primário para ring */
     --ring: 264 89% 54%;
+
+    --primary-glow: 263 88% 72%;
 
     /* Apple-like Shadows - Dark Mode */
     --shadow-light: 0px 1px 2px rgba(0,0,0,0.04);
@@ -102,6 +115,15 @@
     --surface-muted: 257 37% 20%;
     --surface-inset: 240 3% 15%;
     --shadow-soft: 0 0% 0% / 0.15;
+
+    --status-available: 150 73% 60%;
+    --status-available-foreground: 0 0% 98%;
+    --status-in-use: 217 92% 70%;
+    --status-in-use-foreground: 0 0% 8%;
+    --status-maintenance: 10 94% 68%;
+    --status-maintenance-foreground: 0 0% 99%;
+    --status-retired: 255 9% 55%;
+    --status-retired-foreground: 0 0% 90%;
   }
 }
 
@@ -110,15 +132,27 @@
     @apply border-border;
   }
   
+  /* Transições suaves para alternância de tema */
+  *:not([class*="motion-"]):not([class*="animate-"]):not([class*="transition-none"]) {
+    transition-property: background-color, border-color, color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
+  }
+  
   html {
     position: relative;
   }
   
   html,
   body {
-    @apply bg-background text-foreground overflow-x-hidden;
+    @apply text-foreground overflow-x-hidden;
     width: 100%;
     position: relative;
+    background-color: #FFFFFF;
+  }
+  
+  .dark body {
+    background-color: #000000;
   }
   
   /* Prevenir movimento indesejado durante a troca de tema */
@@ -184,6 +218,15 @@
 @layer components {
   .font-inter {
     font-family: var(--font-inter), sans-serif;
+  }
+  
+  /* Força texto branco nos cards no dark mode */
+  .dark .card-highlight {
+    color: #FFFFFF !important;
+  }
+  
+  .card-highlight {
+    color: #1D1D1F;
   }
   
   .hero-gradient {

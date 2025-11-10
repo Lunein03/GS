@@ -317,15 +317,15 @@ export function DriveQrSidebar() {
 const sidebarBackgroundClass = 'bg-surface-base dark:bg-background'
 const sidebarHeaderGradientClass =
   'bg-[radial-gradient(circle_at_top,_rgba(100,34,242,0.16),_rgba(226,232,255,0.6)_60%,_transparent_80%)] dark:bg-[radial-gradient(circle_at_top,_rgba(100,34,242,0.22),_transparent_65%)]'
-const activeItemBackgroundClass = 'bg-accent/70 dark:bg-[hsla(263,70%,52%,0.18)]'
+const activeItemBackgroundClass = 'bg-primary/10 dark:bg-primary/20'
 const activeItemBorderColorClass = 'border-l-primary dark:border-l-[hsl(263_70%_52%)]'
 const inactiveItemHoverClass = 'hover:bg-surface-elevated dark:hover:bg-[hsla(263,70%,52%,0.12)]'
 const activeIconColorClass = 'text-primary dark:text-[hsl(263_70%_60%)]'
 const inactiveIconColorClass = 'text-muted-foreground dark:text-muted-foreground'
-const inactiveLinkTextClass = 'text-foreground/80 dark:text-muted-foreground'
-const sectionLabelClass = 'text-muted-foreground dark:text-muted-foreground'
-const sectionIconClass = 'text-muted-foreground dark:text-muted-foreground'
-const sidebarTextClass = 'text-foreground/70 dark:text-muted-foreground'
+const inactiveLinkTextClass = 'text-foreground dark:text-foreground'
+const sectionLabelClass = 'text-foreground/90 dark:text-foreground/90'
+const sectionIconClass = 'text-foreground/90 dark:text-foreground/90'
+const sidebarTextClass = 'text-foreground dark:text-foreground'
 const sidebarBackgroundRingOffsetClass =
   'focus-visible:ring-offset-[hsl(var(--surface-base))] dark:focus-visible:ring-offset-[hsl(var(--background))]'
 

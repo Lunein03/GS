@@ -43,18 +43,7 @@ const DRIVE_QR_FEATURES: DriveQrFeature[] = [
 
 export function DriveQrSection() {
   return (
-    <section id="drive-qr" className="py-16 md:py-24 bg-background relative overflow-hidden noise-background">
-      {/* Luzes flutuantes */}
-      <div className="floating-lights-container">
-        <div className="floating-light floating-light-1" />
-        <div className="floating-light floating-light-2" />
-        <div className="floating-light floating-light-3" />
-        <div className="floating-light floating-light-4" />
-        <div className="floating-light floating-light-5" />
-      </div>
-
-      {/* Background decorativo */}
-      <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent" />
+    <section id="drive-qr" className="py-12 md:py-[72px] lg:py-[112px] bg-gray-100 dark:bg-gray-900 relative overflow-hidden font-inter">
       
       <div className="relative z-10 container mx-auto px-4">
         <motion.div
@@ -64,21 +53,21 @@ export function DriveQrSection() {
           transition={{ duration: 0.5 }}
           className="mb-12 text-center md:mb-16"
         >
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-primary">
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-primary/10 backdrop-blur-md px-5 py-2 text-primary font-inter border border-primary/20">
             <ScanQrCode className="w-4 h-4" />
             <span className="text-sm font-medium">Digitalização inteligente</span>
           </div>
           
-          <h2 className="mb-4 text-3xl font-medium md:text-4xl lg:text-5xl bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+          <h2 className="mb-6 text-4xl md:text-5xl font-medium leading-[1.1] tracking-[-0.02em] text-foreground font-inter">
             Drive QR Scanner integrado
           </h2>
           
-          <p className="mx-auto max-w-2xl text-lg md:text-xl text-muted-foreground">
+          <p className="mx-auto max-w-2xl text-lg leading-[1.6] text-foreground/80 font-inter">
             Concentre o fluxo de leitura de QR codes corporativos em um único lugar, com segurança, acessibilidade e suporte completo ao ecossistema da intranet.
           </p>
         </motion.div>
 
-        <div className="mb-12 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div className="mb-16 grid grid-cols-1 gap-4 md:gap-6 lg:gap-8 md:grid-cols-2 lg:grid-cols-4">
           {DRIVE_QR_FEATURES.map((feature, index) => (
             <motion.div
               key={feature.title}
@@ -88,20 +77,20 @@ export function DriveQrSection() {
               transition={{ duration: 0.5, delay: index * 0.1 }}
               className="group"
             >
-              <div className="h-full p-6 rounded-2xl border border-border bg-card hover:bg-accent/50 transition-all duration-300 hover:shadow-lg hover:scale-105">
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-                  <feature.icon className="w-6 h-6 text-primary" />
+              <div className="h-full p-6 rounded-lg border border-border bg-card backdrop-blur-xl shadow-light hover:shadow-hover transition-all duration-300 font-inter focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                <div className="w-12 h-12 rounded-lg bg-primary flex items-center justify-center mb-4 group-hover:bg-primary/90 transition-colors">
+                  <feature.icon className="w-6 h-6 text-primary-foreground" />
                 </div>
                 
-                <h3 className="text-lg font-medium mb-2">
+                <h3 className="text-lg font-semibold mb-3 text-card-foreground leading-tight tracking-[-0.01em] font-inter">
                   {feature.title}
                 </h3>
                 
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-muted-foreground leading-relaxed font-inter mb-3">
                   {feature.description}
                 </p>
                 
-                <p className="mt-4 text-sm font-medium text-foreground/70">
+                <p className="text-sm font-medium text-primary font-inter">
                   {feature.highlight}
                 </p>
               </div>
@@ -119,14 +108,14 @@ export function DriveQrSection() {
           <Link href="/drive-qr" passHref>
             <Button 
               size="lg" 
-              className="group text-lg px-8 py-6 rounded-xl shadow-lg hover:shadow-md transition-all duration-300"
+              className="group text-base px-8 py-4 font-medium font-inter focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
               Acessar Drive QR
               <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
             </Button>
           </Link>
           
-          <p className="text-sm text-muted-foreground mt-4">
+          <p className="text-sm text-muted-foreground mt-4 font-inter">
             Disponível para times de produção e operações. Acesse com seu login corporativo.
           </p>
         </motion.div>
@@ -134,4 +123,3 @@ export function DriveQrSection() {
     </section>
   );
 }
-

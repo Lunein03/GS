@@ -151,18 +151,18 @@ export default function FormularioHorasExtras() {
                 className="h-20 w-20"
                 priority
               />
-              <h1 className="text-3xl font-medium text-foreground md:text-4xl lg:text-5xl leading-tight">
+              <h1 className="text-4xl font-semibold text-[#1D1D1F] dark:text-[#F0EEEF] md:text-5xl lg:text-6xl leading-[1.1] tracking-[-0.02em] font-inter">
                 Registro de Horas Extras
               </h1>
             </div>
 
-            <div className="bg-card/50 rounded-2xl border border-border/50 p-10 md:p-12 shadow-sm text-center">
+            <div className="bg-white dark:bg-[#1C1C1E] rounded-[16px] border-0 shadow-light p-10 md:p-12 text-center font-inter">
               <div className="space-y-8 max-w-3xl mx-auto">
-                <p className="text-base leading-relaxed text-muted-foreground md:text-lg lg:leading-loose">
+                <p className="text-base leading-[1.6] text-[#86868B] dark:text-[#98989D] md:text-lg font-inter">
                   Formulário para registro e controle das horas extras realizadas. Preencha todos os campos obrigatórios para garantir o registro correto no banco de horas da GS Produções.
                 </p>
-                <div className="bg-background/50 rounded-lg p-4 border border-border/30">
-                  <p className="text-sm text-muted-foreground flex items-center justify-center gap-2">
+                <div className="bg-[#F2F2F7] dark:bg-[#2C2C2E] rounded-[8px] p-4 border-0">
+                  <p className="text-sm text-[#86868B] dark:text-[#98989D] flex items-center justify-center gap-2 font-inter">
                     <CalendarClock className="h-4 w-4" />
                     <strong>Vinculado a:</strong> comunicacao@gsproducao.com
                   </p>
@@ -175,18 +175,18 @@ export default function FormularioHorasExtras() {
             <section className="space-y-10">
               <div className="flex flex-col items-center gap-5">
                 <Clock className="h-8 w-8 text-secondary" />
-                <h2 className="text-xl font-medium text-foreground md:text-2xl">Preencha o formulário</h2>
+                <h2 className="text-2xl font-semibold text-[#1D1D1F] dark:text-[#F0EEEF] md:text-3xl leading-tight tracking-[-0.01em] font-inter">Preencha o formulário</h2>
               </div>
 
               <div className="mx-auto max-w-4xl">
-                <div className="mb-8 rounded-xl border border-yellow-500/30 bg-yellow-500/10 p-6 shadow-sm">
+                <div className="mb-8 rounded-[12px] border border-yellow-500/20 bg-yellow-500/8 p-6 shadow-light font-inter">
                   <div className="flex items-center gap-3 mb-4">
                     <AlertTriangle className="h-5 w-5 text-yellow-600 dark:text-yellow-400 flex-shrink-0" />
-                    <h3 className="text-lg font-medium text-foreground">
+                    <h3 className="text-lg font-semibold text-[#1D1D1F] dark:text-[#F0EEEF] font-inter">
                       Orientações importantes
                     </h3>
                   </div>
-                  <ul className="list-disc space-y-3 text-sm leading-relaxed text-foreground md:text-base pl-6">
+                  <ul className="list-disc space-y-3 text-sm leading-[1.6] text-[#1D1D1F] dark:text-[#F0EEEF] md:text-base pl-6 font-inter">
                     <li>
                       O preenchimento deve ser feito em até <strong>1 dia útil</strong> após a hora extra.
                     </li>

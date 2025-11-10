@@ -30,7 +30,7 @@ export function Navbar() {
   const handleClose = () => setIsOpen(false);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b border-border">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 dark:bg-[#0f172a]/95 backdrop-blur-md border-b border-border">
       <div className="container-custom mx-auto h-16 flex items-center justify-between">
   <Link href="/#hero" className="flex items-center gap-2" onClick={handleClose}>
           <Image src="/images/gs-logo.svg" alt="Logotipo" width={40} height={32} className="dark:hidden" priority />
@@ -90,7 +90,7 @@ export function Navbar() {
       </div>
 
       {isOpen && (
-        <div className="md:hidden border-t border-border bg-background">
+        <div className="md:hidden border-t border-border bg-background dark:bg-[#0f172a]">
           <nav className="container-custom py-4 flex flex-col gap-3">
             {navItems.map((item) => (
               <Link

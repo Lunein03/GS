@@ -93,6 +93,11 @@ const config: Config = {
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
       },
+      boxShadow: {
+        'light': 'var(--shadow-light)',
+        'dark': 'var(--shadow-dark)',
+        'hover': 'var(--shadow-hover)',
+      },
       keyframes: {
         'accordion-down': {
           from: { height: '0' },

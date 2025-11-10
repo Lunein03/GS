@@ -42,16 +42,7 @@ const features: Feature[] = [
 
 export function GsPropostasSection() {
   return (
-    <section id="gs-propostas" className="py-16 md:py-24 bg-background relative overflow-hidden noise-background">
-      <div className="floating-lights-container">
-        <div className="floating-light floating-light-1" />
-        <div className="floating-light floating-light-2" />
-        <div className="floating-light floating-light-3" />
-        <div className="floating-light floating-light-4" />
-        <div className="floating-light floating-light-5" />
-      </div>
-
-      <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent" />
+    <section id="gs-propostas" className="py-12 md:py-[72px] lg:py-[112px] bg-white dark:bg-black relative overflow-hidden font-inter">
 
       <div className="container mx-auto px-4 relative z-10">
         <motion.div
@@ -61,21 +52,21 @@ export function GsPropostasSection() {
           transition={{ duration: 0.5 }}
           className="text-center mb-12 md:mb-16"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary mb-4">
+          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-primary/10 text-primary mb-6 font-inter border border-primary/20">
             <KanbanSquare className="w-4 h-4" />
             <span className="text-sm font-medium">Suite Comercial</span>
           </div>
 
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-medium mb-4 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+          <h2 className="text-4xl md:text-5xl font-medium mb-6 leading-[1.1] tracking-[-0.02em] text-foreground font-inter">
             GS Propostas
           </h2>
 
-          <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto">
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto leading-[1.6] font-inter">
             Centralize oportunidades, propostas comerciais e indicadores financeiros em um único painel conectado.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8 mb-16">
           {features.map((feature, index) => (
             <motion.div
               key={feature.title}
@@ -85,16 +76,16 @@ export function GsPropostasSection() {
               transition={{ duration: 0.5, delay: index * 0.1 }}
               className="group"
             >
-              <div className="h-full p-6 rounded-2xl border border-border bg-card hover:bg-accent/50 transition-all duration-300 hover:shadow-lg hover:scale-105">
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+              <div className="h-full p-6 rounded-lg border border-border bg-card shadow-light hover:shadow-hover transition-all duration-300 font-inter focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/15 transition-colors">
                   <feature.icon className="w-6 h-6 text-primary" />
                 </div>
 
-                <h3 className="text-lg font-medium mb-2">
+                <h3 className="text-lg font-semibold mb-3 text-card-foreground leading-tight tracking-[-0.01em] font-inter">
                   {feature.title}
                 </h3>
 
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-muted-foreground leading-relaxed font-inter">
                   {feature.description}
                 </p>
               </div>
@@ -112,14 +103,14 @@ export function GsPropostasSection() {
           <Link href="/gs-propostas/dashboard" passHref>
             <Button
               size="lg"
-              className="group text-lg px-8 py-6 rounded-xl shadow-lg hover:shadow-md transition-all duration-300"
+              className="group text-base px-8 py-4 font-medium font-inter focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
               Acessar GS Propostas
               <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
             </Button>
           </Link>
 
-          <p className="text-sm text-muted-foreground mt-4">
+          <p className="text-sm text-muted-foreground mt-4 font-inter">
             Disponível para squads autorizados e fluxos comerciais integrados
           </p>
         </motion.div>
@@ -127,4 +118,3 @@ export function GsPropostasSection() {
     </section>
   );
 }
-
