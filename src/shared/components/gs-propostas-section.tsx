@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, BarChart3, ClipboardCheck, ClipboardList, Cpu, KanbanSquare } from "lucide-react";
 import Link from "next/link";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 
 interface GsPropostaModuleFeature {
   icon: React.ElementType;
@@ -57,7 +57,8 @@ export function GsPropostasSection() {
         <div className="floating-light floating-light-5" />
       </div>
 
-      <div className="absolute inset-0 bg-gradient-to-b from-secondary/5 via-transparent to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-br from-secondary/15 via-transparent to-primary/10 dark:from-secondary/25 dark:to-primary/20" />
+      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_top,_rgba(102,32,242,0.18),_transparent_55%)] dark:bg-[radial-gradient(circle_at_top,_rgba(102,32,242,0.24),_transparent_60%)]" />
 
       <div className="relative z-10 container mx-auto px-4">
         <motion.div
@@ -67,12 +68,12 @@ export function GsPropostasSection() {
           transition={{ duration: 0.5 }}
           className="mb-12 text-center md:mb-16"
         >
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-secondary/10 px-4 py-2 text-secondary">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-secondary/15 px-4 py-2 text-secondary ring-1 ring-secondary/25 shadow-[0_10px_24px_-18px_rgba(242,106,10,0.55)] dark:bg-secondary/20 dark:text-secondary-foreground/90 dark:ring-secondary/35">
             <KanbanSquare className="w-4 h-4" />
             <span className="text-sm font-medium">Ciclo de vendas integrado</span>
           </div>
 
-          <h2 className="mb-4 text-3xl font-bold md:text-4xl lg:text-5xl bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+          <h2 className="mb-4 text-3xl font-bold md:text-4xl lg:text-5xl bg-gradient-to-r from-primary via-secondary to-primary/80 bg-clip-text text-transparent drop-shadow-[0_8px_24px_rgba(102,32,242,0.2)] dark:drop-shadow-[0_8px_24px_rgba(102,32,242,0.35)]">
             GS Propostas
           </h2>
 
@@ -91,9 +92,9 @@ export function GsPropostasSection() {
               transition={{ duration: 0.4, delay: index * 0.08 }}
               className="group h-full"
             >
-              <div className="h-full p-6 rounded-2xl border border-border bg-card transition-all duration-300 group-hover:bg-accent/50 group-hover:shadow-lg group-hover:-translate-y-1">
-                <div className="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center mb-4 group-hover:bg-secondary/20 transition-colors">
-                  <feature.icon className="w-6 h-6 text-secondary" />
+              <div className="h-full p-6 rounded-2xl border border-border bg-card shadow-[0_16px_35px_-25px_rgba(15,23,42,0.35)] transition-all duration-300 dark:border-border dark:bg-surface-elevated group-hover:-translate-y-1 group-hover:border-secondary/50 group-hover:shadow-[0_20px_45px_-24px_rgba(102,32,242,0.25)] dark:group-hover:bg-surface-muted dark:group-hover:shadow-[0_18px_40px_-24px_rgba(242,106,10,0.35)]">
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 bg-secondary/15 text-secondary transition-all duration-300 group-hover:bg-secondary group-hover:text-secondary-foreground dark:bg-secondary/25">
+                  <feature.icon className="w-6 h-6 transition-colors duration-300" />
                 </div>
 
                 <h3 className="text-lg font-semibold mb-2">
@@ -120,7 +121,10 @@ export function GsPropostasSection() {
           className="flex flex-col items-center gap-4"
         >
           <Link href="/gs-propostas/dashboard" aria-label="Acessar GS Propostas">
-            <Button size="lg" className="group text-lg px-8 py-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
+            <Button
+              size="lg"
+              className="group text-lg px-8 py-6 rounded-xl border-none bg-gradient-to-r from-primary via-secondary to-primary text-white shadow-[0_18px_40px_-18px_rgba(15,23,42,0.45)] transition-all duration-300 hover:shadow-[0_24px_50px_-20px_rgba(102,32,242,0.3)]"
+            >
               Acessar Plataforma
               <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
             </Button>
@@ -133,3 +137,4 @@ export function GsPropostasSection() {
     </section>
   );
 }
+

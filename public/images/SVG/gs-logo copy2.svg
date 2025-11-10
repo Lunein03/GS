@@ -1,0 +1,8 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#6620F2" />
+    <stop offset="100%" stop-color="#31EBCB" />
+  </linearGradient>
+  <path d="M20.5 4H11.5C7.36 4 4 7.36 4 11.5V20.5C4 24.64 7.36 28 11.5 28H20.5C24.64 28 28 24.64 28 20.5V11.5C28 7.36 24.64 4 20.5 4Z" stroke="url(#gradient)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M10 16.5C10 13.47 12.47 11 15.5 11H22V13.5H15.5C13.85 13.5 12.5 14.85 12.5 16.5C12.5 18.15 13.85 19.5 15.5 19.5H16.5C17.33 19.5 18 18.83 18 18C18 17.17 17.33 16.5 16.5 16.5H13.5V14H16.5C18.71 14 20.5 15.79 20.5 18C20.5 20.21 18.71 22 16.5 22H15.5C12.47 22 10 19.53 10 16.5Z" fill="url(#gradient)"/>
+</svg> 
