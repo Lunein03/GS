@@ -1,10 +1,10 @@
 'use client';
 
 import { memo } from 'react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
-import { formatCPF, formatPhone } from '@/lib/validators';
+import { Button } from '@/shared/ui/button';
+import { Badge } from '@/shared/ui/badge';
+import { cn } from '@/shared/lib/utils';
+import { formatCPF, formatPhone } from '@/shared/lib/validators';
 import type { Signature } from '../types';
 import { SignatureStatusBadge } from './signature-status-badge';
 import { SignatureTypeBadge } from './signature-type-badge';
@@ -185,3 +185,6 @@ function SignatureTableComponent({
 }
 
 export const SignatureTable = memo(SignatureTableComponent);
+
+
+

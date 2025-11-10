@@ -3,10 +3,11 @@
 import { createContext, useCallback, useMemo, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/shared/ui/use-toast';
+import { generateId } from '@/shared/lib/utils';
 
-import { fetchDriveMetadata } from '../lib/drive-client';
-import { detectAudioByNameOrUrl, isGoogleDriveLink, scanQrCode } from '../lib/qr-processor';
+import { fetchDriveMetadata } from './lib/drive-client';
+import { detectAudioByNameOrUrl, isGoogleDriveLink, scanQrCode } from './lib/qr-processor';
 import type { DriveQrResult } from '../types';
 
 export const DriveQrContext = createContext<DriveQrContextValue | undefined>(undefined);
@@ -53,7 +54,7 @@ export function DriveQrProvider({ children }: DriveQrProviderProps) {
       let errorCount = 0;
 
       for (const file of files) {
-        const resultId = crypto.randomUUID();
+        const resultId = generateId();
         const imageUrl = URL.createObjectURL(file);
         registerObjectUrl(resultId, imageUrl);
 
@@ -183,3 +184,5 @@ function createTimeoutSignal(timeoutMs: number): AbortSignal | undefined {
   setTimeout(() => controller.abort(), timeoutMs);
   return controller.signal;
 }
+
+

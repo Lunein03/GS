@@ -3,10 +3,11 @@
 import Link from 'next/link';
 import { Calendar, CheckCircle, Package, Wrench } from 'lucide-react';
 
-import { useEquipment } from '@/app/patrimonio/context/equipment-provider';
-import { EQUIPMENT_STATUS_LABEL, EQUIPMENT_STATUS_STYLES } from '@/app/patrimonio/lib/equipment-status';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useEquipmentList } from '@/features/patrimonio/hooks/use-equipment';
+import { useEventsList } from '@/features/patrimonio/hooks/use-events';
+import { EQUIPMENT_STATUS_LABEL, EQUIPMENT_STATUS_STYLES } from '@/features/patrimonio/domain/equipment-status';
+import { Button } from '@/shared/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/card';
 
 // Função auxiliar local para combinar classes
 function cn(...classes: (string | undefined | null | false)[]): string {
@@ -14,9 +15,10 @@ function cn(...classes: (string | undefined | null | false)[]): string {
 }
 
 export function DashboardContent() {
-  const { equipment, events, isHydrated } = useEquipment();
+  const { data: equipment = [], isLoading: isLoadingEquipment } = useEquipmentList();
+  const { data: events = [], isLoading: isLoadingEvents } = useEventsList();
 
-  if (!isHydrated) {
+  if (isLoadingEquipment || isLoadingEvents) {
     return (
       <div className="space-y-6">
         <div className="space-y-2">
@@ -53,7 +55,7 @@ export function DashboardContent() {
   return (
     <div className="space-y-6 sm:space-y-8">
       <header className="space-y-2">
-        <h1 className="text-2xl font-bold text-foreground sm:text-3xl">Dashboard</h1>
+        <h1 className="text-2xl font-medium text-foreground sm:text-3xl">Dashboard</h1>
         <p className="text-sm text-muted-foreground sm:text-base">Visão geral do patrimônio da empresa</p>
       </header>
 
@@ -86,7 +88,7 @@ export function DashboardContent() {
       <section className="grid gap-6 lg:grid-cols-2">
         <Card className="order-1">
           <CardHeader className="pb-3">
-            <CardTitle className="flex items-center justify-between text-base font-semibold sm:text-lg">
+            <CardTitle className="flex items-center justify-between text-base font-medium sm:text-lg">
               Equipamentos recentes
               <Button asChild variant="ghost" size="sm">
                 <Link href="/patrimonio/equipamentos">Ver todos</Link>
@@ -126,7 +128,7 @@ export function DashboardContent() {
 
         <Card className="order-2">
           <CardHeader className="pb-3">
-            <CardTitle className="flex items-center justify-between text-base font-semibold sm:text-lg">
+            <CardTitle className="flex items-center justify-between text-base font-medium sm:text-lg">
               Próximos eventos
               <Button asChild variant="ghost" size="sm">
                 <Link href="/patrimonio/eventos">Ver todos</Link>
@@ -183,8 +185,11 @@ function DashboardStatCard({ title, value, icon, accentClass }: DashboardStatCar
         </div>
       </CardHeader>
       <CardContent className="pt-0">
-        <p className="text-2xl font-bold text-foreground sm:text-3xl">{value}</p>
+        <p className="text-2xl font-medium text-foreground sm:text-3xl">{value}</p>
       </CardContent>
     </Card>
   );
 }
+
+
+

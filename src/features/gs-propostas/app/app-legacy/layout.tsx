@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import { GsPropostasProviders } from './providers';
-import { GsPropostasLayout } from './components/gs-propostas-layout';
+import { GsPropostasLayout } from '@/features/gs-propostas/ui/layout/gs-propostas-layout';
 
 export const metadata: Metadata = {
   title: 'GS Propostas | Plataforma Comercial',
@@ -19,3 +19,4 @@ export default function GsPropostasSegmentLayout({
     </GsPropostasProviders>
   );
 }
+

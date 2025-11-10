@@ -3,8 +3,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { CheckCircle2, PenTool, Plus, RefreshCw, ShieldCheck, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import { Input } from '@/shared/ui/input';
+import { Button } from '@/shared/ui/button';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,7 +14,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
+} from '@/shared/ui/alert-dialog';
 import { SignatureTable } from './components/signature-table';
 import { SignatureFormDialog } from './components/signature-form-dialog';
 import { SignatureStatusBadge } from './components/signature-status-badge';
@@ -219,7 +219,7 @@ export default function AssinaturasPage() {
         <div className="flex items-center gap-3">
           <PenTool className="h-10 w-10 text-primary" />
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Assinaturas</h1>
+            <h1 className="text-3xl font-medium tracking-tight">Assinaturas</h1>
             <p className="text-muted-foreground">
               Cadastre assinaturas Gov.br ou personalizadas para utilizar nas propostas.
             </p>
@@ -290,7 +290,7 @@ export default function AssinaturasPage() {
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex flex-col gap-1">
                 <span className="text-sm font-medium text-muted-foreground">Assinatura selecionada</span>
-                <span className="text-lg font-semibold text-foreground">{selectedSignature.name}</span>
+                <span className="text-lg font-medium text-foreground">{selectedSignature.name}</span>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <SignatureStatusBadge status={selectedSignature.status} />
                   {selectedSignature.signatureType === 'govbr' ? (
@@ -364,3 +364,4 @@ export default function AssinaturasPage() {
     </div>
   );
 }
+

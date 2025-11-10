@@ -1,26 +1,22 @@
 import { Suspense } from "react";
-import { OpportunityKanbanBoard } from "@/components/gs-propostas/opportunity-kanban-board";
+import { OpportunityKanbanBoard } from "@/features/gs-propostas/ui/components/opportunity-kanban-board";
 import { Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 import Link from "next/link";
-import { GsPropostasHeroBackground } from "../components/gs-propostas-hero-background";
-
-async function getInitialOpportunities() {
-  try {
-    // Importação dinâmica para garantir que só rode no servidor
-    const { getOpportunities } = await import('@/lib/services/opportunity-service');
-    return await getOpportunities();
-  } catch (error) {
-    console.error('Erro ao carregar oportunidades:', error);
-    return [];
-  }
-}
+import { GsPropostasHeroBackground } from "@/features/gs-propostas/ui/layout/gs-propostas-hero-background";
+import { listOpportunities } from "@/features/gs-propostas/api/opportunities";
 
 // Marcar como dinâmico para evitar SSG durante build
 export const dynamic = 'force-dynamic';
 
 export default async function GsPropostasDashboardPage() {
-  const initialOpportunities = await getInitialOpportunities();
+  let initialOpportunities = [];
+
+  try {
+    initialOpportunities = await listOpportunities();
+  } catch (error) {
+    console.error("Erro ao carregar oportunidades:", error);
+  }
 
   return (
     <>
@@ -28,7 +24,7 @@ export default async function GsPropostasDashboardPage() {
         <div className="flex flex-col gap-6 relative z-10">
           <header className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between py-8">
             <div>
-              <h1 className="text-3xl font-bold tracking-tight">GS Propostas · Oportunidades</h1>
+              <h1 className="text-3xl font-medium tracking-tight">GS Propostas · Oportunidades</h1>
               <p className="text-muted-foreground">
                 Centralize o pipeline comercial da organização e acompanhe o avanço das negociações em tempo real.
               </p>
@@ -65,3 +61,8 @@ function KanbanSkeleton() {
     </div>
   );
 }
+
+
+
+
+

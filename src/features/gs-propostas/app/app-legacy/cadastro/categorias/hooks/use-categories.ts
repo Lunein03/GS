@@ -13,7 +13,7 @@ import {
   deleteCategory,
   getCategories,
   updateCategory,
-} from '../actions/category-actions';
+} from '@/features/gs-propostas/api/categories';
 import type {
   Category,
   CreateCategoryInput,
@@ -22,72 +22,30 @@ import type {
   UpdateCategoryInput,
 } from '../types';
 
-type GetCategoriesActionResult = Awaited<ReturnType<typeof getCategories>>;
-type CreateCategoryActionResult = Awaited<ReturnType<typeof createCategory>>;
-type UpdateCategoryActionResult = Awaited<ReturnType<typeof updateCategory>>;
-type DeleteCategoryActionResult = Awaited<ReturnType<typeof deleteCategory>>;
-
-function resolveActionError(actionResult: {
-  data?: { success: boolean; error?: { message: string } };
-  serverError?: string;
-  validationError?: unknown;
-}, fallbackMessage: string): never {
-  if (actionResult.serverError) {
-    throw new Error(actionResult.serverError);
-  }
-
-  if (actionResult.data && !actionResult.data.success) {
-    const message = actionResult.data.error?.message ?? fallbackMessage;
-    throw new Error(message);
-  }
-
-  if (actionResult.validationError) {
-    throw new Error(fallbackMessage);
-  }
-
-  throw new Error(fallbackMessage);
-}
-
-function extractCategories(result: GetCategoriesActionResult): Category[] {
-  if (result.data?.success && result.data.data) {
-    return result.data.data.categories;
-  }
-
-  resolveActionError(result, 'Nao foi possivel carregar as categorias.');
-}
-
-function extractCategory(
-  result: CreateCategoryActionResult | UpdateCategoryActionResult,
-  fallback: string,
-): Category {
-  if (result.data?.success && result.data.data) {
-    return result.data.data;
-  }
-
-  resolveActionError(result, fallback);
-}
-
-function ensureDeleted(
-  result: DeleteCategoryActionResult,
-  fallback: string,
-): string {
-  if (result.data?.success && result.data.data) {
-    return result.data.data.id;
-  }
-
-  resolveActionError(result, fallback);
-}
-
 function buildQueryKey(input: GetCategoriesInput) {
   return ['gs-propostas', 'categorias', input.search ?? ''] as const;
 }
+
+const handleResponse = <T>(response: ActionResponse<T>, fallbackMessage: string): T => {
+  if (response.success) {
+    return response.data;
+  }
+
+  const trimmed = response.error.message.trim();
+  const message = trimmed.length > 0 ? trimmed : fallbackMessage;
+  throw new Error(message);
+};
 
 export function useCategories(
   input: GetCategoriesInput,
 ): UseQueryResult<Category[], Error> {
   return useQuery<Category[], Error>({
     queryKey: buildQueryKey(input),
-    queryFn: async () => extractCategories(await getCategories(input)),
+    queryFn: async () => {
+      const response = await getCategories(input);
+      const data = handleResponse(response, 'Nao foi possivel carregar as categorias.');
+      return data.categories;
+    },
     staleTime: 60 * 1000,
   });
 }
@@ -99,10 +57,10 @@ export function useCreateCategory(
 
   return useMutation<Category, Error, CreateCategoryInput>({
     ...options,
-    mutationFn: async (payload) => extractCategory(
-      await createCategory(payload),
-      'Nao foi possivel criar a categoria.',
-    ),
+    mutationFn: async (payload) => {
+      const response = await createCategory(payload);
+      return handleResponse(response, 'Nao foi possivel criar a categoria.');
+    },
     onSuccess: async (category, variables, context, mutation) => {
       await queryClient.invalidateQueries({ queryKey: ['gs-propostas', 'categorias'] });
       if (options?.onSuccess) {
@@ -119,10 +77,10 @@ export function useUpdateCategory(
 
   return useMutation<Category, Error, UpdateCategoryInput>({
     ...options,
-    mutationFn: async (payload) => extractCategory(
-      await updateCategory(payload),
-      'Nao foi possivel atualizar a categoria.',
-    ),
+    mutationFn: async (payload) => {
+      const response = await updateCategory(payload);
+      return handleResponse(response, 'Nao foi possivel atualizar a categoria.');
+    },
     onSuccess: async (category, variables, context, mutation) => {
       await queryClient.invalidateQueries({ queryKey: ['gs-propostas', 'categorias'] });
       if (options?.onSuccess) {
@@ -139,10 +97,11 @@ export function useDeleteCategory(
 
   return useMutation<string, Error, DeleteCategoryInput>({
     ...options,
-    mutationFn: async (payload) => ensureDeleted(
-      await deleteCategory(payload),
-      'Nao foi possivel remover a categoria.',
-    ),
+    mutationFn: async (payload) => {
+      const response = await deleteCategory(payload);
+      const result = handleResponse(response, 'Nao foi possivel remover a categoria.');
+      return result.id;
+    },
     onSuccess: async (id, variables, context, mutation) => {
       await queryClient.invalidateQueries({ queryKey: ['gs-propostas', 'categorias'] });
       if (options?.onSuccess) {

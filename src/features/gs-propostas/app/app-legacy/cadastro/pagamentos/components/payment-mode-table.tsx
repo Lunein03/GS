@@ -1,9 +1,9 @@
 'use client';
 
 import { memo } from 'react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
+import { Button } from '@/shared/ui/button';
+import { Badge } from '@/shared/ui/badge';
+import { cn } from '@/shared/lib/utils';
 import type { PaymentMode } from '../types';
 
 const percentFormatter = new Intl.NumberFormat('pt-BR', {
@@ -154,3 +154,5 @@ function PaymentModeTableComponent({
 }
 
 export const PaymentModeTable = memo(PaymentModeTableComponent);
+
+

@@ -1,0 +1,33 @@
+# ============================================
+# Dockerfile de Desenvolvimento para Next.js 15
+# Com hot-reload e volume mounting
+# ============================================
+
+FROM node:20-alpine
+
+# Instalar dependências do sistema
+RUN apk add --no-cache \
+    libc6-compat \
+    openssl
+
+WORKDIR /app
+
+# Copiar arquivos de dependências
+COPY package.json package-lock.json* ./
+
+# Instalar todas as dependências (incluindo devDependencies)
+RUN npm ci
+
+# Copiar código fonte (será sobrescrito pelo volume em dev)
+COPY . .
+
+# Expor porta do Next.js
+EXPOSE 3000
+
+# Variáveis de ambiente para desenvolvimento
+ENV NODE_ENV=development
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV WATCHPACK_POLLING=true
+
+# Comando para iniciar o servidor de desenvolvimento com hot-reload
+CMD ["npm", "run", "dev"]

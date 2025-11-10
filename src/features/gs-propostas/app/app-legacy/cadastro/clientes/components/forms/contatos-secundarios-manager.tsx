@@ -2,9 +2,9 @@
 
 import { useState } from 'react';
 import { Plus, Pencil, Trash2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Button } from '@/shared/ui/button';
+import { Input } from '@/shared/ui/input';
+import { Label } from '@/shared/ui/label';
 import {
   Dialog,
   DialogContent,
@@ -12,7 +12,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
+} from '@/shared/ui/dialog';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,9 +22,9 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import { cn } from '@/lib/utils';
-import { removeNonNumeric } from '@/lib/validators';
+} from '@/shared/ui/alert-dialog';
+import { cn } from '@/shared/lib/utils';
+import { removeNonNumeric } from '@/shared/lib/validators';
 import type { ContatoSecundarioSchema } from '../../types/cliente';
 
 // ============================================
@@ -200,7 +200,7 @@ export function ContatosSecundariosManager({
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold">Contatos Secundários</h3>
+          <h3 className="text-lg font-medium">Contatos Secundários</h3>
           <p className="text-sm text-muted-foreground">
             Adicione contatos adicionais para este cliente
           </p>
@@ -402,3 +402,6 @@ export function ContatosSecundariosManager({
     </div>
   );
 }
+
+
+

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 
-import { AddEquipmentForm } from '@/app/patrimonio/components/add-equipment-form';
+import { AddEquipmentForm } from '@/features/patrimonio/ui/components/add-equipment-form';
 
 export const metadata: Metadata = {
   title: 'Patrimônio | Cadastrar equipamento',
@@ -10,3 +10,4 @@ export const metadata: Metadata = {
 export default function PatrimonioCreateEquipmentPage() {
   return <AddEquipmentForm />;
 }
+

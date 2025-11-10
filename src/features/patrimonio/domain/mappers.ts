@@ -1,7 +1,6 @@
-import type { Equipment, Event } from '@/app/patrimonio/types/equipment';
-
-import type { EquipmentEntity } from '@/app/patrimonio/lib/repositories/equipment-repository';
-import type { EventWithEquipment } from '@/app/patrimonio/lib/repositories/event-repository';
+import type { Equipment, Event } from '@/features/patrimonio/domain/types/equipment';
+import type { EquipmentEntity } from '@/features/patrimonio/server/repositories/equipment-repository';
+import type { EventWithEquipment } from '@/features/patrimonio/server/repositories/event-repository';
 
 export function mapEquipmentEntity(entity: EquipmentEntity): Equipment {
   return {

@@ -1,4 +1,4 @@
-import type { Equipment } from '@/app/patrimonio/types/equipment';
+import type { Equipment } from '@/features/patrimonio/domain/types/equipment';
 
 export const EQUIPMENT_STATUS_LABEL: Record<Equipment['status'], string> = {
   available: 'Disponível',
@@ -13,3 +13,4 @@ export const EQUIPMENT_STATUS_STYLES: Record<Equipment['status'], string> = {
   maintenance: 'border-destructive/30 bg-destructive/20 text-destructive',
   retired: 'border-muted-foreground/30 bg-muted text-muted-foreground',
 };
+

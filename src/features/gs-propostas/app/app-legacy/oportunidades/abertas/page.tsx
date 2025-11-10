@@ -1,24 +1,21 @@
 import { Suspense } from "react";
-import { OpportunityKanbanBoard } from "@/components/gs-propostas/opportunity-kanban-board";
+import { OpportunityKanbanBoard } from "@/features/gs-propostas/ui/components/opportunity-kanban-board";
 import { Plus, Clock } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 import Link from "next/link";
-
-async function getOpenOpportunities() {
-  try {
-    const { getOpportunities } = await import('@/lib/services/opportunity-service');
-    const all = await getOpportunities();
-    return all.filter(opp => opp.status === 'OPEN');
-  } catch (error) {
-    console.error('Erro ao carregar oportunidades abertas:', error);
-    return [];
-  }
-}
+import { listOpportunities } from "@/features/gs-propostas/api/opportunities";
 
 export const dynamic = 'force-dynamic';
 
 export default async function OportunidadesAbertasPage() {
-  const opportunities = await getOpenOpportunities();
+  let opportunities = [];
+
+  try {
+    const all = await listOpportunities();
+    opportunities = all.filter((opp) => opp.status === "OPEN");
+  } catch (error) {
+    console.error("Erro ao carregar oportunidades abertas:", error);
+  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -26,7 +23,7 @@ export default async function OportunidadesAbertasPage() {
         <div className="flex items-center gap-3">
           <Clock className="h-8 w-8 text-blue-500" />
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Oportunidades Abertas</h1>
+            <h1 className="text-3xl font-medium tracking-tight">Oportunidades Abertas</h1>
             <p className="text-muted-foreground">
               {opportunities.length} oportunidade{opportunities.length !== 1 ? 's' : ''} em aberto
             </p>
@@ -46,3 +43,7 @@ export default async function OportunidadesAbertasPage() {
     </div>
   );
 }
+
+
+
+

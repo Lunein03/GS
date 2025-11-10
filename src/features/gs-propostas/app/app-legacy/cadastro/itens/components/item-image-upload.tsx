@@ -2,9 +2,9 @@
 
 import { useState, useRef, DragEvent, ChangeEvent } from 'react'
 import { Upload, X, Image as ImageIcon } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Progress } from '@/components/ui/progress'
-import { cn } from '@/lib/utils'
+import { Button } from '@/shared/ui/button'
+import { Progress } from '@/shared/ui/progress'
+import { cn } from '@/shared/lib/utils'
 
 interface ItemImageUploadProps {
   images: string[]
@@ -305,3 +305,5 @@ export function ItemImageUpload({
     </div>
   )
 }
+
+

@@ -1,12 +1,12 @@
-import '@/lib/polyfills/node-file';
+import '@/shared/lib/polyfills/node-file';
 
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
-import { extractDriveMetadata } from '@/app/drive-qr/lib/google-drive';
-import type { DriveExtractionResult } from '@/app/drive-qr/lib/google-drive';
-import type { ActionResponse } from '@/types/actions';
-import { appErrors } from '@/types/actions';
+import { extractDriveMetadata } from '@/features/drive-qr/server/google-drive';
+import type { DriveExtractionResult } from '@/features/drive-qr/server/google-drive';
+import type { ActionResponse } from '@/shared/lib/types/actions';
+import { appErrors } from '@/shared/lib/types/actions';
 
 const schema = z.object({
   urls: z.array(z.string().url()).min(1).max(50),
@@ -95,3 +95,6 @@ export async function POST(request: Request): Promise<NextResponse<ActionRespons
     );
   }
 }
+
+
+

@@ -1,8 +1,8 @@
 'use client';
 
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Badge } from '@/shared/ui/badge';
+import { Button } from '@/shared/ui/button';
+import { Input } from '@/shared/ui/input';
 import { Plus, RefreshCw, Settings } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import type { Category } from '../types/item.types';
@@ -143,3 +143,4 @@ export function ItemsFilters({
     </div>
   );
 }
+

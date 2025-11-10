@@ -1,4 +1,12 @@
-import type { Equipment, Event } from '@/app/patrimonio/types/equipment';
+/**
+ * @deprecated Este módulo de storage local está deprecated.
+ * Os dados agora são gerenciados pela API FastAPI.
+ * Use os clientes API em @/features/patrimonio/api/ em vez disso.
+ * 
+ * Este arquivo será removido após a migração completa dos componentes.
+ */
+
+import type { Equipment, Event } from '@/features/patrimonio/domain/types/equipment';
 
 const EQUIPMENT_KEY = 'gs-patrimonio-equipment';
 const EVENTS_KEY = 'gs-patrimonio-events';
@@ -69,3 +77,4 @@ function getStorage(): Storage | null {
     return null;
   }
 }
+

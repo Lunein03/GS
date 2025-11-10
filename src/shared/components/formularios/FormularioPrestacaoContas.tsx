@@ -12,11 +12,13 @@ import {
   Send,
   User,
 } from 'lucide-react';
+import { toast } from 'sonner';
 
-import { cn } from '@/lib/utils';
-import { DatePicker } from '@/components/ui/date-picker';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import { cn } from '@/shared/lib/utils';
+import { DatePicker } from '@/shared/ui/date-picker';
+import { Input } from '@/shared/ui/input';
+import { Textarea } from '@/shared/ui/textarea';
+import { createExpenseReport } from '@/shared/api/expenses';
 
 export default function FormularioPrestacaoContas() {
   const [formData, setFormData] = useState({
@@ -149,42 +151,60 @@ export default function FormularioPrestacaoContas() {
 
     try {
       // Prepara os dados para envio, convertendo o valor formatado para número
-      const submissionData = {
-        ...formData,
-        valorGasto: formData.valorGasto ? 
-          (parseInt(formData.valorGasto.replace(/\D/g, ''), 10) / 100).toFixed(2) : 
-          ''
-      };
+      const valorGasto = formData.valorGasto
+        ? (parseInt(formData.valorGasto.replace(/\D/g, ''), 10) / 100).toFixed(2)
+        : '0.00';
 
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      console.log('Form submitted:', submissionData);
-      setSubmitSuccess(true);
-      setFormData({
-        nomeColaborador: '',
-        dataUso: '',
-        categoriaUso: '',
-        categoriaOutro: '',
-        nomeEvento: '',
-        transporte: '',
-        transporteOutro: '',
-        valorGasto: '',
+      const result = await createExpenseReport({
+        employeeName: formData.nomeColaborador,
+        expenseDate: formData.dataUso,
+        category: formData.categoriaUso,
+        categoryOther: formData.categoriaOutro || undefined,
+        eventName: formData.nomeEvento,
+        transportType: formData.transporte || undefined,
+        transportOther: formData.transporteOutro || undefined,
+        amount: valorGasto,
       });
+
+      if (result.success) {
+        setSubmitSuccess(true);
+        toast.success('Prestação de contas enviada com sucesso!', {
+          description: 'Seu registro foi salvo e será processado.',
+        });
+        setFormData({
+          nomeColaborador: '',
+          dataUso: '',
+          categoriaUso: '',
+          categoriaOutro: '',
+          nomeEvento: '',
+          transporte: '',
+          transporteOutro: '',
+          valorGasto: '',
+        });
+      } else {
+        toast.error('Erro ao enviar prestação de contas', {
+          description: result.error.message,
+        });
+      }
     } catch (error) {
       console.error('Submission error:', error);
+      toast.error('Erro inesperado', {
+        description: 'Ocorreu um erro ao enviar o formulário. Tente novamente.',
+      });
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-background font-inter [&_h1]:font-inter [&_h1]:font-semibold [&_h2]:font-inter [&_h2]:font-semibold [&_h3]:font-inter [&_h3]:font-semibold">
+    <div className="min-h-screen bg-background font-poppins [&_h1]:font-poppins [&_h1]:font-medium [&_h2]:font-poppins [&_h2]:font-medium [&_h3]:font-poppins [&_h3]:font-medium">
       <div className="py-12 md:py-16 lg:py-20">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 space-y-20">
           <div className="space-y-8">
             <div className="flex justify-start">
               <Link
                 href="/formularios"
-                className="btn-primary inline-flex items-center gap-3 px-4 py-3 text-sm font-semibold"
+                className="btn-primary inline-flex items-center gap-3 px-4 py-3 text-sm font-medium"
               >
                 <ArrowLeft className="h-4 w-4" />
                 Voltar aos formulários
@@ -200,7 +220,7 @@ export default function FormularioPrestacaoContas() {
                 className="h-20 w-20"
                 priority
               />
-              <h1 className="text-3xl font-bold text-foreground md:text-4xl lg:text-5xl leading-tight">
+              <h1 className="text-3xl font-medium text-foreground md:text-4xl lg:text-5xl leading-tight">
                 Prestação de Contas – Cartão Corporativo
               </h1>
             </div>
@@ -224,13 +244,13 @@ export default function FormularioPrestacaoContas() {
             <section className="space-y-10">
               <div className="flex flex-col items-center gap-5">
                 <AlertTriangle className="h-8 w-8 text-secondary" />
-                <h2 className="text-xl font-bold text-foreground md:text-2xl">⚠️ Atenção!</h2>
+                <h2 className="text-xl font-medium text-foreground md:text-2xl">⚠️ Atenção!</h2>
               </div>
 
               <div className="mx-auto max-w-4xl">
                 <div className="bg-card/50 rounded-2xl border border-border/50 p-8 shadow-sm space-y-6">
                   <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-6">
-                    <p className="text-sm leading-relaxed text-red-700 dark:text-red-400 font-semibold">
+                    <p className="text-sm leading-relaxed text-red-700 dark:text-red-400 font-medium">
                       Caso tenha algum valor que não foi prestado contas, será dividido para todos os colaboradores e descontado na folha de pagamento!
                     </p>
                   </div>
@@ -252,7 +272,7 @@ export default function FormularioPrestacaoContas() {
             <section className="space-y-10">
               <div className="flex flex-col items-center gap-5">
                 <CreditCard className="h-8 w-8 text-secondary" />
-                <h2 className="text-xl font-bold text-foreground md:text-2xl">Preencha o formulário</h2>
+                <h2 className="text-xl font-medium text-foreground md:text-2xl">Preencha o formulário</h2>
               </div>
 
               <div className="mx-auto max-w-4xl">
@@ -267,7 +287,7 @@ export default function FormularioPrestacaoContas() {
                     <div className="space-y-2">
                       <label
                         htmlFor="nomeColaborador"
-                        className="text-sm font-semibold text-foreground flex items-center gap-2"
+                        className="text-sm font-medium text-foreground flex items-center gap-2"
                       >
                         <User className="h-4 w-4 text-secondary" />
                         Nome do colaborador: <span className="text-red-500">*</span>
@@ -296,7 +316,7 @@ export default function FormularioPrestacaoContas() {
                       <div className="space-y-2">
                         <label
                           htmlFor="dataUso"
-                          className="text-sm font-semibold text-foreground flex items-center gap-2"
+                          className="text-sm font-medium text-foreground flex items-center gap-2"
                         >
                           <CalendarClock className="h-4 w-4 text-secondary" />
                           Data de uso: <span className="text-red-500">*</span>
@@ -323,7 +343,7 @@ export default function FormularioPrestacaoContas() {
                       <div className="space-y-2">
                         <label
                           htmlFor="categoriaUso"
-                          className="text-sm font-semibold text-foreground flex items-center gap-2"
+                          className="text-sm font-medium text-foreground flex items-center gap-2"
                         >
                           <CreditCard className="h-4 w-4 text-secondary" />
                           Categoria de uso: <span className="text-red-500">*</span>
@@ -356,7 +376,7 @@ export default function FormularioPrestacaoContas() {
                       <div className="space-y-2">
                         <label
                           htmlFor="categoriaOutro"
-                          className="text-sm font-semibold text-foreground"
+                          className="text-sm font-medium text-foreground"
                         >
                           Descrição da Despesa: <span className="text-red-500">*</span>
                         </label>
@@ -386,7 +406,7 @@ export default function FormularioPrestacaoContas() {
                         <div className="space-y-2">
                           <label
                             htmlFor="nomeEvento"
-                            className="text-sm font-semibold text-foreground"
+                            className="text-sm font-medium text-foreground"
                           >
                             Nome do evento: <span className="text-red-500">*</span>
                           </label>
@@ -413,7 +433,7 @@ export default function FormularioPrestacaoContas() {
                         <div className="space-y-2">
                           <label
                             htmlFor="transporte"
-                            className="text-sm font-semibold text-foreground"
+                            className="text-sm font-medium text-foreground"
                           >
                             Transporte: <span className="text-red-500">*</span>
                           </label>
@@ -444,7 +464,7 @@ export default function FormularioPrestacaoContas() {
                       <div className="space-y-2">
                         <label
                           htmlFor="nomeEvento"
-                          className="text-sm font-semibold text-foreground"
+                          className="text-sm font-medium text-foreground"
                         >
                           Nome do evento: <span className="text-red-500">*</span>
                         </label>
@@ -473,7 +493,7 @@ export default function FormularioPrestacaoContas() {
                       <div className="space-y-2">
                         <label
                           htmlFor="transporteOutro"
-                          className="text-sm font-semibold text-foreground"
+                          className="text-sm font-medium text-foreground"
                         >
                           Especifique o transporte: <span className="text-red-500">*</span>
                         </label>
@@ -501,7 +521,7 @@ export default function FormularioPrestacaoContas() {
                     <div className="space-y-2">
                       <label
                         htmlFor="valorGasto"
-                        className="text-sm font-semibold text-foreground flex items-center gap-2"
+                        className="text-sm font-medium text-foreground flex items-center gap-2"
                       >
                         <DollarSign className="h-4 w-4 text-secondary" />
                         Valor gasto: <span className="text-red-500">*</span>
@@ -531,7 +551,7 @@ export default function FormularioPrestacaoContas() {
                       <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="btn-primary inline-flex items-center gap-2 px-8 py-4 text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="btn-primary inline-flex items-center gap-2 px-8 py-4 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <Send className="h-4 w-4" />
                         {isSubmitting ? 'Enviando...' : 'Enviar prestação de contas'}
@@ -549,7 +569,7 @@ export default function FormularioPrestacaoContas() {
             </p>
             <Link
               href="/formularios"
-              className="btn-primary inline-flex items-center gap-2 px-8 py-4 text-sm font-semibold"
+              className="btn-primary inline-flex items-center gap-2 px-8 py-4 text-sm font-medium"
             >
               <ArrowLeft className="h-4 w-4" />
               Voltar aos formulários
@@ -560,3 +580,5 @@ export default function FormularioPrestacaoContas() {
     </div>
   );
 }
+
+

@@ -12,7 +12,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
+} from '@/shared/ui/dialog';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,20 +22,20 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
+} from '@/shared/ui/alert-dialog';
+import { Button } from '@/shared/ui/button';
+import { Input } from '@/shared/ui/input';
+import { Label } from '@/shared/ui/label';
+import { Badge } from '@/shared/ui/badge';
+import { ScrollArea } from '@/shared/ui/scroll-area';
+import { Separator } from '@/shared/ui/separator';
 
 import { categoryFormSchema, type Category } from '../types/item.types';
 import {
   createCategory,
   updateCategory,
   deleteCategory,
-} from '../actions/category-actions';
+} from '@/features/gs-propostas/api/categories';
 import type { z } from 'zod';
 
 interface CategoriesDialogProps {
@@ -103,7 +103,7 @@ export function CategoriesDialog({
       }
 
       const result = editingId
-        ? await updateCategory(editingId, data)
+        ? await updateCategory({ id: editingId, ...data })
         : await createCategory(data);
 
       if (result.success) {
@@ -141,7 +141,7 @@ export function CategoriesDialog({
     setIsSubmitting(true);
 
     try {
-      const result = await deleteCategory(deletingId);
+      const result = await deleteCategory({ id: deletingId });
 
       if (result.success) {
         toast.success('Categoria deletada com sucesso!');
@@ -372,3 +372,4 @@ export function CategoriesDialog({
     </>
   );
 }
+

@@ -1,9 +1,9 @@
 "use client";
 
 import { useDroppable } from "@dnd-kit/core";
-import type { Opportunity, OpportunityStatus } from "@/app/gs-propostas/types";
+import type { Opportunity, OpportunityStatus } from "@/features/gs-propostas/domain/types";
 import { OpportunityCard } from "./opportunity-card";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/lib/utils";
 
 interface KanbanColumnProps {
   id: OpportunityStatus;
@@ -31,7 +31,7 @@ export function KanbanColumn({ id, title, color, opportunities }: KanbanColumnPr
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className={cn("h-3 w-3 rounded-full", color)} />
-          <h3 className="font-semibold">{title}</h3>
+          <h3 className="font-medium">{title}</h3>
           <span className="text-sm text-muted-foreground">
             ({opportunities.length})
           </span>
@@ -40,7 +40,7 @@ export function KanbanColumn({ id, title, color, opportunities }: KanbanColumnPr
 
       <div className="mb-4 rounded-lg bg-muted/50 p-3">
         <p className="text-xs text-muted-foreground">Valor Total</p>
-        <p className="text-lg font-bold">
+        <p className="text-lg font-medium">
           {new Intl.NumberFormat("pt-BR", {
             style: "currency",
             currency: "BRL",
@@ -62,3 +62,5 @@ export function KanbanColumn({ id, title, color, opportunities }: KanbanColumnPr
     </div>
   );
 }
+
+

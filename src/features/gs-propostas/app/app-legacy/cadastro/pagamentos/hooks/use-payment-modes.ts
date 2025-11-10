@@ -13,7 +13,7 @@ import {
   deletePaymentMode,
   getPaymentModes,
   updatePaymentMode,
-} from '../actions/payment-mode-actions';
+} from '@/features/gs-propostas/api/payment-modes';
 import type {
   CreatePaymentModeInput,
   DeletePaymentModeInput,
@@ -21,62 +21,7 @@ import type {
   PaymentMode,
   UpdatePaymentModeInput,
 } from '../types';
-
-type GetPaymentModesActionResult = Awaited<ReturnType<typeof getPaymentModes>>;
-type CreatePaymentModeActionResult = Awaited<ReturnType<typeof createPaymentMode>>;
-type UpdatePaymentModeActionResult = Awaited<ReturnType<typeof updatePaymentMode>>;
-type DeletePaymentModeActionResult = Awaited<ReturnType<typeof deletePaymentMode>>;
-
-function resolveActionError(actionResult: {
-  data?: { success: boolean; error?: { message: string } };
-  serverError?: string;
-  validationError?: unknown;
-}, fallbackMessage: string): never {
-  if (actionResult.serverError) {
-    throw new Error(actionResult.serverError);
-  }
-
-  if (actionResult.data && !actionResult.data.success) {
-    const message = actionResult.data.error?.message ?? fallbackMessage;
-    throw new Error(message);
-  }
-
-  if (actionResult.validationError) {
-    throw new Error(fallbackMessage);
-  }
-
-  throw new Error(fallbackMessage);
-}
-
-function extractPaymentModes(result: GetPaymentModesActionResult): PaymentMode[] {
-  if (result.data?.success && result.data.data) {
-    return result.data.data.paymentModes;
-  }
-
-  resolveActionError(result, 'Nao foi possivel carregar os modos de pagamento.');
-}
-
-function extractPaymentMode(
-  result: CreatePaymentModeActionResult | UpdatePaymentModeActionResult,
-  fallback: string,
-): PaymentMode {
-  if (result.data?.success && result.data.data) {
-    return result.data.data;
-  }
-
-  resolveActionError(result, fallback);
-}
-
-function ensureDeleted(
-  result: DeletePaymentModeActionResult,
-  fallback: string,
-): string {
-  if (result.data?.success && result.data.data) {
-    return result.data.data.id;
-  }
-
-  resolveActionError(result, fallback);
-}
+import { extractActionArray, extractActionData } from '../../../shared/utils/action-helpers';
 
 function buildQueryKey(input: GetPaymentModesInput) {
   return ['gs-propostas', 'pagamentos', input.search ?? ''] as const;
@@ -85,7 +30,7 @@ function buildQueryKey(input: GetPaymentModesInput) {
 export function usePaymentModes(input: GetPaymentModesInput): UseQueryResult<PaymentMode[], Error> {
   return useQuery<PaymentMode[], Error>({
     queryKey: buildQueryKey(input),
-    queryFn: async () => extractPaymentModes(await getPaymentModes(input)),
+    queryFn: async () => extractActionArray(await getPaymentModes(input), 'paymentModes', 'Não foi possível carregar os modos de pagamento.'),
     staleTime: 60 * 1000,
   });
 }
@@ -97,9 +42,9 @@ export function useCreatePaymentMode(
 
   return useMutation<PaymentMode, Error, CreatePaymentModeInput>({
     ...options,
-    mutationFn: async (payload) => extractPaymentMode(
+    mutationFn: async (payload) => extractActionData(
       await createPaymentMode(payload),
-      'Nao foi possivel criar o modo de pagamento.',
+      'Não foi possível criar o modo de pagamento.',
     ),
     onSuccess: async (paymentMode, variables, context, mutation) => {
       await queryClient.invalidateQueries({ queryKey: ['gs-propostas', 'pagamentos'] });
@@ -117,9 +62,9 @@ export function useUpdatePaymentMode(
 
   return useMutation<PaymentMode, Error, UpdatePaymentModeInput>({
     ...options,
-    mutationFn: async (payload) => extractPaymentMode(
+    mutationFn: async (payload) => extractActionData(
       await updatePaymentMode(payload),
-      'Nao foi possivel atualizar o modo de pagamento.',
+      'Não foi possível atualizar o modo de pagamento.',
     ),
     onSuccess: async (paymentMode, variables, context, mutation) => {
       await queryClient.invalidateQueries({ queryKey: ['gs-propostas', 'pagamentos'] });
@@ -137,10 +82,10 @@ export function useDeletePaymentMode(
 
   return useMutation<string, Error, DeletePaymentModeInput>({
     ...options,
-    mutationFn: async (payload) => ensureDeleted(
-      await deletePaymentMode(payload),
-      'Nao foi possivel remover o modo de pagamento.',
-    ),
+    mutationFn: async (payload) => {
+      const result = await deletePaymentMode(payload);
+      return extractActionData(result, 'Não foi possível remover o modo de pagamento.').id;
+    },
     onSuccess: async (id, variables, context, mutation) => {
       await queryClient.invalidateQueries({ queryKey: ['gs-propostas', 'pagamentos'] });
       if (options?.onSuccess) {

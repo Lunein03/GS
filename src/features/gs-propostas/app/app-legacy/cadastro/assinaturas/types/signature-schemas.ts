@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { removeNonNumeric, validateCPF } from '@/lib/validators';
+import { removeNonNumeric, validateCPF } from '@/shared/lib/validators';
 
 const MAX_NAME_LENGTH = 120;
 const MAX_EMAIL_LENGTH = 160;
@@ -185,3 +185,4 @@ export type RequestGovbrValidationInput = z.infer<typeof requestGovbrValidationS
 export type CompleteGovbrValidationInput = z.infer<typeof completeGovbrValidationSchema>;
 
 // TODO (MEDIUM): [Assinaturas Validacao] Implementar testes unitarios para validacao condicional de assinaturas Gov.br e personalizadas.
+

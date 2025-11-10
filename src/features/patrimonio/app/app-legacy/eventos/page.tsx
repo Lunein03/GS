@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 
-import { EventsContent } from '@/app/patrimonio/components/events-content';
+import { EventsContent } from '@/features/patrimonio/ui/components/events-content';
 
 export const metadata: Metadata = {
   title: 'Patrimônio | Eventos',
@@ -10,3 +10,4 @@ export const metadata: Metadata = {
 export default function PatrimonioEventsPage() {
   return <EventsContent />;
 }
+

@@ -11,12 +11,14 @@ import {
   Send,
   User,
 } from 'lucide-react';
+import { toast } from 'sonner';
 
-import { cn } from '@/lib/utils';
-import { DatePicker } from '@/components/ui/date-picker';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { TimePicker } from '@/components/ui/time-picker';
+import { cn } from '@/shared/lib/utils';
+import { DatePicker } from '@/shared/ui/date-picker';
+import { Input } from '@/shared/ui/input';
+import { Textarea } from '@/shared/ui/textarea';
+import { TimePicker } from '@/shared/ui/time-picker';
+import { createOvertimeRequest } from '@/shared/api/overtime';
 
 export default function FormularioHorasExtras() {
   const [formData, setFormData] = useState({
@@ -90,32 +92,50 @@ export default function FormularioHorasExtras() {
     setIsSubmitting(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      console.log('Form submitted:', formData);
-      setSubmitSuccess(true);
-      setFormData({
-        nomeCompleto: '',
-        dataHoraExtra: '',
-        horarioInicio: '',
-        horarioTermino: '',
-        justificativa: '',
+      const result = await createOvertimeRequest({
+        employeeName: formData.nomeCompleto,
+        overtimeDate: formData.dataHoraExtra,
+        startTime: formData.horarioInicio,
+        endTime: formData.horarioTermino,
+        justification: formData.justificativa,
       });
+
+      if (result.success) {
+        setSubmitSuccess(true);
+        toast.success('Registro enviado com sucesso!', {
+          description: 'Seu registro foi salvo no banco de horas.',
+        });
+        setFormData({
+          nomeCompleto: '',
+          dataHoraExtra: '',
+          horarioInicio: '',
+          horarioTermino: '',
+          justificativa: '',
+        });
+      } else {
+        toast.error('Erro ao enviar registro', {
+          description: result.error.message,
+        });
+      }
     } catch (error) {
       console.error('Submission error:', error);
+      toast.error('Erro inesperado', {
+        description: 'Ocorreu um erro ao enviar o formulário. Tente novamente.',
+      });
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-background font-inter [&_h1]:font-inter [&_h1]:font-semibold [&_h2]:font-inter [&_h2]:font-semibold [&_h3]:font-inter [&_h3]:font-semibold">
+    <div className="min-h-screen bg-background font-poppins [&_h1]:font-poppins [&_h1]:font-medium [&_h2]:font-poppins [&_h2]:font-medium [&_h3]:font-poppins [&_h3]:font-medium">
       <div className="py-12 md:py-16 lg:py-20">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 space-y-20">
           <div className="space-y-8">
             <div className="flex justify-start">
               <Link
                 href="/formularios"
-                className="btn-primary inline-flex items-center gap-3 px-4 py-3 text-sm font-semibold"
+                className="btn-primary inline-flex items-center gap-3 px-4 py-3 text-sm font-medium"
               >
                 <ArrowLeft className="h-4 w-4" />
                 Voltar aos formulários
@@ -131,7 +151,7 @@ export default function FormularioHorasExtras() {
                 className="h-20 w-20"
                 priority
               />
-              <h1 className="text-3xl font-bold text-foreground md:text-4xl lg:text-5xl leading-tight">
+              <h1 className="text-3xl font-medium text-foreground md:text-4xl lg:text-5xl leading-tight">
                 Registro de Horas Extras
               </h1>
             </div>
@@ -155,14 +175,14 @@ export default function FormularioHorasExtras() {
             <section className="space-y-10">
               <div className="flex flex-col items-center gap-5">
                 <Clock className="h-8 w-8 text-secondary" />
-                <h2 className="text-xl font-bold text-foreground md:text-2xl">Preencha o formulário</h2>
+                <h2 className="text-xl font-medium text-foreground md:text-2xl">Preencha o formulário</h2>
               </div>
 
               <div className="mx-auto max-w-4xl">
                 <div className="mb-8 rounded-xl border border-yellow-500/30 bg-yellow-500/10 p-6 shadow-sm">
                   <div className="flex items-center gap-3 mb-4">
                     <AlertTriangle className="h-5 w-5 text-yellow-600 dark:text-yellow-400 flex-shrink-0" />
-                    <h3 className="text-lg font-semibold text-foreground">
+                    <h3 className="text-lg font-medium text-foreground">
                       Orientações importantes
                     </h3>
                   </div>
@@ -192,7 +212,7 @@ export default function FormularioHorasExtras() {
                     <div className="space-y-2">
                       <label
                         htmlFor="nomeCompleto"
-                        className="text-sm font-semibold text-foreground flex items-center gap-2"
+                        className="text-sm font-medium text-foreground flex items-center gap-2"
                       >
                         <User className="h-4 w-4 text-secondary" />
                         Nome completo: <span className="text-red-500">*</span>
@@ -223,7 +243,7 @@ export default function FormularioHorasExtras() {
                       <div className="space-y-2">
                         <label
                           htmlFor="dataHoraExtra"
-                          className="text-sm font-semibold text-foreground flex items-center gap-2"
+                          className="text-sm font-medium text-foreground flex items-center gap-2"
                         >
                           <CalendarClock className="h-4 w-4 text-secondary" />
                           Data da hora extra: <span className="text-red-500">*</span>
@@ -252,7 +272,7 @@ export default function FormularioHorasExtras() {
                       <div className="space-y-2">
                         <label
                           htmlFor="horarioInicio"
-                          className="text-sm font-semibold text-foreground flex items-center gap-2"
+                          className="text-sm font-medium text-foreground flex items-center gap-2"
                         >
                           <Clock className="h-4 w-4 text-secondary" />
                           Horário de início: <span className="text-red-500">*</span>
@@ -282,7 +302,7 @@ export default function FormularioHorasExtras() {
                       <div className="space-y-2">
                         <label
                           htmlFor="horarioTermino"
-                          className="text-sm font-semibold text-foreground flex items-center gap-2"
+                          className="text-sm font-medium text-foreground flex items-center gap-2"
                         >
                           <Clock className="h-4 w-4 text-secondary" />
                           Horário de término: <span className="text-red-500">*</span>
@@ -313,7 +333,7 @@ export default function FormularioHorasExtras() {
                     <div className="space-y-2">
                       <label
                         htmlFor="justificativa"
-                        className="text-sm font-semibold text-foreground"
+                        className="text-sm font-medium text-foreground"
                       >
                         Justificativa para realização da hora extra:{' '}
                         <span className="text-red-500">*</span>
@@ -344,7 +364,7 @@ export default function FormularioHorasExtras() {
                       <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="btn-primary inline-flex items-center gap-2 px-8 py-4 text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="btn-primary inline-flex items-center gap-2 px-8 py-4 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <Send className="h-4 w-4" />
                         {isSubmitting ? 'Enviando...' : 'Enviar registro'}
@@ -362,7 +382,7 @@ export default function FormularioHorasExtras() {
             </p>
             <Link
               href="/formularios"
-              className="btn-primary inline-flex items-center gap-2 px-8 py-4 text-sm font-semibold"
+              className="btn-primary inline-flex items-center gap-2 px-8 py-4 text-sm font-medium"
             >
               <ArrowLeft className="h-4 w-4" />
               Voltar aos formulários
@@ -373,3 +393,5 @@ export default function FormularioHorasExtras() {
     </div>
   );
 }
+
+

@@ -2,7 +2,7 @@
 
 import { Menu, Package } from 'lucide-react'
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@/shared/ui/button'
 
 export function PatrimonioHeader({ onMenuClick }: PatrimonioHeaderProps) {
   return (
@@ -25,7 +25,7 @@ export function PatrimonioHeader({ onMenuClick }: PatrimonioHeaderProps) {
               <Package className="h-5 w-5 text-primary-foreground" aria-hidden="true" />
             </div>
             <div>
-              <h1 className="text-lg font-bold text-foreground">PatrimônioTech</h1>
+              <h1 className="text-lg font-medium text-foreground">PatrimônioTech</h1>
               <p className="text-xs text-muted-foreground">Gestão de Ativos</p>
             </div>
           </div>
@@ -43,3 +43,4 @@ export function PatrimonioHeader({ onMenuClick }: PatrimonioHeaderProps) {
 interface PatrimonioHeaderProps {
   onMenuClick: () => void
 }
+

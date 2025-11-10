@@ -3,10 +3,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/shared/ui/dialog';
+import { Input } from '@/shared/ui/input';
+import { Textarea } from '@/shared/ui/textarea';
+import { Button } from '@/shared/ui/button';
 import { CategoryColorPicker, categoryColorOptions } from './category-color-picker';
 import { categoryFormSchema, type Category, type CategoryFormSchema } from '../types';
 
@@ -130,7 +130,7 @@ export function CategoryFormDialog({
             </div>
 
             <div className="rounded-lg bg-gradient-to-b from-blue-600/90 to-blue-500/90 p-6 text-white">
-              <div className="font-semibold tracking-wide uppercase text-xs">Categorias</div>
+              <div className="font-medium tracking-wide uppercase text-xs">Categorias</div>
               <p className="mt-3 text-sm text-white/90">
                 Use cores para identificar rapidamente os grupos de produtos e serviços.
                 Categorias bem definidas facilitam a busca e a gestao dos itens.
@@ -189,3 +189,4 @@ export function CategoryFormDialog({
     </Dialog>
   );
 }
+

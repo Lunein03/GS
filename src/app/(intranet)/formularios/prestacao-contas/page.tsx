@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import FormularioPrestacaoContas from '@/components/formularios/FormularioPrestacaoContas';
+import FormularioPrestacaoContas from '@/shared/components/formularios/FormularioPrestacaoContas';
 
 export const metadata: Metadata = {
   title: getPrestacaoContasTitle(),
@@ -17,3 +17,4 @@ function getPrestacaoContasTitle(): string {
 function getPrestacaoContasDescription(): string {
   return 'Formulário para submissão e acompanhamento de prestações de contas corporativas.';
 }
+

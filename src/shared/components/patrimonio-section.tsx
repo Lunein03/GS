@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Package, Search, FileText, TrendingUp, ArrowRight } from "lucide-react";
-import { Button } from "./ui/button";
+import { Button } from "@/shared/ui/button";
 
 export function PatrimonioSection() {
   const features = [
@@ -57,7 +57,7 @@ export function PatrimonioSection() {
             <span className="text-sm font-medium">Sistema de Gestão</span>
           </div>
           
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-medium mb-4 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
             Controle de Patrimônio
           </h2>
           
@@ -82,7 +82,7 @@ export function PatrimonioSection() {
                   <feature.icon className="w-6 h-6 text-primary" />
                 </div>
                 
-                <h3 className="text-lg font-semibold mb-2">
+                <h3 className="text-lg font-medium mb-2">
                   {feature.title}
                 </h3>
                 
@@ -105,7 +105,7 @@ export function PatrimonioSection() {
           <Link href="/patrimonio" passHref>
             <Button 
               size="lg" 
-              className="group text-lg px-8 py-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+              className="group text-lg px-8 py-6 rounded-xl shadow-lg hover:shadow-md transition-all duration-300"
             >
               Acessar Patrimônio
               <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />

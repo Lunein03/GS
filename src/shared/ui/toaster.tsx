@@ -1,8 +1,8 @@
 'use client';
 
-import { Toaster as SonnerToaster } from '@/components/ui/sonner';
-import { Toast, ToastClose, ToastDescription, ToastProvider, ToastTitle, ToastViewport } from '@/components/ui/toast';
-import { useToast } from '@/components/ui/use-toast';
+import { Toaster as SonnerToaster } from '@/shared/ui/sonner';
+import { Toast, ToastClose, ToastDescription, ToastProvider, ToastTitle, ToastViewport } from '@/shared/ui/toast';
+import { useToast } from '@/shared/ui/use-toast';
 
 export function Toaster() {
   const { toasts } = useToast();
@@ -24,3 +24,4 @@ export function Toaster() {
     </ToastProvider>
   );
 }
+

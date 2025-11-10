@@ -4,12 +4,12 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { createOpportunityAction } from "@/app/gs-propostas/actions/opportunity-actions";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { createOpportunity } from "@/features/gs-propostas/api/opportunities";
+import { Button } from "@/shared/ui/button";
+import { Input } from "@/shared/ui/input";
+import { Label } from "@/shared/ui/label";
+import { Textarea } from "@/shared/ui/textarea";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Loader2 } from "lucide-react";
 
 interface OpportunityFormData {
@@ -41,16 +41,21 @@ export function CreateOpportunityForm() {
     setIsSubmitting(true);
 
     try {
-      const result = await createOpportunityAction(data);
+      await createOpportunity({
+        title: data.title,
+        description: data.description?.trim() || null,
+        value: data.value,
+        probability: Number.isFinite(data.probability) ? data.probability : null,
+        nextStep: data.nextStep?.trim() || null,
+        clientName: data.clientName?.trim() || null,
+        clientEmail: data.clientEmail?.trim() || null,
+        responsibleUser: data.responsibleUser?.trim() || null,
+      });
 
-      if (result?.data?.success) {
-        toast.success(result.data.message || "Oportunidade criada com sucesso!");
-        router.push("/gs-propostas/dashboard");
-      } else {
-        toast.error(result?.data?.message || "Erro ao criar oportunidade");
-      }
+      toast.success("Oportunidade criada com sucesso!");
+      router.push("/gs-propostas/dashboard");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Erro inesperado");
+      toast.error(error instanceof Error ? error.message : "Erro ao criar oportunidade");
     } finally {
       setIsSubmitting(false);
     }
@@ -198,3 +203,5 @@ export function CreateOpportunityForm() {
     </form>
   );
 }
+
+

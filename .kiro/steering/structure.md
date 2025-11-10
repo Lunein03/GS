@@ -1,101 +1,90 @@
-
-## Language
-
-**Sempre responda em português** - Always respond in Portuguese to the user.
-
-## Documentation Files
-
-**NEVER create .md documentation files unless explicitly requested by the user.**
-- Do not create documentation "just in case"
-- Do not create multiple docs for the same topic
-- Only create when user specifically asks for it
-
-
 # Project Structure
 
-## Directory Organization
-
+## Root Organization
 ```
-app/                          # Next.js App Router
-  (core)/                     # Core layout and shared components
-    layout/                   # Root layout with theme provider
-    seo/                      # SEO utilities
-    styles/                   # Global styles
-  (public)/                   # Public-facing routes
-  (intranet)/                 # Internal authenticated routes
-    formularios/              # Corporate forms
-    politicas/                # Policy documents
-  (demos)/                    # Demo/test pages
-  actions/                    # Shared server actions
-  api/                        # API routes
-  [feature]/                  # Feature-specific routes (drive-qr, patrimonio, gs-propostas)
-    actions/                  # Feature server actions
-    components/               # Feature components
-    context/                  # Feature context providers
-    hooks/                    # Feature hooks
-    lib/                      # Feature utilities
-    types/                    # Feature types
-    layout.tsx                # Feature layout
-    page.tsx                  # Feature pages
-
-components/                   # Shared React components
-  ui/                         # shadcn/ui primitives
-  [feature]-section.tsx       # Feature-specific sections
-
-lib/                          # Shared utilities
-  db/                         # Database layer
-    client.ts                 # Drizzle client instance
-    schema.ts                 # Database schema definitions
-  services/                   # Business logic services
-  utils.ts                    # Utility functions (cn, etc.)
-
-actions/                      # Top-level server actions
-types/                        # Shared TypeScript types
-public/                       # Static assets
-  fonts/                      # Custom fonts (Neoverse)
-  images/                     # Images and icons
-docs/                         # Documentation
+├── src/                    # Frontend source code
+├── backend/                # FastAPI backend
+├── components/             # Shared UI components
+├── lib/                    # Shared utilities
+├── public/                 # Static assets
+├── docker/                 # Docker configuration
+├── docs/                   # Documentation
+└── scripts/                # Utility scripts
 ```
 
-## Routing Patterns
+## Frontend Structure (`src/`)
 
-- **Route Groups**: Use parentheses for logical grouping without affecting URL structure
-  - `(core)` - Shared layouts and core functionality
-  - `(public)` - Public routes
-  - `(intranet)` - Internal routes
-  - `(demos)` - Development/testing routes
+### App Router (`src/app/`)
+Next.js 15 App Router with route groups:
 
-- **Feature Modules**: Self-contained features with their own folder structure
-  - Each feature has its own actions, components, hooks, types
-  - Feature-specific layouts override parent layouts
+- `(core)/` - Shared layouts and root configuration
+  - `layout/root-layout.tsx` - Root layout wrapper
+- `(public)/` - Public institutional pages (no auth required)
+- `(intranet)/` - Internal pages (forms, policies, protected routes)
+- `(workspace)/` - Business tools (opportunities, proposals, equipment)
 
-## Component Patterns
+### Features (`src/features/`)
+Feature-based modules with isolated logic:
+- `drive-qr/` - QR code drive integration
+- `gs-propostas/` - Commercial proposals
+- `patrimonio/` - Equipment/asset management
 
-- **Server Components by default** - Use `'use client'` only when needed
-- **shadcn/ui components** in `components/ui/` - Do not modify directly
-- **Feature components** in `components/[feature]-*.tsx` or `app/[feature]/components/`
-- **Shared utilities** via `@/` path alias
+### Server (`src/server/`)
+- `actions/` - Next.js Server Actions
+- `http.ts` - HTTP client configuration
 
-## Data Layer Patterns
+### Shared (`src/shared/`)
+Common code across the application:
+- `api/` - API client and endpoints
+- `components/` - Reusable React components
+- `hooks/` - Custom React hooks
+- `lib/` - Utility functions
+- `providers/` - Context providers
+- `styles/` - Global styles
+- `ui/` - shadcn/ui components
 
-- **Server Actions** for mutations - Use `next-safe-action` with `actionClient`
-- **Drizzle ORM** for database queries - Schema in `lib/db/schema.ts`
-- **Services** in `lib/services/` - Business logic separate from actions
-- **Zod schemas** for validation - Co-located with actions or in types
-
-## Styling Conventions
-
-- **Tailwind utility classes** - Primary styling method
-- **`cn()` utility** - For conditional class merging
-- **CSS variables** - For theme tokens (defined in globals.css)
-- **Custom fonts** - Neoverse (brand) and Inter (body text)
-
-## Path Aliases
-
-```typescript
-@/components  → components/
-@/lib         → lib/
-@/utils       → lib/utils
-@/ui          → components/ui/
-@/hooks       → hooks/
+## Backend Structure (`backend/`)
 ```
+backend/
+├── app/
+│   ├── api/              # API routes
+│   ├── core/             # Core configuration
+│   ├── models/           # SQLAlchemy models
+│   ├── schemas/          # Pydantic schemas
+│   └── main.py           # FastAPI app entry
+├── alembic/              # Database migrations
+├── tests/                # Backend tests
+└── scripts/              # Backend utility scripts
+```
+
+## Component Organization (`components/`)
+```
+components/
+└── ui/                   # shadcn/ui primitives
+    ├── button.tsx
+    ├── dialog.tsx
+    ├── form.tsx
+    └── ...
+```
+
+## Configuration Files
+- `next.config.js` - Next.js configuration
+- `tailwind.config.ts` - Tailwind CSS customization
+- `tsconfig.json` - TypeScript configuration
+- `components.json` - shadcn/ui configuration
+- `backend/pyproject.toml` - Python dependencies
+- `backend/alembic.ini` - Alembic configuration
+
+## Styling Approach
+- **Tailwind CSS** for all styling (no CSS modules or styled-components)
+- **CSS Variables** for theming (defined in `src/app/globals.css`)
+- **Dark mode** via `next-themes` with class-based strategy
+- **Custom colors**: Primary (#6620F2), Secondary (#31EBCB)
+- **Custom fonts**: Inter (sans), Neoverse (display)
+
+## Key Conventions
+- **Route groups** in parentheses don't affect URL structure
+- **Server Components** by default, `'use client'` only when needed
+- **Feature folders** contain all related code (components, hooks, types)
+- **Shared code** goes in `src/shared/` for cross-feature usage
+- **Backend follows** FastAPI best practices with clear separation of concerns

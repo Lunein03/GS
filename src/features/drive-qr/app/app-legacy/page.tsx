@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 
-import { DriveQrContent } from './components/drive-qr-content';
+import { DriveQrContent } from '@/features/drive-qr/ui/components/drive-qr-content';
 
 export const metadata: Metadata = {
   title: 'QR Code Drive Scanner',
@@ -10,3 +10,4 @@ export const metadata: Metadata = {
 export default function DriveQrPage() {
   return <DriveQrContent />;
 }
+

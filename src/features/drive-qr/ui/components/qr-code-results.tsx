@@ -3,8 +3,8 @@
 import Image from 'next/image';
 import { AlertCircle, CheckCircle2, ExternalLink, HardDrive, Loader2, Volume2, XCircle } from 'lucide-react';
 
-import { Badge } from '@/components/ui/badge';
-import { Card } from '@/components/ui/card';
+import { Badge } from '@/shared/ui/badge';
+import { Card } from '@/shared/ui/card';
 
 import type { DriveQrResult } from '../types';
 import { CustomAudioPlayer } from './custom-audio-player';
@@ -54,7 +54,7 @@ function ResultCard({ result }: ResultCardProps) {
         
         <div className="min-w-0 flex-1 space-y-3">
           <div className="flex items-start gap-3">
-            <h3 className="min-w-0 flex-1 font-inter text-lg font-semibold text-foreground">{result.fileName}</h3>
+            <h3 className="min-w-0 flex-1 font-poppins text-lg font-medium text-foreground">{result.fileName}</h3>
             {statusBadge}
           </div>
           
@@ -154,3 +154,4 @@ function renderStatusBadge(status: DriveQrResult['status']) {
 interface QRCodeResultsProps {
   results: DriveQrResult[];
 }
+

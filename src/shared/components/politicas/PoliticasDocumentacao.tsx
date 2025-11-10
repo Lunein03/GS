@@ -16,7 +16,7 @@ import {
 
 export default function PoliticasDocumentacao() {
   return (
-    <div className="min-h-screen bg-background font-inter [&_h1]:font-inter [&_h1]:font-semibold [&_h2]:font-inter [&_h2]:font-semibold [&_h3]:font-inter [&_h3]:font-semibold">
+    <div className="min-h-screen bg-background font-poppins [&_h1]:font-poppins [&_h1]:font-medium [&_h2]:font-poppins [&_h2]:font-medium [&_h3]:font-poppins [&_h3]:font-medium">
       <div className="py-12 md:py-16 lg:py-20">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 space-y-20">
           <div className="space-y-8">
@@ -24,7 +24,7 @@ export default function PoliticasDocumentacao() {
             <div className="flex justify-start">
               <Link
                 href="/"
-                className="btn-primary inline-flex items-center gap-3 px-4 py-3 text-sm font-semibold"
+                className="btn-primary inline-flex items-center gap-3 px-4 py-3 text-sm font-medium"
               >
                 <ArrowLeft className="h-4 w-4" />
                 Voltar ao início
@@ -41,7 +41,7 @@ export default function PoliticasDocumentacao() {
                 className="h-20 w-20"
                 priority
               />
-              <h1 className="text-3xl font-bold text-foreground md:text-4xl lg:text-5xl leading-tight">
+              <h1 className="text-3xl font-medium text-foreground md:text-4xl lg:text-5xl leading-tight">
                 Políticas e diretrizes da GS Produções
               </h1>
             </div>
@@ -66,7 +66,7 @@ export default function PoliticasDocumentacao() {
             <section className="space-y-10">
               <div className="flex flex-col items-center gap-5">
                 <FileText className="h-8 w-8 text-secondary" />
-                <h2 className="text-xl font-bold text-foreground md:text-2xl">Introdução</h2>
+                <h2 className="text-xl font-medium text-foreground md:text-2xl">Introdução</h2>
               </div>
               
               <div className="mx-auto max-w-4xl">
@@ -86,7 +86,7 @@ export default function PoliticasDocumentacao() {
             <section className="space-y-10">
               <div className="flex flex-col items-center gap-5">
                 <FileText className="h-8 w-8 text-secondary" />
-                <h2 className="text-xl font-bold text-foreground md:text-2xl">Integração ao contrato</h2>
+                <h2 className="text-xl font-medium text-foreground md:text-2xl">Integração ao contrato</h2>
               </div>
               
               <div className="mx-auto max-w-4xl">
@@ -106,7 +106,7 @@ export default function PoliticasDocumentacao() {
             <section className="space-y-10">
               <div className="flex flex-col items-center gap-5">
                 <Users className="h-8 w-8 text-secondary" />
-                <h2 className="text-xl font-bold text-foreground md:text-2xl text-center">Admissão dos funcionários: Art. 2º</h2>
+                <h2 className="text-xl font-medium text-foreground md:text-2xl text-center">Admissão dos funcionários: Art. 2º</h2>
               </div>
               
               <div className="mx-auto max-w-4xl">
@@ -126,7 +126,7 @@ export default function PoliticasDocumentacao() {
             <section className="space-y-10">
               <div className="flex flex-col items-center gap-5">
                 <ClipboardCheck className="h-8 w-8 text-secondary" />
-                <h2 className="text-xl font-bold text-foreground md:text-2xl text-center leading-tight">
+                <h2 className="text-xl font-medium text-foreground md:text-2xl text-center leading-tight">
                   Deveres, obrigações e responsabilidades: Arts. 5º e 6º
                 </h2>
               </div>
@@ -138,7 +138,7 @@ export default function PoliticasDocumentacao() {
                     <div className="space-y-6">
                       <div className="flex items-center gap-3 justify-center">
                         <ClipboardCheck className="h-6 w-6 text-secondary" />
-                        <h3 className="text-lg font-semibold text-foreground">Responsabilidades Profissionais</h3>
+                        <h3 className="text-lg font-medium text-foreground">Responsabilidades Profissionais</h3>
                       </div>
                       <ul className="list-disc space-y-3 text-left text-sm leading-relaxed text-muted-foreground md:text-base pl-6 lg:leading-loose">
                         <li>Cumprir as atribuições com zelo, eficiência e responsabilidade.</li>
@@ -158,7 +158,7 @@ export default function PoliticasDocumentacao() {
                     <div className="space-y-6">
                       <div className="flex items-center gap-3 justify-center">
                         <Users className="h-6 w-6 text-secondary" />
-                        <h3 className="text-lg font-semibold text-foreground">Conduta e Relacionamento</h3>
+                        <h3 className="text-lg font-medium text-foreground">Conduta e Relacionamento</h3>
                       </div>
                       <ul className="list-disc space-y-3 text-left text-sm leading-relaxed text-muted-foreground md:text-base pl-6 lg:leading-loose">
                         <li>Manter disciplina, organização e respeito aos colegas.</li>
@@ -185,7 +185,7 @@ export default function PoliticasDocumentacao() {
             <section className="space-y-10">
               <div className="flex flex-col items-center gap-5">
                 <AlertTriangle className="h-8 w-8 text-secondary" />
-                <h2 className="text-xl font-bold text-foreground md:text-2xl">Condutas proibidas</h2>
+                <h2 className="text-xl font-medium text-foreground md:text-2xl">Condutas proibidas</h2>
               </div>
               
               <div className="mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -194,7 +194,7 @@ export default function PoliticasDocumentacao() {
                   <div className="space-y-6">
                     <div className="flex items-center gap-3 justify-center">
                       <Users className="h-6 w-6 text-secondary" />
-                      <h3 className="text-lg font-semibold text-foreground">Ambiente e Relacionamento</h3>
+                      <h3 className="text-lg font-medium text-foreground">Ambiente e Relacionamento</h3>
                     </div>
                     <ul className="list-disc space-y-3 text-left text-sm leading-relaxed text-muted-foreground md:text-base pl-6 lg:leading-loose">
                       <li>Realizar atividades pessoais ou negociações sem autorização no expediente.</li>
@@ -214,7 +214,7 @@ export default function PoliticasDocumentacao() {
                   <div className="space-y-6">
                     <div className="flex items-center gap-3 justify-center">
                       <ShieldCheck className="h-6 w-6 text-secondary" />
-                      <h3 className="text-lg font-semibold text-foreground">Segurança e Confidencialidade</h3>
+                      <h3 className="text-lg font-medium text-foreground">Segurança e Confidencialidade</h3>
                     </div>
                     <ul className="list-disc space-y-3 text-left text-sm leading-relaxed text-muted-foreground md:text-base pl-6 lg:leading-loose">
                       <li>Retirar documentos, equipamentos ou materiais da empresa sem permissão.</li>
@@ -234,7 +234,7 @@ export default function PoliticasDocumentacao() {
             <section className="space-y-10">
               <div className="flex flex-col items-center gap-5">
                 <Clock className="h-8 w-8 text-secondary" />
-                <h2 className="text-xl font-bold text-foreground md:text-2xl text-center leading-tight">
+                <h2 className="text-xl font-medium text-foreground md:text-2xl text-center leading-tight">
                   Horário de trabalho e marcação de ponto: Arts. 11 a 22
                 </h2>
               </div>
@@ -265,7 +265,7 @@ export default function PoliticasDocumentacao() {
             <section className="space-y-10">
               <div className="flex flex-col items-center gap-5">
                 <ClipboardCheck className="h-8 w-8 text-secondary" />
-                <h2 className="text-xl font-bold text-foreground md:text-2xl">Atestados: Arts. 23 e 24</h2>
+                <h2 className="text-xl font-medium text-foreground md:text-2xl">Atestados: Arts. 23 e 24</h2>
               </div>
               
               <div className="mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -274,7 +274,7 @@ export default function PoliticasDocumentacao() {
                   <div className="space-y-6">
                     <div className="flex items-center gap-3 justify-center">
                       <FileText className="h-6 w-6 text-secondary" />
-                      <h3 className="text-lg font-semibold text-foreground">Ordem de Prioridade</h3>
+                      <h3 className="text-lg font-medium text-foreground">Ordem de Prioridade</h3>
                     </div>
                     <div className="space-y-4">
                       <p className="text-sm font-medium text-foreground mb-4">Justificativas médicas por ordem de preferência:</p>
@@ -323,7 +323,7 @@ export default function PoliticasDocumentacao() {
                   <div className="space-y-6">
                     <div className="flex items-center gap-3 justify-center">
                       <ClipboardCheck className="h-6 w-6 text-secondary" />
-                      <h3 className="text-lg font-semibold text-foreground">Requisitos do Documento</h3>
+                      <h3 className="text-lg font-medium text-foreground">Requisitos do Documento</h3>
                     </div>
                     <div className="space-y-4">
                       <p className="text-sm font-medium text-foreground mb-4">O atestado médico deve conter obrigatoriamente:</p>
@@ -362,7 +362,7 @@ export default function PoliticasDocumentacao() {
             <section className="space-y-10">
               <div className="flex flex-col items-center gap-5">
                 <CreditCard className="h-8 w-8 text-secondary" />
-                <h2 className="text-xl font-bold text-foreground md:text-2xl">Pagamento e férias: Arts. 25 a 30</h2>
+                <h2 className="text-xl font-medium text-foreground md:text-2xl">Pagamento e férias: Arts. 25 a 30</h2>
               </div>
               
               <div className="mx-auto max-w-4xl">
@@ -381,7 +381,7 @@ export default function PoliticasDocumentacao() {
             <section className="space-y-10">
               <div className="flex flex-col items-center gap-5">
                 <AlertTriangle className="h-8 w-8 text-secondary" />
-                <h2 className="text-xl font-bold text-foreground md:text-2xl">Penalidades: Arts. 32 e 33</h2>
+                <h2 className="text-xl font-medium text-foreground md:text-2xl">Penalidades: Arts. 32 e 33</h2>
               </div>
               
               <div className="mx-auto max-w-4xl">
@@ -404,7 +404,7 @@ export default function PoliticasDocumentacao() {
             <section className="space-y-10">
               <div className="flex flex-col items-center gap-5">
                 <ShieldCheck className="h-8 w-8 text-secondary" />
-                <h2 className="text-xl font-bold text-foreground md:text-2xl">Disposições finais</h2>
+                <h2 className="text-xl font-medium text-foreground md:text-2xl">Disposições finais</h2>
               </div>
               
               <div className="mx-auto max-w-4xl">
@@ -424,7 +424,7 @@ export default function PoliticasDocumentacao() {
             <section className="space-y-10">
               <div className="flex flex-col items-center gap-5">
                 <CalendarClock className="h-8 w-8 text-secondary" />
-                <h2 className="text-xl font-bold text-foreground md:text-2xl">Responsável pela elaboração</h2>
+                <h2 className="text-xl font-medium text-foreground md:text-2xl">Responsável pela elaboração</h2>
               </div>
               
               <div className="mx-auto max-w-4xl">
@@ -443,7 +443,7 @@ export default function PoliticasDocumentacao() {
             </p>
             <Link
               href="/"
-              className="btn-primary inline-flex items-center gap-2 px-8 py-4 text-sm font-semibold"
+              className="btn-primary inline-flex items-center gap-2 px-8 py-4 text-sm font-medium"
             >
               <ArrowLeft className="h-4 w-4" />
               Retornar à página inicial

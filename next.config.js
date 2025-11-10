@@ -3,28 +3,37 @@ const nextConfig = {
   reactStrictMode: true,
   // Output standalone para Docker (gera servidor Node.js otimizado)
   output: 'standalone',
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   typescript: {
     ignoreBuildErrors: true,
   },
   images: {
     unoptimized: true,
-    domains: [
-      'images.pexels.com',
-      'images.unsplash.com',
-      'video-gsproducao.s3.sa-east-1.amazonaws.com',
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'images.pexels.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'video-gsproducao.s3.sa-east-1.amazonaws.com',
+        pathname: '/**',
+      },
     ],
     formats: ['image/avif', 'image/webp'],
   },
   experimental: {
     optimizeCss: true,
   },
-  // Configuração para evitar bundling de módulos do servidor no cliente
+  turbopack: {},
+  // Configuracao aplicada apenas ao pipeline Webpack legado
   webpack: (config, { isServer }) => {
     if (!isServer) {
-      // Não incluir módulos do Node.js no bundle do cliente
       config.resolve.fallback = {
         ...config.resolve.fallback,
         fs: false,

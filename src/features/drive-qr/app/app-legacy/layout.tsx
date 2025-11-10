@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 
-import { DriveQrLayout } from './components/drive-qr-layout';
+import { DriveQrLayout } from '@/features/drive-qr/ui/components/drive-qr-layout';
 import { DriveQrProviders } from './providers';
 
 export const metadata: Metadata = {
@@ -20,3 +20,4 @@ export default function DriveQrSegmentLayout({ children }: DriveQrSegmentLayoutP
 interface DriveQrSegmentLayoutProps {
   children: ReactNode;
 }
+

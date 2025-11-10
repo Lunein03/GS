@@ -13,7 +13,7 @@ import {
   deleteNote,
   getNotes,
   updateNote,
-} from '../actions/note-actions';
+} from '@/features/gs-propostas/api/notes';
 import type {
   CreateNoteInput,
   DeleteNoteInput,
@@ -21,62 +21,7 @@ import type {
   Note,
   UpdateNoteInput,
 } from '../types';
-
-type GetNotesActionResult = Awaited<ReturnType<typeof getNotes>>;
-type CreateNoteActionResult = Awaited<ReturnType<typeof createNote>>;
-type UpdateNoteActionResult = Awaited<ReturnType<typeof updateNote>>;
-type DeleteNoteActionResult = Awaited<ReturnType<typeof deleteNote>>;
-
-function resolveActionError(actionResult: {
-  data?: { success: boolean; error?: { message: string } };
-  serverError?: string;
-  validationError?: unknown;
-}, fallbackMessage: string): never {
-  if (actionResult.serverError) {
-    throw new Error(actionResult.serverError);
-  }
-
-  if (actionResult.data && !actionResult.data.success) {
-    const message = actionResult.data.error?.message ?? fallbackMessage;
-    throw new Error(message);
-  }
-
-  if (actionResult.validationError) {
-    throw new Error(fallbackMessage);
-  }
-
-  throw new Error(fallbackMessage);
-}
-
-function extractNotes(result: GetNotesActionResult): Note[] {
-  if (result.data?.success && result.data.data) {
-    return result.data.data.notes;
-  }
-
-  resolveActionError(result, 'Nao foi possivel carregar as notas.');
-}
-
-function extractNote(
-  result: CreateNoteActionResult | UpdateNoteActionResult,
-  fallback: string,
-): Note {
-  if (result.data?.success && result.data.data) {
-    return result.data.data;
-  }
-
-  resolveActionError(result, fallback);
-}
-
-function ensureDeleted(
-  result: DeleteNoteActionResult,
-  fallback: string,
-): string {
-  if (result.data?.success && result.data.data) {
-    return result.data.data.id;
-  }
-
-  resolveActionError(result, fallback);
-}
+import { extractActionArray, extractActionData } from '../../../shared/utils/action-helpers';
 
 function buildQueryKey(input: GetNotesInput) {
   return ['gs-propostas', 'notas', input.search ?? ''] as const;
@@ -85,7 +30,7 @@ function buildQueryKey(input: GetNotesInput) {
 export function useNotes(input: GetNotesInput): UseQueryResult<Note[], Error> {
   return useQuery<Note[], Error>({
     queryKey: buildQueryKey(input),
-    queryFn: async () => extractNotes(await getNotes(input)),
+    queryFn: async () => extractActionArray(await getNotes(input), 'notes', 'Não foi possível carregar as notas.'),
     staleTime: 60 * 1000,
   });
 }
@@ -97,9 +42,9 @@ export function useCreateNote(
 
   return useMutation<Note, Error, CreateNoteInput>({
     ...options,
-    mutationFn: async (payload) => extractNote(
+    mutationFn: async (payload) => extractActionData(
       await createNote(payload),
-      'Nao foi possivel criar a nota.',
+      'Não foi possível criar a nota.',
     ),
     onSuccess: async (note, variables, context, mutation) => {
       await queryClient.invalidateQueries({ queryKey: ['gs-propostas', 'notas'] });
@@ -117,9 +62,9 @@ export function useUpdateNote(
 
   return useMutation<Note, Error, UpdateNoteInput>({
     ...options,
-    mutationFn: async (payload) => extractNote(
+    mutationFn: async (payload) => extractActionData(
       await updateNote(payload),
-      'Nao foi possivel atualizar a nota.',
+      'Não foi possível atualizar a nota.',
     ),
     onSuccess: async (note, variables, context, mutation) => {
       await queryClient.invalidateQueries({ queryKey: ['gs-propostas', 'notas'] });
@@ -137,10 +82,10 @@ export function useDeleteNote(
 
   return useMutation<string, Error, DeleteNoteInput>({
     ...options,
-    mutationFn: async (payload) => ensureDeleted(
-      await deleteNote(payload),
-      'Nao foi possivel remover a nota.',
-    ),
+    mutationFn: async (payload) => {
+      const result = await deleteNote(payload);
+      return extractActionData(result, 'Não foi possível remover a nota.').id;
+    },
     onSuccess: async (id, variables, context, mutation) => {
       await queryClient.invalidateQueries({ queryKey: ['gs-propostas', 'notas'] });
       if (options?.onSuccess) {

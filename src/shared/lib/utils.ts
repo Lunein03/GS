@@ -35,3 +35,24 @@ export function sanitizeHtml(input: string | null | undefined): string {
 
   return sanitized;
 }
+
+/**
+ * Generates a UUID v4 string that works in both browser and Node.js environments
+ */
+export function generateId(): string {
+  // Try to use native crypto.randomUUID if available
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    try {
+      return crypto.randomUUID();
+    } catch {
+      // Fall through to manual implementation
+    }
+  }
+
+  // Fallback to manual UUID v4 generation
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = Math.random() * 16 | 0;
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}

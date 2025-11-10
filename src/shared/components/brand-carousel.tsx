@@ -3,7 +3,7 @@
 import { useRef, useEffect, useState } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import Image from 'next/image';
-import { cn } from '@/lib/utils';
+import { cn } from '@/shared/lib/utils';
 
 type Brand = {
   name: string;

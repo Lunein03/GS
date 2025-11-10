@@ -3,8 +3,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Network, Plus, RefreshCw, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import { Input } from '@/shared/ui/input';
+import { Button } from '@/shared/ui/button';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,7 +14,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
+} from '@/shared/ui/alert-dialog';
 import { CategoryTable } from './components/category-table';
 import { CategoryFormDialog } from './components/category-form-dialog';
 import {
@@ -160,7 +160,7 @@ export default function CategoriasPage() {
         <div className="flex items-center gap-3">
           <Network className="h-10 w-10 text-primary" />
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Categorias</h1>
+            <h1 className="text-3xl font-medium tracking-tight">Categorias</h1>
             <p className="text-muted-foreground">
               Configure categorias para organizar itens comerciais e agilizar o cadastro.
             </p>
@@ -261,3 +261,4 @@ export default function CategoriasPage() {
     </div>
   );
 }
+

@@ -1,7 +1,7 @@
-import { CreateOpportunityForm } from "@/components/gs-propostas/create-opportunity-form";
+import { CreateOpportunityForm } from "@/features/gs-propostas/ui/components/create-opportunity-form";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 
 export default function NovaOportunidadePage() {
   return (
@@ -13,7 +13,7 @@ export default function NovaOportunidadePage() {
           </Button>
         </Link>
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Nova Oportunidade</h1>
+          <h1 className="text-3xl font-medium tracking-tight">Nova Oportunidade</h1>
           <p className="text-muted-foreground">
             Cadastre uma nova oportunidade no pipeline comercial
           </p>
@@ -26,3 +26,6 @@ export default function NovaOportunidadePage() {
     </div>
   );
 }
+
+
+

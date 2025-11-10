@@ -2,8 +2,8 @@
 
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import type { Opportunity } from "@/app/gs-propostas/types";
-import { cn } from "@/lib/utils";
+import type { Opportunity } from "@/features/gs-propostas/domain/types";
+import { cn } from "@/shared/lib/utils";
 import { GripVertical, Mail, User, TrendingUp } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -50,7 +50,7 @@ export function OpportunityCard({ opportunity, isDragging }: OpportunityCardProp
 
       <div className="space-y-3">
         <div>
-          <h4 className="font-semibold text-sm line-clamp-2">{opportunity.title}</h4>
+          <h4 className="font-medium text-sm line-clamp-2">{opportunity.title}</h4>
           {opportunity.description && (
             <p className="mt-1 text-xs text-muted-foreground line-clamp-2">
               {opportunity.description}
@@ -59,7 +59,7 @@ export function OpportunityCard({ opportunity, isDragging }: OpportunityCardProp
         </div>
 
         <div className="flex items-center justify-between">
-          <span className="text-lg font-bold text-primary">
+          <span className="text-lg font-medium text-primary">
             {new Intl.NumberFormat("pt-BR", {
               style: "currency",
               currency: "BRL",
@@ -124,3 +124,5 @@ export function OpportunityCard({ opportunity, isDragging }: OpportunityCardProp
     </div>
   );
 }
+
+

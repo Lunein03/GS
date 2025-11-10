@@ -1,4 +1,4 @@
-import '@/lib/polyfills/node-file';
+import '@/shared/lib/polyfills/node-file';
 
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -109,3 +109,4 @@ export async function OPTIONS() {
     },
   });
 }
+

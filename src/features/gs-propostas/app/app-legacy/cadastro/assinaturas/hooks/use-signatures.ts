@@ -15,7 +15,7 @@ import {
   getSignatures,
   requestGovbrValidation,
   updateSignature,
-} from '../actions/signature-actions';
+} from '@/features/gs-propostas/api/signatures';
 import type {
   CompleteGovbrValidationInput,
   CreateSignatureInput,

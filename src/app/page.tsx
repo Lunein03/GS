@@ -1,7 +1,7 @@
-import { DriveQrSection } from "@/components/drive-qr-section";
-import { HeroSection } from "@/components/hero-section";
-import { PatrimonioSection } from "@/components/patrimonio-section";
-import { GsPropostasSection } from "@/components/gs-propostas-section";
+import { DriveQrSection } from "@/shared/components/drive-qr-section";
+import { HeroSection } from "@/shared/components/hero-section";
+import { PatrimonioSection } from "@/shared/components/patrimonio-section";
+import { GsPropostasSection } from "@/shared/components/gs-propostas-section";
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {

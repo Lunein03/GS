@@ -13,9 +13,9 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
+} from '@/shared/ui/alert-dialog';
 
-import { deleteItem } from '../actions/item-actions';
+import { deleteItem } from '@/features/gs-propostas/api/items';
 import type { Item } from '../types/item.types';
 
 interface ItemDeleteDialogProps {
@@ -64,7 +64,7 @@ export function ItemDeleteDialog({
           <AlertDialogDescription className="space-y-2">
             <p>
               Tem certeza que deseja deletar o item{' '}
-              <span className="font-semibold text-foreground">
+              <span className="font-medium text-foreground">
                 {item.name}
               </span>
               ?
@@ -97,3 +97,4 @@ export function ItemDeleteDialog({
     </AlertDialog>
   );
 }
+

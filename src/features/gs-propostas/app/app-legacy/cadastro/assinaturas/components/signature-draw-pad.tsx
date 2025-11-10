@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/shared/ui/button';
 
 type SignatureDrawPadProps = {
   width?: number;
@@ -188,3 +188,4 @@ export function SignatureDrawPad({
     </div>
   );
 }
+

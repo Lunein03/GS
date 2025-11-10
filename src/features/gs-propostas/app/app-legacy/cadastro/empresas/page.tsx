@@ -1,184 +1,282 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
-import { EmpresaFilters } from './components/filters/empresa-filters';
-import { EmpresasTable } from './components/table/empresas-table';
-import { getEmpresas, deleteEmpresa } from './actions/empresa-actions';
-import type { Empresa, FilterState } from './types/empresa';
+import { Building2, Plus, RefreshCw, Trash2 } from 'lucide-react';
+import { Input } from '@/shared/ui/input';
+import { Button } from '@/shared/ui/button';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from '@/shared/ui/alert-dialog';
+import { CompanyTable } from './components/company-table';
+import { CompanyFormDialog } from './components/company-form-dialog';
+import {
+    useCompanies,
+    useCreateCompany,
+    useDeleteCompany,
+    useRefreshCompanies,
+    useUpdateCompany,
+} from './hooks/use-companies';
+import type { Company, CompanyFormSchema } from './types';
 
-// TODO (MEDIUM): [Cadastro Empresas] Cobrir fluxo completo com testes E2E.
+type FormMode = 'create' | 'edit';
 
-// ============================================
-// TYPES
-// ============================================
+const formatDateTime = (date?: Date) => {
+    if (!date) {
+        return 'Sem atualização';
+    }
 
-type PaginationState = {
-    page: number;
-    pageSize: number;
-    total: number;
-    totalPages: number;
+    return new Intl.DateTimeFormat('pt-BR', {
+        dateStyle: 'short',
+        timeStyle: 'medium',
+    }).format(date);
 };
 
-// ============================================
-// COMPONENT
-// ============================================
-
 export default function EmpresasPage() {
-    const router = useRouter();
+    const [search, setSearch] = useState('');
+    const [debouncedSearch, setDebouncedSearch] = useState('');
+    const [formOpen, setFormOpen] = useState(false);
+    const [formMode, setFormMode] = useState<FormMode>('create');
+    const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(null);
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
-    // State
-    const [empresas, setEmpresas] = useState<Empresa[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [filters, setFilters] = useState<FilterState>({
-        search: '',
-        tipo: 'all',
-        status: 'all',
-        estado: undefined,
-    });
-    const [pagination, setPagination] = useState<PaginationState>({
-        page: 1,
-        pageSize: 10,
-        total: 0,
-        totalPages: 0,
-    });
-
-    // ============================================
-    // DATA FETCHING
-    // ============================================
-
-    const loadEmpresas = useCallback(async () => {
-        setIsLoading(true);
-
-        try {
-            // Preparar parâmetros para a action
-            const params = {
-                search: filters.search || undefined,
-                tipo: filters.tipo === 'all' ? undefined : filters.tipo,
-                status: filters.status === 'all' ? undefined : filters.status,
-                estado: filters.estado,
-                page: pagination.page,
-                pageSize: pagination.pageSize,
-            };
-
-            const result = await getEmpresas(params);
-
-            // next-safe-action retorna { data, serverError, validationError }
-            if (result.data?.success && result.data.data) {
-                // Converter ativo de number para boolean para compatibilidade com o tipo
-                const empresasFormatted = result.data.data.empresas.map((empresa: any) => ({
-                    ...empresa,
-                    ativo: empresa.ativo as number,
-                }));
-
-                setEmpresas(empresasFormatted);
-                setPagination({
-                    page: result.data.data.pagination.page,
-                    pageSize: result.data.data.pagination.pageSize,
-                    total: result.data.data.pagination.total,
-                    totalPages: result.data.data.pagination.totalPages,
-                });
-            } else {
-                const errorMessage = result.serverError ||
-                    (result.data && !result.data.success ? result.data.error.message : 'Erro ao carregar empresas');
-                toast.error(errorMessage);
-                setEmpresas([]);
-            }
-        } catch (error) {
-            console.error('Erro ao carregar empresas:', error);
-            toast.error('Erro ao carregar empresas. Tente novamente.');
-            setEmpresas([]);
-        } finally {
-            setIsLoading(false);
-        }
-    }, [filters, pagination.page, pagination.pageSize]);
-
-    // Carregar empresas quando filtros ou página mudarem
     useEffect(() => {
-        loadEmpresas();
-    }, [loadEmpresas]);
+        const handler = window.setTimeout(() => {
+            setDebouncedSearch(search.trim());
+        }, 400);
 
-    // ============================================
-    // HANDLERS
-    // ============================================
+        return () => window.clearTimeout(handler);
+    }, [search]);
 
-    const handleFilterChange = (newFilters: FilterState) => {
-        setFilters(newFilters);
-        // Reset para primeira página quando filtros mudarem
-        setPagination((prev) => ({ ...prev, page: 1 }));
-    };
+    const { data: companies = [], isLoading, isFetching } = useCompanies({
+        search: debouncedSearch.length > 0 ? debouncedSearch : undefined,
+    });
 
-    const handlePageChange = (page: number) => {
-        setPagination((prev) => ({ ...prev, page }));
-        // Scroll para o topo quando mudar de página
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
+    const refreshCompanies = useRefreshCompanies();
 
-    const handleEdit = (id: string) => {
-        router.push(`/gs-propostas/cadastro/empresas/${id}`);
-    };
-
-    const handleDelete = async (id: string) => {
-        try {
-            const result = await deleteEmpresa({ id });
-
-            // next-safe-action retorna { data, serverError, validationError }
-            if (result.data?.success) {
-                toast.success('Empresa removida com sucesso');
-
-                // Recarregar lista
-                await loadEmpresas();
-            } else {
-                const errorMessage = result.serverError || result.data?.error?.message || 'Erro ao remover empresa';
-                toast.error(errorMessage);
-            }
-        } catch (error) {
-            console.error('Erro ao remover empresa:', error);
-            toast.error('Erro ao remover empresa. Tente novamente.');
+    const selectedCompany = useMemo<Company | null>(() => {
+        if (!selectedCompanyId) {
+            return null;
         }
+
+        return companies.find((company) => company.id === selectedCompanyId) ?? null;
+    }, [companies, selectedCompanyId]);
+
+    const createMutation = useCreateCompany({
+        onSuccess: (company) => {
+            toast.success('Empresa cadastrada com sucesso.');
+            setFormOpen(false);
+            setSelectedCompanyId(company.id);
+        },
+        onError: (error) => {
+            toast.error(error.message);
+        },
+    });
+
+    const updateMutation = useUpdateCompany({
+        onSuccess: (company) => {
+            toast.success('Empresa atualizada com sucesso.');
+            setFormOpen(false);
+            setSelectedCompanyId(company.id);
+        },
+        onError: (error) => {
+            toast.error(error.message);
+        },
+    });
+
+    const deleteMutation = useDeleteCompany({
+        onSuccess: () => {
+            toast.success('Empresa removida com sucesso.');
+            setDeleteDialogOpen(false);
+            setSelectedCompanyId(null);
+        },
+        onError: (error) => {
+            toast.error(error.message);
+        },
+    });
+
+    const handleSubmitForm = async (data: CompanyFormSchema) => {
+        if (formMode === 'create') {
+            await createMutation.mutateAsync(data);
+            return;
+        }
+
+        if (!selectedCompany) {
+            toast.error('Selecione uma empresa para editar.');
+            return;
+        }
+
+        await updateMutation.mutateAsync({
+            id: selectedCompany.id,
+            ...data,
+        });
     };
 
-    // ============================================
-    // RENDER
-    // ============================================
+    const handleOpenCreate = () => {
+        setFormMode('create');
+        setSelectedCompanyId(null);
+        setFormOpen(true);
+    };
+
+    const handleOpenEdit = (company: Company) => {
+        setSelectedCompanyId(company.id);
+        setFormMode('edit');
+        setFormOpen(true);
+    };
+
+    const handleTriggerDelete = (company: Company) => {
+        setSelectedCompanyId(company.id);
+        setDeleteDialogOpen(true);
+    };
+
+        const handleOpenDeleteDialog = () => {
+            if (!selectedCompany) {
+                toast.error('Selecione uma empresa para remover.');
+                return;
+            }
+
+            setDeleteDialogOpen(true);
+        };
+
+    const handleConfirmDelete = async () => {
+        if (!selectedCompany) {
+            toast.error('Selecione uma empresa para remover.');
+            return;
+        }
+
+        await deleteMutation.mutateAsync({ id: selectedCompany.id });
+    };
+
+    const handleRefresh = async () => {
+        await refreshCompanies();
+        toast.info('Lista de empresas atualizada.');
+    };
+
+    const isProcessing =
+        createMutation.isPending || updateMutation.isPending || deleteMutation.isPending;
+
+    const totalCompanies = companies.length;
+    const selectedCount = selectedCompany ? 1 : 0;
+    const hasSelection = Boolean(selectedCompany);
+
+    const lastUpdatedAt = useMemo(() => {
+        if (companies.length === 0) {
+            return undefined;
+        }
+
+        const timestamps = companies.map((company) => company.updatedAt.getTime());
+        return new Date(Math.max(...timestamps));
+    }, [companies]);
 
     return (
-        <div className="container mx-auto py-8 px-4 space-y-6">
-            {/* Filtros */}
-            <EmpresaFilters
-                onFilterChange={handleFilterChange}
-                initialFilters={filters}
-            />
-
-            {/* Tabela */}
-            <EmpresasTable
-                empresas={empresas}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-                isLoading={isLoading}
-                currentPage={pagination.page}
-                totalPages={pagination.totalPages}
-                pageSize={pagination.pageSize}
-                totalItems={pagination.total}
-                onPageChange={handlePageChange}
-            />
-
-            {/* Mensagem quando não há empresas */}
-            {!isLoading && empresas.length === 0 && (
-                <div className="text-center py-12">
-                    <p className="text-muted-foreground mb-4">
-                        {filters.search || filters.tipo !== 'all' || filters.status !== 'all' || filters.estado
-                            ? 'Nenhuma empresa encontrada com os filtros aplicados'
-                            : 'Nenhuma empresa cadastrada'}
-                    </p>
-                    {!filters.search && filters.tipo === 'all' && filters.status === 'all' && !filters.estado && (
-                        <p className="text-sm text-muted-foreground">
-                            Clique em "Cadastrar Empresas" para adicionar sua primeira empresa
+        <div className="flex flex-col gap-6">
+            <header className="flex flex-wrap items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                    <Building2 className="h-10 w-10 text-primary" />
+                    <div>
+                        <h1 className="text-3xl font-medium tracking-tight">Empresas</h1>
+                        <p className="text-muted-foreground">
+                            Configure aqui as informações da sua empresa para cabeçalhos e rodapés das propostas.
                         </p>
-                    )}
+                    </div>
                 </div>
-            )}
+
+                <div className="w-full max-w-xs">
+                    <Input
+                        value={search}
+                        onChange={(event) => setSearch(event.target.value)}
+                        placeholder="Procurar..."
+                        aria-label="Pesquisar empresas"
+                    />
+                </div>
+            </header>
+
+            <section className="flex flex-col gap-4">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <span>Total: {totalCompanies}</span>
+                        <span aria-hidden="true">•</span>
+                        <span>{selectedCount} de {totalCompanies} linha(s) selecionada(s)</span>
+                    </div>
+                            <div className="flex flex-wrap items-center gap-2">
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={handleRefresh}
+                                    disabled={isFetching || isProcessing}
+                                >
+                                    <RefreshCw className="mr-2 h-4 w-4" /> Atualizar Dados
+                                </Button>
+                                <Button
+                                    type="button"
+                                    variant="destructive"
+                                    onClick={handleOpenDeleteDialog}
+                                    disabled={!hasSelection || deleteMutation.isPending}
+                                >
+                                    <Trash2 className="mr-2 h-4 w-4" /> Remover Empresa
+                                </Button>
+                                <Button type="button" onClick={handleOpenCreate} disabled={isProcessing}>
+                                    <Plus className="mr-2 h-4 w-4" /> Cadastrar Empresa
+                                </Button>
+                            </div>
+                </div>
+
+                <CompanyTable
+                    companies={companies}
+                    selectedId={selectedCompanyId}
+                    isLoading={isLoading}
+                    onSelect={(company) => {
+                        setSelectedCompanyId(company ? company.id : null);
+                    }}
+                    onEdit={handleOpenEdit}
+                    onDelete={handleTriggerDelete}
+                />
+
+                <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border bg-muted/40 px-4 py-3 text-xs text-muted-foreground">
+                    <span>Última atualização: {formatDateTime(lastUpdatedAt)}</span>
+                    <span>Nenhum filtro ativo</span>
+                </div>
+            </section>
+
+            <CompanyFormDialog
+                open={formOpen}
+                mode={formMode}
+                company={formMode === 'edit' ? selectedCompany : null}
+                onOpenChange={(open) => setFormOpen(open)}
+                onSubmit={handleSubmitForm}
+                isSubmitting={createMutation.isPending || updateMutation.isPending}
+            />
+
+            <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Remover empresa</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Essa ação não pode ser desfeita. A empresa
+                            {selectedCompany ? ` "${selectedCompany.tipo === 'juridica' ? (selectedCompany.nomeFantasia ?? selectedCompany.razaoSocial ?? 'Sem nome') : (selectedCompany.nome ?? 'Sem nome')}"` : ''}
+                            será marcada como inativa e deixará de aparecer nas propostas.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel disabled={deleteMutation.isPending}>Cancelar</AlertDialogCancel>
+                        <AlertDialogAction
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            onClick={handleConfirmDelete}
+                            disabled={deleteMutation.isPending}
+                        >
+                            Confirmar exclusão
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     );
 }
+

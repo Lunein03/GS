@@ -3,22 +3,22 @@
 import { useState, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { useEquipment } from '@/app/patrimonio/context/equipment-provider';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { useCreateEquipment } from '@/features/patrimonio/hooks/use-equipment';
+import { Button } from '@/shared/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/card';
+import { Input } from '@/shared/ui/input';
+import { Label } from '@/shared/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
-import { useToast } from '@/components/ui/use-toast';
+} from '@/shared/ui/select';
+import { Textarea } from '@/shared/ui/textarea';
+import { useToast } from '@/shared/ui/use-toast';
 
-import type { EquipmentFormData } from '@/app/patrimonio/types/equipment';
+import type { EquipmentFormData } from '@/features/patrimonio/domain/types/equipment';
 
 const STATUS_OPTIONS: Array<{ value: EquipmentFormData['status']; label: string }> = [
   { value: 'available', label: 'Disponível' },
@@ -29,7 +29,7 @@ const STATUS_OPTIONS: Array<{ value: EquipmentFormData['status']; label: string 
 
 export function AddEquipmentForm() {
   const router = useRouter();
-  const { addEquipment } = useEquipment();
+  const createMutation = useCreateEquipment();
   const { toast } = useToast();
   const [formData, setFormData] = useState<EquipmentFormData>({
     name: '',
@@ -49,20 +49,40 @@ export function AddEquipmentForm() {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const equipment = addEquipment(formData);
-
-    toast({
-      title: 'Equipamento cadastrado com sucesso!',
-      description: `Código gerado: ${equipment.code}`,
+    
+    createMutation.mutate({
+      code: `EQ-${Date.now()}`, // Gerar código temporário
+      name: formData.name,
+      category: formData.category,
+      brand: formData.brand,
+      model: formData.model,
+      serialNumber: formData.serialNumber,
+      acquisitionDate: formData.acquisitionDate,
+      status: formData.status,
+      location: formData.location,
+      notes: formData.notes,
+    }, {
+      onSuccess: (equipment) => {
+        toast({
+          title: 'Equipamento cadastrado com sucesso!',
+          description: `Código gerado: ${equipment.code}`,
+        });
+        router.push('/patrimonio/equipamentos');
+      },
+      onError: (error) => {
+        toast({
+          title: 'Erro ao cadastrar equipamento',
+          description: error.message,
+          variant: 'destructive',
+        });
+      },
     });
-
-    router.push('/patrimonio/equipamentos');
   };
 
   return (
     <div className="mx-auto max-w-3xl space-y-6">
       <header>
-        <h1 className="text-3xl font-bold text-foreground">Cadastrar equipamento</h1>
+        <h1 className="text-3xl font-medium text-foreground">Cadastrar equipamento</h1>
         <p className="text-muted-foreground">Adicione um novo equipamento ao patrimônio</p>
       </header>
 
@@ -194,3 +214,6 @@ export function AddEquipmentForm() {
 function Field({ children }: { children: ReactNode }) {
   return <div className="space-y-2">{children}</div>;
 }
+
+
+

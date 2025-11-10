@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 
-import { EquipmentListContent } from '@/app/patrimonio/components/equipment-list-content';
+import { EquipmentListContent } from '@/features/patrimonio/ui/components/equipment-list-content';
 
 export const metadata: Metadata = {
   title: 'Patrimônio | Equipamentos',
@@ -10,3 +10,4 @@ export const metadata: Metadata = {
 export default function PatrimonioEquipmentPage() {
   return <EquipmentListContent />;
 }
+

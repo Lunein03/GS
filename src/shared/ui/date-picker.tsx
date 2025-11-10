@@ -5,7 +5,7 @@ import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Calendar as CalendarIcon } from "lucide-react";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/lib/utils";
 
 import { Button } from "./button";
 import { Calendar } from "./calendar";
@@ -110,3 +110,4 @@ export function DatePicker({
     </div>
   );
 }
+

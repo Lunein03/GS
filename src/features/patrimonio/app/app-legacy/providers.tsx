@@ -2,21 +2,20 @@
 
 import type { ReactNode } from 'react';
 
-import { EquipmentProvider } from '@/app/patrimonio/context/equipment-provider';
-import { TooltipProvider } from '@/components/ui/tooltip';
-import { Toaster } from '@/components/ui/toaster';
+import { TooltipProvider } from '@/shared/ui/tooltip';
+import { Toaster } from '@/shared/ui/toaster';
 
 export function PatrimonioProviders({ children }: PatrimonioProvidersProps) {
   return (
-    <EquipmentProvider>
-      <TooltipProvider delayDuration={200} skipDelayDuration={400}>
-        {children}
-        <Toaster />
-      </TooltipProvider>
-    </EquipmentProvider>
+    <TooltipProvider delayDuration={200} skipDelayDuration={400}>
+      {children}
+      <Toaster />
+    </TooltipProvider>
   );
 }
 
 interface PatrimonioProvidersProps {
   children: ReactNode;
 }
+
+

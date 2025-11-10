@@ -9,18 +9,18 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
+} from '@/shared/ui/form';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
+} from '@/shared/ui/select';
+import { Input } from '@/shared/ui/input';
+import { Textarea } from '@/shared/ui/textarea';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/ui/tabs';
+import { Badge } from '@/shared/ui/badge';
 import type { ItemFormData, Category } from '../types/item.types';
 import { ITEM_TYPES, ITEM_UNITS } from '../types/item.types';
 import { ItemImageUpload } from './item-image-upload';
@@ -376,3 +376,4 @@ export function ItemFormTabs({ control, errors, categories }: ItemFormTabsProps)
     </Tabs>
   );
 }
+

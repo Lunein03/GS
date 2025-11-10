@@ -13,14 +13,14 @@ import {
 
 export default function FormulariosCorporativos() {
   return (
-    <div className="min-h-screen bg-background font-inter [&_h1]:font-inter [&_h1]:font-semibold [&_h2]:font-inter [&_h2]:font-semibold [&_h3]:font-inter [&_h3]:font-semibold">
+    <div className="min-h-screen bg-background font-poppins [&_h1]:font-poppins [&_h1]:font-medium [&_h2]:font-poppins [&_h2]:font-medium [&_h3]:font-poppins [&_h3]:font-medium">
       <div className="py-12 md:py-16 lg:py-20">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 space-y-20">
           <div className="space-y-8">
             <div className="flex justify-start">
               <Link
                 href="/"
-                className="btn-primary inline-flex items-center gap-3 px-4 py-3 text-sm font-semibold"
+                className="btn-primary inline-flex items-center gap-3 px-4 py-3 text-sm font-medium"
               >
                 <ArrowLeft className="h-4 w-4" />
                 Voltar ao início
@@ -36,7 +36,7 @@ export default function FormulariosCorporativos() {
                 className="h-20 w-20"
                 priority
               />
-              <h1 className="text-3xl font-bold text-foreground md:text-4xl lg:text-5xl leading-tight">
+              <h1 className="text-3xl font-medium text-foreground md:text-4xl lg:text-5xl leading-tight">
                 Formulários Corporativos
               </h1>
             </div>
@@ -60,7 +60,7 @@ export default function FormulariosCorporativos() {
             <section className="space-y-10">
               <div className="flex flex-col items-center gap-5">
                 <FileText className="h-8 w-8 text-secondary" />
-                <h2 className="text-xl font-bold text-foreground md:text-2xl">Formulários Disponíveis</h2>
+                <h2 className="text-xl font-medium text-foreground md:text-2xl">Formulários Disponíveis</h2>
               </div>
 
               <div className="mx-auto max-w-4xl">
@@ -77,7 +77,7 @@ export default function FormulariosCorporativos() {
             <section className="space-y-10">
               <div className="flex flex-col items-center gap-5">
                 <Clock className="h-8 w-8 text-secondary" />
-                <h2 className="text-xl font-bold text-foreground md:text-2xl text-center leading-tight">
+                <h2 className="text-xl font-medium text-foreground md:text-2xl text-center leading-tight">
                   Registro de Horas Extras – Banco de Horas
                 </h2>
               </div>
@@ -89,7 +89,7 @@ export default function FormulariosCorporativos() {
                       Este formulário deve ser preenchido sempre que houver realização de horas extras, garantindo controle interno e registro correto no banco de horas da GS Produções.
                     </p>
                     <div className="bg-background/50 rounded-lg p-6 border border-border/30 space-y-3">
-                      <p className="text-sm text-foreground font-semibold flex items-center gap-2">
+                      <p className="text-sm text-foreground font-medium flex items-center gap-2">
                         <ClipboardCheck className="h-4 w-4 text-secondary" />
                         Orientações Importantes:
                       </p>
@@ -103,7 +103,7 @@ export default function FormulariosCorporativos() {
                   <div className="pt-4 flex justify-center">
                     <Link
                       href="/formularios/horas-extras"
-                      className="btn-primary inline-flex items-center gap-2 px-8 py-4 text-sm font-semibold"
+                      className="btn-primary inline-flex items-center gap-2 px-8 py-4 text-sm font-medium"
                     >
                       <Clock className="h-4 w-4" />
                       Acessar formulário de horas extras
@@ -116,7 +116,7 @@ export default function FormulariosCorporativos() {
             <section className="space-y-10">
               <div className="flex flex-col items-center gap-5">
                 <CreditCard className="h-8 w-8 text-secondary" />
-                <h2 className="text-xl font-bold text-foreground md:text-2xl text-center leading-tight">
+                <h2 className="text-xl font-medium text-foreground md:text-2xl text-center leading-tight">
                   Prestação de Contas – Cartão Corporativo
                 </h2>
               </div>
@@ -128,7 +128,7 @@ export default function FormulariosCorporativos() {
                       Este formulário deve ser preenchido sempre que o cartão corporativo for utilizado. O cartão é exclusivo para despesas com Uber e alimentação relacionadas às atividades profissionais.
                     </p>
                     <div className="bg-background/50 rounded-lg p-6 border border-border/30 space-y-3">
-                      <p className="text-sm text-foreground font-semibold flex items-center gap-2">
+                      <p className="text-sm text-foreground font-medium flex items-center gap-2">
                         <ClipboardCheck className="h-4 w-4 text-secondary" />
                         Observações Importantes:
                       </p>
@@ -142,7 +142,7 @@ export default function FormulariosCorporativos() {
                   <div className="pt-4 flex justify-center">
                     <Link
                       href="/formularios/prestacao-contas"
-                      className="btn-primary inline-flex items-center gap-2 px-8 py-4 text-sm font-semibold"
+                      className="btn-primary inline-flex items-center gap-2 px-8 py-4 text-sm font-medium"
                     >
                       <CreditCard className="h-4 w-4" />
                       Acessar formulário de prestação de contas
@@ -159,7 +159,7 @@ export default function FormulariosCorporativos() {
             </p>
             <Link
               href="/"
-              className="btn-primary inline-flex items-center gap-2 px-8 py-4 text-sm font-semibold"
+              className="btn-primary inline-flex items-center gap-2 px-8 py-4 text-sm font-medium"
             >
               <ArrowLeft className="h-4 w-4" />
               Retornar à página inicial

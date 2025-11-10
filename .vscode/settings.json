@@ -1,22 +1,20 @@
 {
-  "deno.enable": true,
-  "deno.unstable": true,
-  "deno.importMap": "./.supabase/import_map.json",
-  "deno.enablePaths": [
-    "./supabase/functions"
-  ],
-  "deno.lint": true,
-  "deno.suggest.imports.hosts": {
-    "https://deno.land": true
+  "docker.commands.build": "docker compose -f docker/docker-compose.dev.yml build",
+  "docker.commands.up": "docker compose -f docker/docker-compose.dev.yml up -d",
+  "docker.commands.down": "docker compose -f docker/docker-compose.dev.yml down",
+  "docker.commands.logs": "docker compose -f docker/docker-compose.dev.yml logs -f",
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/node_modules/**": true,
+    "**/.next/**": true,
+    "**/dist/**": true,
+    "**/build/**": true
   },
-  "[typescript]": {
-    "editor.defaultFormatter": "vscode.typescript-language-features"
-  },
-  "kiroAgent.configureMCP": "Enabled",
-  "terminal.integrated.fontSize": 14,
-  "terminal.integrated.fontFamily": "JetBrainsMono Nerd Font", // Certifique-se que esta fonte está instalada
-  "terminal.integrated.gpuAcceleration": "on",
-  "terminal.integrated.showExitAlert": false,
-  // Recomendo definir seu terminal padrão para Windows (ex: PowerShell, Git Bash, etc.)
-  "terminal.integrated.defaultProfile.windows": "Git Bash",
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/.next": true,
+    "**/dist": true,
+    "**/build": true
+  }
 }

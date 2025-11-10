@@ -2,7 +2,7 @@
 
 import { useContext } from 'react';
 
-import { DriveQrContext } from '../context/drive-qr-provider';
+import { DriveQrContext } from './drive-qr-provider';
 
 export function useDriveQrContext() {
   const context = useContext(DriveQrContext);
@@ -13,3 +13,4 @@ export function useDriveQrContext() {
 
   return context;
 }
+

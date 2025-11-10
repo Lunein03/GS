@@ -5,7 +5,7 @@ import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 import { ArrowRight, Cloud, Headphones, Radar, ScanQrCode } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 
 interface DriveQrFeature {
   icon: LucideIcon;
@@ -69,7 +69,7 @@ export function DriveQrSection() {
             <span className="text-sm font-medium">Digitalização inteligente</span>
           </div>
           
-          <h2 className="mb-4 text-3xl font-bold md:text-4xl lg:text-5xl bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+          <h2 className="mb-4 text-3xl font-medium md:text-4xl lg:text-5xl bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
             Drive QR Scanner integrado
           </h2>
           
@@ -93,7 +93,7 @@ export function DriveQrSection() {
                   <feature.icon className="w-6 h-6 text-primary" />
                 </div>
                 
-                <h3 className="text-lg font-semibold mb-2">
+                <h3 className="text-lg font-medium mb-2">
                   {feature.title}
                 </h3>
                 
@@ -119,7 +119,7 @@ export function DriveQrSection() {
           <Link href="/drive-qr" passHref>
             <Button 
               size="lg" 
-              className="group text-lg px-8 py-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+              className="group text-lg px-8 py-6 rounded-xl shadow-lg hover:shadow-md transition-all duration-300"
             >
               Acessar Drive QR
               <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
@@ -134,3 +134,4 @@ export function DriveQrSection() {
     </section>
   );
 }
+

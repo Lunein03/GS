@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 
-import { PatrimonioLayout } from './components/patrimonio-layout';
+import { PatrimonioLayout } from '@/features/patrimonio/ui/components/patrimonio-layout';
 import { PatrimonioProviders } from './providers';
 
 export const metadata: Metadata = {

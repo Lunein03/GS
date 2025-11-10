@@ -4,12 +4,12 @@ import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { Separator } from '@/components/ui/separator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/shared/ui/button';
+import { Input } from '@/shared/ui/input';
+import { Label } from '@/shared/ui/label';
+import { Switch } from '@/shared/ui/switch';
+import { Separator } from '@/shared/ui/separator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/ui/tabs';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,9 +19,9 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import { cn } from '@/lib/utils';
-import { removeNonNumeric } from '@/lib/validators';
+} from '@/shared/ui/alert-dialog';
+import { cn } from '@/shared/lib/utils';
+import { removeNonNumeric } from '@/shared/lib/validators';
 import { CpfCnpjInput } from '../inputs/cpf-cnpj-input';
 import { CepInput } from '../inputs/cep-input';
 import { ContatosSecundariosManager } from './contatos-secundarios-manager';
@@ -305,7 +305,7 @@ export function ClienteForm({
 
             <Separator />
 
-            <h3 className="text-lg font-semibold">Contato Principal</h3>
+            <h3 className="text-lg font-medium">Contato Principal</h3>
 
             <div className="space-y-2">
               <Label htmlFor="contatoNome">Nome do Contato *</Label>
@@ -510,3 +510,6 @@ export function ClienteForm({
     </>
   );
 }
+
+
+

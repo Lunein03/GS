@@ -10,10 +10,10 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+} from '@/shared/ui/dialog';
+import { Button } from '@/shared/ui/button';
+import { Input } from '@/shared/ui/input';
+import { Textarea } from '@/shared/ui/textarea';
 import {
   paymentModeFormSchema,
   type PaymentMode,
@@ -203,7 +203,7 @@ export function PaymentModeFormDialog({
             </div>
 
             <div className="rounded-lg bg-gradient-to-b from-amber-500/90 to-orange-500/90 p-6 text-white">
-              <div className="text-xs font-semibold uppercase tracking-wide">Pagamentos</div>
+              <div className="text-xs font-medium uppercase tracking-wide">Pagamentos</div>
               <p className="mt-3 text-sm text-white/90">
                 Configure as condicoes comerciais utilizados nas propostas. Ajuste taxas conforme politica financeira.
               </p>
@@ -266,3 +266,4 @@ export function PaymentModeFormDialog({
     </Dialog>
   );
 }
+

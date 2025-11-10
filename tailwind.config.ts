@@ -14,22 +14,29 @@ const config: Config = {
       fontFamily: {
         sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
         inter: ['var(--font-inter)', 'system-ui', 'sans-serif'],
-        neoverse: ['var(--font-neoverse)', 'system-ui', 'sans-serif'],
-        'neoverse-bold': ['var(--font-neoverse-bold)', 'system-ui', 'sans-serif'],
       },
       colors: {
-        // Brand Colors
+        // Brand Colors - Paleta Oficial
         primary: {
-          DEFAULT: '#6620F2',
+          DEFAULT: '#6422F2', // Roxo Primário (corrigido)
           light: '#8952F5',
           dark: '#4C18B4',
           foreground: '#FFFFFF',
         },
         secondary: {
-          DEFAULT: '#31EBCB',
-          light: '#5EEFD8',
-          dark: '#25B9A2',
-          foreground: '#000000',
+          DEFAULT: '#2A2451', // Roxo Secundário (substituiu ciano)
+          light: '#3D3570',
+          dark: '#1F1A3D',
+          foreground: '#FFFFFF',
+        },
+        // Paleta Oficial Adicional
+        brand: {
+          lightBg: '#F0EEEF',    // Branco Suave (Light Mode Background)
+          darkBg: '#1D1D1F',     // Preto Neutro (Dark Mode Background)
+          grayUI: '#DADADA',     // Cinza UI (Bordas e Divisores)
+          purple: '#6422F2',     // Roxo Primário
+          purpleDark: '#2A2451', // Roxo Secundário
+          white: '#FFFFFF',      // Branco Puro
         },
         // Logo Color
         logo: {
@@ -79,7 +86,7 @@ const config: Config = {
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
-        'hero-pattern': 'linear-gradient(to right, rgba(102, 32, 242, 0.8), rgba(49, 235, 203, 0.8))',
+        'hero-pattern': 'linear-gradient(to right, rgba(100, 34, 242, 0.8), rgba(42, 36, 81, 0.8))', // Atualizado para paleta oficial
       },
       borderRadius: {
         lg: 'var(--radius)',

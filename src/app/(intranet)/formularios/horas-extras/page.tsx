@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import FormularioHorasExtras from '@/components/formularios/FormularioHorasExtras';
+import FormularioHorasExtras from '@/shared/components/formularios/FormularioHorasExtras';
 
 export const metadata: Metadata = {
   title: getHorasExtrasTitle(),
@@ -17,3 +17,4 @@ function getHorasExtrasTitle(): string {
 function getHorasExtrasDescription(): string {
   return 'Formulário destinado ao registro e aprovação de horas extras realizadas pelos colaboradores.';
 }
+

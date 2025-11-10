@@ -1,7 +1,7 @@
 'use client';
 
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { Badge } from '@/shared/ui/badge';
+import { Button } from '@/shared/ui/button';
 import {
   Table,
   TableBody,
@@ -9,7 +9,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from '@/shared/ui/table';
 import { Pencil, Trash2 } from 'lucide-react';
 import type { Item } from '../types/item.types';
 
@@ -97,7 +97,7 @@ export function ItemsTable({
                 </TableCell>
                 <TableCell className="font-medium">{item.name}</TableCell>
                 <TableCell className="capitalize">{item.unit}</TableCell>
-                <TableCell className="font-semibold">
+                <TableCell className="font-medium">
                   {formatCurrency(item.defaultPrice)}
                 </TableCell>
                 <TableCell className="text-muted-foreground">
@@ -173,3 +173,4 @@ export function ItemsTable({
     </div>
   );
 }
+

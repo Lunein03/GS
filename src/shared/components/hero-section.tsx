@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 
-import { BackgroundNoiseOverlay } from "@/components/ui/background-snippets-noise-effect11";
+import { BackgroundNoiseOverlay } from "@/shared/ui/background-snippets-noise-effect11";
 
 export function HeroSection() {
   const [isVisible, setIsVisible] = useState(false);
@@ -140,15 +140,15 @@ export function HeroSection() {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="h-full flex flex-col justify-center"
             >
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold mb-8 leading-tight tracking-tight text-center">
-                <span className="font-neoverse text-black dark:text-white">Quem </span>
-                <span className="font-neoverse text-secondary">somos</span>
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-medium mb-8 leading-tight tracking-tight text-center text-foreground">
+                <span className="font-inter">Quem </span>
+                <span className="font-inter">somos</span>
               </h1>
-              <p className="text-lg md:text-lg mb-4 text-zinc-700 dark:text-white/90  leading-relaxed font-inter text-justify">
+              <p className="text-lg md:text-lg mb-4 text-foreground  leading-relaxed font-inter text-justify">
               Desde 2019, atuamos com produção e acessibilidade em diversas frentes, com o objetivo de tornar projetos e espaços verdadeiramente acessíveis, transformando ideias em experiências inclusivas para todas as pessoas, promovendo participação, pertencimento e equidade.
               </p>
               {/* <div className="mb-2"></div> */}
-              <p className="text-lg md:text-lg mb-2 text-zinc-700 dark:text-white/90 leading-relaxed font-inter text-justify">
+              <p className="text-lg md:text-lg mb-2 text-foreground leading-relaxed font-inter text-justify">
               Acreditamos que a acessibilidade deve estar presente desde o início de cada projeto, esse é o nosso propósito e a razão da nossa existência, com uma comunicação pensada para todas as pessoas, porque um mundo acessível não é apenas um sonho, é a realidade que estamos construindo.
               </p>
             </motion.div>

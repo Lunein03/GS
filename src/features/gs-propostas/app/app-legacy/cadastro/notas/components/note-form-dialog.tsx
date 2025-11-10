@@ -3,16 +3,16 @@
 import { useEffect, useMemo } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/shared/ui/dialog';
+import { Input } from '@/shared/ui/input';
+import { Button } from '@/shared/ui/button';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@/shared/ui/select';
 import { RichTextEditor } from './rich-text-editor';
 import { noteFormSchema, type Note, type NoteFormSchema } from '../types';
 
@@ -159,7 +159,7 @@ export function NoteFormDialog({
             </div>
 
             <div className="rounded-lg bg-gradient-to-b from-indigo-500/90 to-indigo-400/90 p-6 text-white">
-              <div className="font-semibold tracking-wide uppercase text-xs">Notas</div>
+              <div className="font-medium tracking-wide uppercase text-xs">Notas</div>
               <p className="mt-3 text-sm text-white/90">
                 Utilize notas para guardar clausulas, observacoes ou informacoes padrao das propostas.
                 Defina o modo de inclusao para controlar se a nota aparece automaticamente ou sob demanda.
@@ -205,3 +205,4 @@ export function NoteFormDialog({
     </Dialog>
   );
 }
+

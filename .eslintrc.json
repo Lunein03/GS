@@ -1,5 +1,33 @@
 {
   "extends": [
     "next/core-web-vitals"
-  ]
+  ],
+  "plugins": [
+    "import"
+  ],
+  "rules": {
+    "import/no-restricted-paths": [
+      "error",
+      {
+        "zones": [
+          {
+            "target": "./src/app/api",
+            "from": [
+              "./src/shared/ui",
+              "./src/shared/components",
+              "./src/features/*/ui"
+            ]
+          },
+          {
+            "target": "./src/server",
+            "from": [
+              "./src/shared/ui",
+              "./src/shared/components",
+              "./src/features/*/ui"
+            ]
+          }
+        ]
+      }
+    ]
+  }
 }

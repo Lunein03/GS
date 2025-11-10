@@ -1,7 +1,7 @@
 "use client";
 
-import { WavyBackground } from "@/components/ui/wavy-background";
-import { useWavyTheme } from "../hooks/use-wavy-theme";
+import { WavyBackground } from "@/shared/ui/wavy-background";
+import { useWavyTheme } from "@/features/gs-propostas/hooks/use-wavy-theme";
 
 interface HeroBackgroundProps {
   children: React.ReactNode;
@@ -28,3 +28,4 @@ export function GsPropostasHeroBackground({ children }: HeroBackgroundProps) {
     </>
   );
 }
+

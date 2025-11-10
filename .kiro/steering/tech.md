@@ -1,76 +1,99 @@
+# Tech Stack
 
-## Language
-
-**Sempre responda em português** - Always respond in Portuguese to the user.
-
-## Documentation Files
-
-**NEVER create .md documentation files unless explicitly requested by the user.**
-- Do not create documentation "just in case"
-- Do not create multiple docs for the same topic
-- Only create when user specifically asks for it
-
-
-# Technology Stack
-
-## Framework & Runtime
-
-- **Next.js 15** with App Router (static export mode: `output: 'export'`)
-- **React 18** with Server Components as default
-- **TypeScript 5** with strict mode enabled
-- **Node.js 18+** required
-
-## UI & Styling
-
-- **Tailwind CSS 3** with custom design tokens and animations
-- **shadcn/ui** component library built on Radix UI primitives
-- **Radix UI** for accessible, unstyled component primitives
+## Frontend
+- **Next.js 15** (App Router, React Server Components)
+- **React 18** with TypeScript 5
+- **Tailwind CSS 3** with custom tokens and animations
+- **shadcn/ui + Radix UI** for accessible components
 - **lucide-react** for icons
-- **Framer Motion** for animations
-- **next-themes** for dark/light mode theming
-
-## Data Layer
-
-- **Drizzle ORM** for database operations
-- **PostgreSQL** (via `pg` driver)
-- **Zod** for schema validation
+- **TanStack Query** for data fetching and state management
+- **React Hook Form + Zod** for form validation
 - **next-safe-action** for type-safe server actions
+- **Framer Motion** for animations
+- **zustand** for client state management
 
-## State Management
+## Backend
+- **FastAPI** (Python 3.11+)
+- **SQLAlchemy 2.0** for ORM
+- **Alembic** for database migrations
+- **PostgreSQL** as database
+- **Pydantic** for data validation
+- **uvicorn** as ASGI server
 
-- **Zustand** for client-side state
-- **React Hook Form** for form handling
-- **React Query** (planned) for server state management
+## Infrastructure
+- **Docker** for containerization
+- **Docker Compose** for orchestration
+- Standalone output for optimized production builds
 
-## Utilities
+## Key Libraries
+- `@dnd-kit` for drag-and-drop
+- `date-fns` for date manipulation
+- `recharts` for data visualization
+- `sonner` for toast notifications
+- `next-themes` for dark mode
 
-- **date-fns** for date manipulation
-- **nanoid** for ID generation
-- **clsx** + **tailwind-merge** (via `cn()` utility)
-- **sonner** for toast notifications
+## Path Aliases
+```typescript
+@/*           -> ./src/*
+@/components/* -> ./components/*
+@/lib/*       -> ./lib/*
+```
 
 ## Common Commands
 
+### Development
 ```bash
-# Development
-npm run dev              # Start dev server on localhost:3000
+# Frontend (Next.js)
+npm run dev                    # Start dev server (localhost:3000)
+npm run build                  # Production build
+npm start                      # Start production server
+npm run lint                   # Run ESLint
 
-# Build & Production
-npm run build            # Create static export in /out
-npm start                # Preview production build
+# Backend (FastAPI) - Local
+cd backend
+uvicorn app.main:app --reload --port 9000
 
-# Linting
-npm run lint             # Run ESLint
-
-# Database (Drizzle)
-npm run db:generate      # Generate migrations
-npm run db:migrate       # Run migrations
-npm run db:push          # Push schema changes directly
+# Database migrations
+cd backend
+alembic upgrade head           # Apply migrations
+alembic revision --autogenerate -m "description"  # Create migration
 ```
 
-## Build Configuration
+### Docker
+```bash
+# Production environment
+make up                        # Start all services
+make down                      # Stop all services
+make logs                      # View logs
 
-- Static export enabled (`output: 'export'`)
-- Image optimization disabled (`unoptimized: true`)
-- TypeScript and ESLint errors ignored during builds
-- CSS optimization enabled experimentally
+# Development environment
+make dev-up                    # Start dev services
+docker compose -f docker/docker-compose.dev.yml up --build
+
+# Database
+make db-reset                  # Reset database with seed data
+make migrate                   # Run migrations
+
+# Utilities
+make shell                     # Access container shell
+make verify                    # Verify setup
+```
+
+### Docker Services
+- **Frontend**: localhost:3000
+- **Backend API**: localhost:9000
+- **PostgreSQL**: localhost:5432
+- **Adminer**: localhost:8080
+
+## Environment Variables
+- `.env` - Production config
+- `.env.local` - Local development (frontend)
+- `backend/.env.backend` - Backend config
+- `.env.docker` - Docker environment template
+
+## Build Configuration
+- **Output**: Standalone (optimized for Docker)
+- **TypeScript**: Strict mode enabled, build errors ignored for flexibility
+- **Images**: Unoptimized, supports remote patterns (Pexels, Unsplash, S3)
+- **CSS**: Experimental optimization enabled
+- **Turbopack**: Available for faster dev builds

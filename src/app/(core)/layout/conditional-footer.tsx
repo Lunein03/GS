@@ -1,7 +1,7 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
-import { Footer } from '@/components/footer'
+import { Footer } from '@/shared/components/footer'
 
 export function ConditionalFooter() {
   const pathname = usePathname()

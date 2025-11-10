@@ -3,8 +3,8 @@
 import { useCallback, useRef, useState, type ChangeEvent, type DragEvent, type KeyboardEvent, type MouseEvent } from 'react';
 import { QrCode, Loader2 } from 'lucide-react';
 
-import { useToast } from '@/components/ui/use-toast';
-import { cn } from '@/lib/utils';
+import { useToast } from '@/shared/ui/use-toast';
+import { cn } from '@/shared/lib/utils';
 
 export function QRCodeUploader({ isProcessing, onFilesSelect }: QRCodeUploaderProps) {
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -136,7 +136,7 @@ export function QRCodeUploader({ isProcessing, onFilesSelect }: QRCodeUploaderPr
       
       {/* Textos */}
       <div className="space-y-2">
-        <h3 className="font-inter text-xl font-semibold text-foreground md:text-2xl">
+        <h3 className="font-poppins text-xl font-medium text-foreground md:text-2xl">
           {isDragging ? 'Solte os arquivos aqui' : 'Arraste e solte seus QR codes'}
         </h3>
         <p className="mx-auto max-w-md text-base text-muted-foreground md:text-lg">
@@ -163,3 +163,5 @@ interface QRCodeUploaderProps {
   isProcessing: boolean;
   onFilesSelect: (files: File[]) => Promise<void>;
 }
+
+

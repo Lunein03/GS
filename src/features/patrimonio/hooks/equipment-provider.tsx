@@ -1,3 +1,25 @@
+/**
+ * @deprecated Este Context Provider está deprecated e será removido em breve.
+ * Use os hooks React Query em vez disso:
+ * - useEquipmentList() em vez de equipment
+ * - useEventsList() em vez de events
+ * - useCreateEquipment() em vez de addEquipment
+ * - useUpdateEquipment() em vez de updateEquipment
+ * - useDeleteEquipment() em vez de deleteEquipment
+ * - useCreateEvent() em vez de addEvent
+ * - useDeleteEvent() em vez de deleteEvent
+ * 
+ * Exemplo de migração:
+ * ```tsx
+ * // Antes:
+ * const { equipment, addEquipment } = useEquipment();
+ * 
+ * // Depois:
+ * import { useEquipmentList, useCreateEquipment } from '@/features/patrimonio/hooks/use-equipment';
+ * const { data: equipment = [] } = useEquipmentList();
+ * const createMutation = useCreateEquipment();
+ * ```
+ */
 'use client';
 
 import {
@@ -10,18 +32,19 @@ import {
   type ReactNode,
 } from 'react';
 
+import { generateId } from '@/shared/lib/utils';
 import {
   generateEquipmentCode,
   loadEquipment,
   loadEvents,
   saveEquipment,
   saveEvents,
-} from '@/app/patrimonio/lib/equipment-storage';
+} from '@/features/patrimonio/domain/equipment-storage';
 import type {
   Equipment,
   EquipmentFormData,
   Event,
-} from '@/app/patrimonio/types/equipment';
+} from '@/features/patrimonio/domain/types/equipment';
 
 const EquipmentContext = createContext<EquipmentContextValue | null>(null);
 
@@ -170,9 +193,7 @@ interface EquipmentContextValue {
 }
 
 function createId(): string {
-  if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
-    return crypto.randomUUID();
-  }
-
-  return `patrimonio-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+  return generateId();
 }
+
+

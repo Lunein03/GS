@@ -4,78 +4,114 @@
 
 @layer base {
   :root {
-    --background: 217 40% 96%;
-    --foreground: 222 41% 16%;
-    --card: 220 40% 98%;
-    --card-foreground: 222 41% 16%;
-    --popover: 220 40% 98%;
-    --popover-foreground: 222 41% 16%;
-    --primary: 271 89% 54%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 168 84% 56%;
-    --secondary-foreground: 220 40% 14%;
-    --muted: 220 32% 93%;
-    --muted-foreground: 222 18% 38%;
-    --accent: 223 73% 92%;
-    --accent-foreground: 223 44% 20%;
+    /* Paleta Oficial - Light Mode */
+    /* #F0EEEF - Branco Suave (Fundo Principal) */
+    --background: 300 11% 94%;
+    /* #1D1D1F - Preto Neutro (Texto) */
+    --foreground: 240 3% 11%;
+    /* #FFFFFF - Branco Puro (Cards) */
+    --card: 0 0% 100%;
+    --card-foreground: 240 3% 11%;
+    /* Popover usa fundo branco puro */
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 3% 11%;
+    /* #6422F2 - Roxo Primário (CTAs e Destaques) */
+    --primary: 264 89% 54%;
+    --primary-foreground: 0 0% 100%;
+    /* #2A2451 - Roxo Secundário (Títulos e Seções Premium) */
+    --secondary: 257 37% 23%;
+    --secondary-foreground: 0 0% 100%;
+    /* #DADADA - Cinza UI (Elementos Mudos) */
+    --muted: 0 0% 85%;
+    --muted-foreground: 240 3% 11%;
+    /* Accent usa roxo secundário */
+    --accent: 257 37% 23%;
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 218 24% 84%;
-    --input: 218 24% 84%;
-    --ring: 271 89% 54%;
+    --destructive-foreground: 0 0% 100%;
+    /* #DADADA - Cinza UI (Bordas) */
+    --border: 0 0% 85%;
+    --input: 0 0% 85%;
+    /* Roxo primário para ring */
+    --ring: 264 89% 54%;
+    /* Radius Apple-like: 8px */
     --radius: 0.5rem;
 
-    --surface-base: 218 32% 95%;
-    --surface-elevated: 220 36% 98%;
-    --surface-muted: 220 28% 91%;
-    --surface-inset: 218 24% 88%;
-    --shadow-soft: 220 40% 20% / 0.06;
+    /* Apple-like Shadows */
+    --shadow-light: 0px 1px 2px rgba(0,0,0,0.04);
+    --shadow-dark: 0px 2px 4px rgba(0,0,0,0.16);
+    --shadow-hover: 0px 8px 24px rgba(100,34,242,0.16);
+
+    /* Surface variants */
+    --surface-base: 300 11% 94%;
+    --surface-elevated: 0 0% 100%;
+    --surface-muted: 0 0% 85%;
+    --surface-inset: 0 0% 90%;
+    --shadow-soft: 240 3% 11% / 0.03;
   }
  
   .dark {
-    /* Base principal: #151c2a (azul-acinzentado escuro) */
-    --background: 218 34% 12%;
-    --foreground: 0 0% 98%;
+    /* Paleta Oficial - Dark Mode */
+    /* #1D1D1F - Preto Neutro (Fundo Principal) */
+    --background: 240 3% 11%;
+    /* #F0EEEF - Branco Suave (Texto) */
+    --foreground: 300 11% 94%;
 
-    /* Cinza Chumbo Azulado: #2a2a33 para elementos principais */
-    --card: 240 10% 18%;
-    --card-foreground: 0 0% 98%;
+    /* #2A2451 - Roxo Secundário (Cards e Seções) */
+    --card: 257 37% 23%;
+    --card-foreground: 300 11% 94%;
 
-    /* Roxo Escuro Sutil: #201a30 para elementos secundários */
-    --popover: 255 28% 15%;
-    --popover-foreground: 0 0% 98%;
+    /* Popover usa roxo secundário */
+    --popover: 257 37% 23%;
+    --popover-foreground: 300 11% 94%;
 
-    /* Azul Petróleo Escuro: #121f40 para elementos primários */
-    --primary: 222 55% 16%;
-    --primary-foreground: 0 0% 98%;
+    /* #6422F2 - Roxo Primário (CTAs e Destaques) */
+    --primary: 264 89% 54%;
+    --primary-foreground: 300 11% 94%;
 
-    /* Destaque Escuro Vibrante: #1a2545 para destaques e acentos */
-    --secondary: 222 45% 19%;
-    --secondary-foreground: 0 0% 98%;
+    /* Roxo secundário para elementos secundários */
+    --secondary: 257 37% 23%;
+    --secondary-foreground: 300 11% 94%;
 
-    /* Roxo Escuro Sutil: #201a30 para elementos mudos */
-    --muted: 255 28% 15%;
+    /* Muted usa roxo secundário escurecido */
+    --muted: 257 37% 20%;
     --muted-foreground: 0 0% 75%;
 
-    /* Destaque Escuro Vibrante: #1a2545 para acentos */
-    --accent: 222 45% 19%;
-    --accent-foreground: 0 0% 98%;
+    /* Accent usa roxo secundário */
+    --accent: 257 37% 23%;
+    --accent-foreground: 300 11% 94%;
 
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive-foreground: 300 11% 94%;
 
-    /* Roxo Escuro Sutil: #201a30 para bordas e inputs */
-    --border: 255 28% 15%;
-    --input: 255 28% 15%;
+    /* #DADADA com alpha para bordas sutis */
+    --border: 0 0% 85% / 0.06;
+    --input: 257 37% 20%;
     
-    /* Azul Petróleo Escuro: #121f40 para anéis de foco */
-    --ring: 222 55% 16%;
+    /* Roxo primário para ring */
+    --ring: 264 89% 54%;
+
+    /* Apple-like Shadows - Dark Mode */
+    --shadow-light: 0px 1px 2px rgba(0,0,0,0.04);
+    --shadow-dark: 0px 2px 4px rgba(0,0,0,0.16);
+    --shadow-hover: 0px 8px 24px rgba(100,34,242,0.16);
+
+    /* Surface variants */
+    --surface-base: 240 3% 11%;
+    --surface-elevated: 257 37% 23%;
+    --surface-muted: 257 37% 20%;
+    --surface-inset: 240 3% 15%;
+    --shadow-soft: 0 0% 0% / 0.15;
   }
 }
 
 @layer base {
   * {
     @apply border-border;
+  }
+  
+  html {
+    position: relative;
   }
   
   html,
@@ -94,7 +130,7 @@
   }
   
   h1, h2, h3, h4, h5, h6 {
-    @apply font-neoverse font-bold tracking-tight;
+    @apply font-medium tracking-tight text-foreground;
   }
   
   h1 {
@@ -114,7 +150,7 @@
   }
   
   p {
-    @apply leading-7 font-inter;
+    @apply leading-7 text-foreground;
   }
 }
 
@@ -146,10 +182,6 @@
 }
 
 @layer components {
-  .font-neoverse {
-    font-family: var(--font-neoverse), sans-serif;
-  }
-  
   .font-inter {
     font-family: var(--font-inter), sans-serif;
   }
@@ -166,7 +198,7 @@
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    background-image: linear-gradient(90deg, #6620F2, #31EBCB);
+    background-image: linear-gradient(90deg, #6422F2, #2A2451);
   }
   
   .card {

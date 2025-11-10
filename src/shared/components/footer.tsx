@@ -23,7 +23,7 @@ export function Footer() {
           </div>
 
            <div className="text-center md:text-left">
-            <h4 className="text-xl font-neoverse-bold mb-4 text-white">Normas da empresa</h4>
+            <h4 className="text-xl font-poppins-bold mb-4 text-white">Normas da empresa</h4>
             <ul className="space-y-3">
               <li>
                 <Link
@@ -55,7 +55,7 @@ export function Footer() {
           </div>
 
           <div className="text-center md:text-left">
-            <h4 className="text-xl font-neoverse-bold mb-4 text-white">Formulários</h4>
+            <h4 className="text-xl font-poppins-bold mb-4 text-white">Formulários</h4>
             <p className="text-slate-400 text-sm mb-4 leading-relaxed">
               Registre atividades e mantenha processos rastreáveis
             </p>
@@ -68,7 +68,7 @@ export function Footer() {
           </div> 
 
           <div className="text-center md:text-left">
-            <h4 className="text-lg font-bold mb-4 text-white">Reportar Bug</h4>
+            <h4 className="text-lg font-medium mb-4 text-white">Reportar Bug</h4>
             <p className="text-slate-300 text-sm mb-4">
               Encontrou algum problema na intranet?
             </p>
@@ -76,7 +76,7 @@ export function Footer() {
               href="https://wa.me/5521968793611?text=Olá%2C%20encontrei%20um%20bug%20na%20intranet%3A%20"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-300 hover:scale-105 shadow-lg"
+              className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-medium px-6 py-3 rounded-lg transition-all duration-300 hover:scale-105 shadow-lg"
             >
               <Phone className="h-5 w-5" />
               Reportar via WhatsApp

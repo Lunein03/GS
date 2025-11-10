@@ -3,8 +3,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { CreditCard, Plus, RefreshCw, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import { Input } from '@/shared/ui/input';
+import { Button } from '@/shared/ui/button';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,7 +14,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
+} from '@/shared/ui/alert-dialog';
 import { PaymentModeTable } from './components/payment-mode-table';
 import { PaymentModeFormDialog } from './components/payment-mode-form-dialog';
 import {
@@ -161,7 +161,7 @@ export default function PagamentosPage() {
         <div className="flex items-center gap-3">
           <CreditCard className="h-10 w-10 text-primary" />
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Modos de Pagamento</h1>
+            <h1 className="text-3xl font-medium tracking-tight">Modos de Pagamento</h1>
             <p className="text-muted-foreground">
               Configure as condicoes comerciais para propostas e pedidos.
             </p>
@@ -262,3 +262,4 @@ export default function PagamentosPage() {
     </div>
   );
 }
+

@@ -1,9 +1,9 @@
 'use client';
 
 import { memo } from 'react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { cn, sanitizeHtml } from '@/lib/utils';
+import { Button } from '@/shared/ui/button';
+import { Badge } from '@/shared/ui/badge';
+import { cn, sanitizeHtml } from '@/shared/lib/utils';
 import type { Note } from '../types';
 
 const EMPTY_STATE_MESSAGE = 'Nenhuma nota cadastrada ate o momento.';
@@ -139,3 +139,5 @@ function NoteTableComponent({
 }
 
 export const NoteTable = memo(NoteTableComponent);
+
+

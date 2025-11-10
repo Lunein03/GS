@@ -74,7 +74,7 @@ export type ContatoSecundario = {
 
 export type ClienteFormData = import('./cliente-schemas').ClienteFormSchema;
 
-export type { CNPJData, AddressData } from '@/lib/api-services';
+export type { CNPJData, AddressData } from '@/shared/lib/api-services';
 
 export type PaginationParams = {
   page: number;
@@ -92,13 +92,13 @@ export type PaginatedResult<T> = {
 export type DocumentValidationResult = {
   isValid: boolean;
   error?: string;
-  data?: import('@/lib/api-services').CNPJData;
+  data?: import('@/shared/lib/api-services').CNPJData;
 };
 
 export type CepValidationResult = {
   isValid: boolean;
   error?: string;
-  data?: import('@/lib/api-services').AddressData;
+  data?: import('@/shared/lib/api-services').AddressData;
 };
 
 export type ClienteActionResult<T = void> = {
@@ -106,3 +106,4 @@ export type ClienteActionResult<T = void> = {
   data?: T;
   error?: string;
 };
+

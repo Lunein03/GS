@@ -5,13 +5,13 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Menu, X, ChevronDown } from 'lucide-react';
 import { ModeToggle } from './mode-toggle';
-import { Button } from './ui/button';
+import { Button } from '@/shared/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from './ui/dropdown-menu';
+} from '@/shared/ui/dropdown-menu';
 
 const navItems = [
   { href: '/#hero', label: 'Início' },

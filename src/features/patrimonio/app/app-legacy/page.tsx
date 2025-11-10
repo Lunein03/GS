@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 
-import { DashboardContent } from '@/app/patrimonio/components/dashboard-content';
+import { DashboardContent } from '@/features/patrimonio/ui/components/dashboard-content';
 
 export const metadata: Metadata = {
   title: 'Patrimônio | Dashboard',
@@ -10,3 +10,4 @@ export const metadata: Metadata = {
 export default function PatrimonioDashboardPage() {
   return <DashboardContent />;
 }
+

@@ -1,5 +1,5 @@
 import { z, type ZodRawShape } from 'zod';
-import { validateCPF, validateCNPJ } from '@/lib/validators';
+import { validateCPF, validateCNPJ } from '@/shared/lib/validators';
 
 // ============================================
 // SHARED SCHEMAS
@@ -209,3 +209,4 @@ export type FilterState = {
     status: 'ativo' | 'inativo' | 'all';
     estado?: string;
 };
+

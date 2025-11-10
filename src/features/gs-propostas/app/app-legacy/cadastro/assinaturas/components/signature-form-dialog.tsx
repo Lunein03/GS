@@ -10,11 +10,11 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+} from '@/shared/ui/dialog';
+import { Button } from '@/shared/ui/button';
+import { Input } from '@/shared/ui/input';
+import { Label } from '@/shared/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/shared/ui/radio-group';
 import type { Signature, SignatureFormSchema, SignatureType } from '../types';
 import { signatureFormSchema } from '../types';
 import { SignatureDrawPad } from './signature-draw-pad';
@@ -348,7 +348,7 @@ export function SignatureFormDialog({
             </div>
 
             <div className="rounded-lg bg-gradient-to-b from-indigo-600/90 to-indigo-500/90 p-6 text-white">
-              <div className="text-xs font-semibold uppercase tracking-wide">Assinaturas digitais</div>
+              <div className="text-xs font-medium uppercase tracking-wide">Assinaturas digitais</div>
               <p className="mt-3 text-sm text-white/90">
                 Cadastre responsaveis com validacao Gov.br ou assinatura personalizada. Utilize-as em propostas e documentos emitidos pelo sistema.
               </p>
@@ -482,3 +482,4 @@ export function SignatureFormDialog({
     </Dialog>
   );
 }
+

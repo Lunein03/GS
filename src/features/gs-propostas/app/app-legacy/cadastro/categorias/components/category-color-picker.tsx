@@ -1,8 +1,8 @@
 'use client';
 
 import { memo } from 'react';
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
+import { cn } from '@/shared/lib/utils';
+import { Button } from '@/shared/ui/button';
 
 const CATEGORY_COLORS = [
   '#FA3B38',
@@ -63,3 +63,5 @@ function CategoryColorPickerComponent({ value, onChange }: CategoryColorPickerPr
 
 export const CategoryColorPicker = memo(CategoryColorPickerComponent);
 export const categoryColorOptions = CATEGORY_COLORS;
+
+

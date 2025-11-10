@@ -1,6 +1,6 @@
 'use client';
 
-import { Badge } from '@/components/ui/badge';
+import { Badge } from '@/shared/ui/badge';
 import type { SignatureType } from '../types';
 
 const TYPE_LABEL: Record<SignatureType, string> = {
@@ -24,3 +24,4 @@ export function SignatureTypeBadge({ type }: SignatureTypeBadgeProps) {
     </Badge>
   );
 }
+

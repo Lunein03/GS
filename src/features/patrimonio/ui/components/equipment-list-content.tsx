@@ -3,13 +3,13 @@
 import { useState } from 'react';
 import { QrCode, Search, Trash2 } from 'lucide-react';
 
-import { useEquipment } from '@/app/patrimonio/context/equipment-provider';
+import { useEquipmentList, useDeleteEquipment } from '@/features/patrimonio/hooks/use-equipment';
 import {
   EQUIPMENT_STATUS_LABEL,
   EQUIPMENT_STATUS_STYLES,
-} from '@/app/patrimonio/lib/equipment-status';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+} from '@/features/patrimonio/domain/equipment-status';
+import { Badge } from '@/shared/ui/badge';
+import { Button } from '@/shared/ui/button';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,14 +19,15 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { useToast } from '@/components/ui/use-toast';
-import { cn } from '@/lib/utils';
+} from '@/shared/ui/alert-dialog';
+import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/card';
+import { Input } from '@/shared/ui/input';
+import { useToast } from '@/shared/ui/use-toast';
+import { cn } from '@/shared/lib/utils';
 
 export function EquipmentListContent() {
-  const { equipment, deleteEquipment } = useEquipment();
+  const { data: equipment = [], isLoading } = useEquipmentList();
+  const deleteMutation = useDeleteEquipment();
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
   const [deleteId, setDeleteId] = useState<string | null>(null);
@@ -51,18 +52,51 @@ export function EquipmentListContent() {
       return;
     }
 
-    deleteEquipment(deleteId);
-    toast({
-      title: 'Equipamento excluído',
-      description: 'O equipamento foi removido do sistema.',
+    deleteMutation.mutate(deleteId, {
+      onSuccess: () => {
+        toast({
+          title: 'Equipamento excluído',
+          description: 'O equipamento foi removido do sistema.',
+        });
+        setDeleteId(null);
+      },
+      onError: (error) => {
+        toast({
+          title: 'Erro ao excluir',
+          description: error.message,
+          variant: 'destructive',
+        });
+      },
     });
-    setDeleteId(null);
   };
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <header>
+          <div className="h-9 w-48 animate-pulse rounded bg-muted" />
+          <div className="mt-2 h-5 w-64 animate-pulse rounded bg-muted/70" />
+        </header>
+        <Card>
+          <CardHeader>
+            <div className="h-10 w-full animate-pulse rounded bg-muted" />
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <div key={i} className="h-32 animate-pulse rounded bg-muted" />
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-3xl font-bold text-foreground">Equipamentos</h1>
+        <h1 className="text-3xl font-medium text-foreground">Equipamentos</h1>
         <p className="text-muted-foreground">Gerencie todos os equipamentos cadastrados</p>
       </header>
 
@@ -93,7 +127,7 @@ export function EquipmentListContent() {
                   <CardContent className="flex flex-col gap-4 p-4 md:flex-row md:items-start md:gap-6">
                     <div className="min-w-0 flex-1 space-y-3">
                       <div className="flex flex-wrap items-center gap-3">
-                        <h2 className="text-lg font-semibold text-foreground">{item.name}</h2>
+                        <h2 className="text-lg font-medium text-foreground">{item.name}</h2>
                         <Badge
                           variant="outline"
                           className={cn('border text-xs font-medium uppercase tracking-wide', EQUIPMENT_STATUS_STYLES[item.status])}
@@ -180,3 +214,7 @@ export function EquipmentListContent() {
     </div>
   );
 }
+
+
+
+

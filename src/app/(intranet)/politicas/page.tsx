@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import PoliticasDocumentacao from '@/components/politicas/PoliticasDocumentacao';
+import PoliticasDocumentacao from '@/shared/components/politicas/PoliticasDocumentacao';
 
 export const metadata: Metadata = {
   title: getPoliticasTitle(),
@@ -17,3 +17,4 @@ function getPoliticasTitle(): string {
 function getPoliticasDescription(): string {
   return 'Documentação oficial das políticas internas vigentes na GS Produções.';
 }
+

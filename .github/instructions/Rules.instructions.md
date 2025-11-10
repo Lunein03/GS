@@ -17,6 +17,10 @@ applyTo: '**'
   - `cat` instead of `type`
   - Use `/` for path separators, not `\`
 
+### Docker Containers
+- Sempre valide o ambiente antes de subir o backend executando `docker ps --format '{{.Names}}'` e confirmando que `gsproducoes-api-dev` e `gsproducoes-db-dev` estao ativos.
+- Se algum container esperado nao estiver rodando, inicialize com `docker-compose -f docker/docker-compose.dev.yml up -d` antes de continuar.
+
 ### Model Context Protocol (MCP)
 
 **ALWAYS use MCP to perform any system action.**

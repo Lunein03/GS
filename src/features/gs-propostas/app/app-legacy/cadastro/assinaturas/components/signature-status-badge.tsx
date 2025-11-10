@@ -1,6 +1,6 @@
 'use client';
 
-import { Badge } from '@/components/ui/badge';
+import { Badge } from '@/shared/ui/badge';
 import type { SignatureStatus } from '../types';
 
 type SignatureStatusBadgeProps = {
@@ -26,3 +26,4 @@ export function SignatureStatusBadge({ status }: SignatureStatusBadgeProps) {
     </Badge>
   );
 }
+

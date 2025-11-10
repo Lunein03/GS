@@ -1,6 +1,6 @@
 'use client';
 
-import type { ActionResponse } from '@/types/actions';
+import type { ActionResponse } from '@/shared/lib/types/actions';
 
 export interface DriveMetadataPayload {
   success: boolean;
@@ -41,3 +41,4 @@ export async function fetchDriveMetadata(url: string, signal?: AbortSignal): Pro
 
   return data.data;
 }
+

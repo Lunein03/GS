@@ -3,7 +3,7 @@
 import * as React from "react";
 import { Clock } from "lucide-react";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/lib/utils";
 
 import {
   Select,
@@ -116,3 +116,4 @@ export function TimePicker({
     </div>
   );
 }
+

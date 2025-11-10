@@ -3,18 +3,25 @@
 import { useEffect, useState, useCallback } from 'react';
 import { toast } from 'sonner';
 import { Users, Plus } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/shared/ui/button';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
+} from '@/shared/ui/dialog';
 import { ClienteFilters } from './components/filters/cliente-filters';
 import { ClientesTable } from './components/table/clientes-table';
 import { ClienteForm } from './components/forms/cliente-form';
-import { getClientes, deleteCliente, createCliente, updateCliente } from './actions/cliente-actions';
+import {
+  getClientes,
+  deleteCliente,
+  createCliente,
+  updateCliente,
+  getContatosSecundarios,
+  createContatoSecundario,
+} from '@/features/gs-propostas/api/clients';
 import type { Cliente, FilterState, ClienteFormData } from './types/cliente';
 
 // ============================================
@@ -70,25 +77,20 @@ export default function ClientesPage() {
 
       const result = await getClientes(params);
 
-      if (result.data?.success && result.data.data) {
-        const clientesFormatted = result.data.data.clientes.map((cliente: any) => ({
-          ...cliente,
-          ativo: cliente.ativo as number,
-        }));
-
-        setClientes(clientesFormatted);
-        setPagination({
-          page: result.data.data.pagination.page,
-          pageSize: result.data.data.pagination.pageSize,
-          total: result.data.data.pagination.total,
-          totalPages: result.data.data.pagination.totalPages,
-        });
-      } else {
-        const errorMessage = result.serverError ||
-          (result.data && !result.data.success ? result.data.error.message : 'Erro ao carregar clientes');
-        toast.error(errorMessage);
+      if (!result.success) {
+        toast.error(result.error.message ?? 'Erro ao carregar clientes');
         setClientes([]);
+        setPagination((prev) => ({ ...prev, total: 0, totalPages: 0 }));
+        return;
       }
+
+      const clientesFormatted = result.data.clientes.map((cliente) => ({
+        ...cliente,
+        ativo: cliente.ativo as number,
+      }));
+
+      setClientes(clientesFormatted);
+      setPagination(result.data.pagination);
     } catch (error) {
       console.error('Erro ao carregar clientes:', error);
       toast.error('Erro ao carregar clientes. Tente novamente.');
@@ -123,33 +125,35 @@ export default function ClientesPage() {
 
   const handleEdit = async (id: string) => {
     const cliente = clientes.find((c) => c.id === id);
-    if (cliente) {
-      // Carregar contatos secundários
-      const { getContatosSecundarios } = await import('./actions/cliente-actions');
-      const contatosResult = await getContatosSecundarios(id);
-
-      const clienteComContatos: Cliente = {
-        ...cliente,
-        contatosSecundarios: contatosResult.success && contatosResult.data
-          ? contatosResult.data
-          : [],
-      };
-
-      setEditingCliente(clienteComContatos);
-      setIsFormOpen(true);
+    if (!cliente) {
+      return;
     }
+
+    const contatosResult = await getContatosSecundarios(id);
+    if (!contatosResult.success) {
+      toast.error(contatosResult.error.message ?? 'Erro ao carregar contatos do cliente');
+    }
+
+    const clienteComContatos: Cliente = {
+      ...cliente,
+      contatosSecundarios: contatosResult.success && contatosResult.data
+        ? contatosResult.data
+        : [],
+    };
+
+    setEditingCliente(clienteComContatos);
+    setIsFormOpen(true);
   };
 
   const handleDelete = async (id: string) => {
     try {
       const result = await deleteCliente({ id });
 
-      if (result.data?.success) {
+      if (result.success) {
         toast.success('Cliente removido com sucesso');
         await loadClientes();
       } else {
-        const errorMessage = result.serverError || result.data?.error?.message || 'Erro ao remover cliente';
-        toast.error(errorMessage);
+        toast.error(result.error.message ?? 'Erro ao remover cliente');
       }
     } catch (error) {
       console.error('Erro ao remover cliente:', error);
@@ -159,44 +163,41 @@ export default function ClientesPage() {
 
   const handleFormSubmit = async (data: ClienteFormData & { contatosSecundarios?: any[] }) => {
     try {
-      let result;
       const { contatosSecundarios, ...clienteData } = data;
 
-      if (editingCliente) {
-        result = await updateCliente({ id: editingCliente.id, ...clienteData });
-      } else {
-        result = await createCliente(clienteData);
+      const result = editingCliente
+        ? await updateCliente({ id: editingCliente.id, ...clienteData })
+        : await createCliente(clienteData);
+
+      if (!result.success) {
+        toast.error(result.error.message ?? 'Erro ao salvar cliente');
+        return;
       }
 
-      if (result.data?.success) {
-        const clienteId = editingCliente?.id || result.data.data?.id;
+      const clienteId = editingCliente?.id || result.data.id;
 
-        // Salvar contatos secundários se houver
-        if (clienteId && contatosSecundarios && contatosSecundarios.length > 0) {
-          const { createContatoSecundario } = await import('./actions/cliente-actions');
+      if (clienteId && contatosSecundarios && contatosSecundarios.length > 0) {
+        for (const contato of contatosSecundarios) {
+          if (!contato.id) {
+            const contatoResult = await createContatoSecundario(clienteId, {
+              nome: contato.nome,
+              email: contato.email,
+              telefone: contato.telefone,
+              cargo: contato.cargo,
+            });
 
-          for (const contato of contatosSecundarios) {
-            if (!contato.id) {
-              // Novo contato
-              await createContatoSecundario({
-                clientId: clienteId,
-                nome: contato.nome,
-                email: contato.email,
-                telefone: contato.telefone,
-                cargo: contato.cargo,
-              });
+            if (!contatoResult.success) {
+              toast.error(contatoResult.error.message ?? 'Erro ao salvar contato secundario');
+              return;
             }
           }
         }
-
-        toast.success(editingCliente ? 'Cliente atualizado com sucesso' : 'Cliente cadastrado com sucesso');
-        setIsFormOpen(false);
-        setEditingCliente(undefined);
-        await loadClientes();
-      } else {
-        const errorMessage = result.serverError || result.data?.error?.message || 'Erro ao salvar cliente';
-        toast.error(errorMessage);
       }
+
+      toast.success(editingCliente ? 'Cliente atualizado com sucesso' : 'Cliente cadastrado com sucesso');
+      setIsFormOpen(false);
+      setEditingCliente(undefined);
+      await loadClientes();
     } catch (error) {
       console.error('Erro ao salvar cliente:', error);
       toast.error('Erro ao salvar cliente. Tente novamente.');
@@ -219,7 +220,7 @@ export default function ClientesPage() {
         <div className="flex items-center gap-3">
           <Users className="h-8 w-8 text-primary" />
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Clientes</h1>
+            <h1 className="text-3xl font-medium tracking-tight">Clientes</h1>
             <p className="text-muted-foreground">
               Cadastre aqui os seus clientes
             </p>
@@ -291,3 +292,4 @@ export default function ClientesPage() {
     </div>
   );
 }
+

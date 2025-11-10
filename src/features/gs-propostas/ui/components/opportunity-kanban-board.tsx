@@ -14,13 +14,13 @@ import {
 } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { toast } from "sonner";
-import { updateOpportunityStatusAction } from "@/app/gs-propostas/actions/opportunity-actions";
-import type { Opportunity, OpportunityStatus } from "@/app/gs-propostas/types";
+import { listOpportunities, updateOpportunityStatus } from "@/features/gs-propostas/api/opportunities";
+import type { Opportunity, OpportunityStatus } from "@/features/gs-propostas/domain/types";
 import { OpportunityCard } from "./opportunity-card";
 import { KanbanColumn } from "./kanban-column";
 import { Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { opportunityQueryKeys } from "@/app/gs-propostas/lib/query-keys";
+import { Button } from "@/shared/ui/button";
+import { opportunityQueryKeys } from "@/features/gs-propostas/domain/query-keys";
 
 const COLUMNS: { id: OpportunityStatus; title: string; color: string }[] = [
   { id: "OPEN", title: "Aberto", color: "bg-blue-500" },
@@ -36,11 +36,7 @@ export function OpportunityKanbanBoard({ initialData }: OpportunityKanbanBoardPr
 
   const { data: opportunities = initialData, isLoading } = useQuery({
     queryKey: opportunityQueryKeys.lists(),
-    queryFn: async () => {
-      const response = await fetch("/api/gs-propostas/opportunities");
-      if (!response.ok) throw new Error("Falha ao carregar oportunidades");
-      return response.json();
-    },
+    queryFn: listOpportunities,
     initialData,
   });
 
@@ -100,16 +96,18 @@ export function OpportunityKanbanBoard({ initialData }: OpportunityKanbanBoardPr
     );
 
     try {
-      const result = await updateOpportunityStatusAction({
+      const updated = await updateOpportunityStatus({
         id: opportunityId,
         status: newStatus,
       });
 
-      if (result?.data?.success) {
-        toast.success(result.data.message || "Status atualizado com sucesso");
-      } else {
-        throw new Error(result?.data?.message || "Erro ao atualizar");
-      }
+      queryClient.setQueryData<Opportunity[]>(
+        opportunityQueryKeys.lists(),
+        (old = []) =>
+          old.map((opp: Opportunity) => (opp.id === updated.id ? updated : opp))
+      );
+
+      toast.success("Status atualizado com sucesso");
     } catch (error) {
       // Reverter em caso de erro
       queryClient.setQueryData<Opportunity[]>(
@@ -191,3 +189,7 @@ export function OpportunityKanbanBoard({ initialData }: OpportunityKanbanBoardPr
 interface OpportunityKanbanBoardProps {
   initialData: Opportunity[];
 }
+
+
+
+

@@ -2,8 +2,8 @@
 
 import { useEffect, useMemo, useRef } from 'react';
 import { Bold, Italic, Link, List, ListOrdered, Underline } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { cn, sanitizeHtml } from '@/lib/utils';
+import { Button } from '@/shared/ui/button';
+import { cn, sanitizeHtml } from '@/shared/lib/utils';
 
 type RichTextEditorProps = {
   value: string;
@@ -161,3 +161,5 @@ export function RichTextEditor({
     </div>
   );
 }
+
+

@@ -2,9 +2,9 @@
 
 import type { ReactNode } from 'react';
 
-import { DriveQrProvider } from './context/drive-qr-provider';
-import { TooltipProvider } from '@/components/ui/tooltip';
-import { Toaster } from '@/components/ui/toaster';
+import { DriveQrProvider } from '@/features/drive-qr/hooks/drive-qr-provider';
+import { TooltipProvider } from '@/shared/ui/tooltip';
+import { Toaster } from '@/shared/ui/toaster';
 
 export function DriveQrProviders({ children }: DriveQrProvidersProps) {
   return (
@@ -20,3 +20,6 @@ export function DriveQrProviders({ children }: DriveQrProvidersProps) {
 interface DriveQrProvidersProps {
   children: ReactNode;
 }
+
+
+

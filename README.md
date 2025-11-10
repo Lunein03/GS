@@ -80,6 +80,12 @@ npm start
 ```
 O comando `start` utiliza o artefato gerado em `.next/` para um preview de produção.
 
+## Backend FastAPI e integracao com o frontend
+- Consulte o guia completo em `docs/backend/onboarding.md` para revisar variaveis de ambiente, comandos do Docker Compose e roteiro de migracao de dados.
+- Para iniciar tudo em modo desenvolvimento, execute `docker compose -f docker/docker-compose.dev.yml up --build` (FastAPI + PostgreSQL) e, em paralelo, `npm run dev` com `.env.local` apontando `NEXT_PUBLIC_API_BASE_URL=http://localhost:9000/api/v1`.
+- Caso rode FastAPI localmente, lembre-se de exportar `DATABASE_URL` antes de `alembic upgrade head` e, em seguida, subir o servidor com `uvicorn app.main:app --reload --port 9000`.
+- Ao popular dados ou restaurar dumps, rode `alembic upgrade head` novamente para garantir que o schema esteja sincronizado.
+
 ## 📁 Estrutura destacada
 ```
 app/

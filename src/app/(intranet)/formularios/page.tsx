@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import FormulariosCorporativos from '@/components/formularios/FormulariosCorporativos';
+import FormulariosCorporativos from '@/shared/components/formularios/FormulariosCorporativos';
 
 export const metadata: Metadata = {
   title: getFormulariosTitle(),
@@ -17,3 +17,4 @@ function getFormulariosTitle(): string {
 function getFormulariosDescription(): string {
   return 'Catálogo de formulários institucionais disponíveis para solicitações internas.';
 }
+

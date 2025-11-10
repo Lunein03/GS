@@ -13,12 +13,12 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Form } from '@/components/ui/form';
-import { Button } from '@/components/ui/button';
+} from '@/shared/ui/dialog';
+import { Form } from '@/shared/ui/form';
+import { Button } from '@/shared/ui/button';
 
 import { itemFormSchema, type Item, type Category } from '../types/item.types';
-import { createItem, updateItem } from '../actions/item-actions';
+import { createItem, updateItem } from '@/features/gs-propostas/api/items';
 import { ItemFormTabs } from './item-form-tabs';
 import type { z } from 'zod';
 
@@ -165,3 +165,4 @@ export function ItemFormDialog({
     </Dialog>
   );
 }
+

@@ -3,23 +3,24 @@
 import { useMemo, useState, type ReactNode } from 'react';
 import { Calendar, Plus, Printer, Trash2 } from 'lucide-react';
 
-import { useEquipment } from '@/app/patrimonio/context/equipment-provider';
-import { EQUIPMENT_STATUS_LABEL } from '@/app/patrimonio/lib/equipment-status';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
+import { useEquipmentList } from '@/features/patrimonio/hooks/use-equipment';
+import { useEventsList, useCreateEvent, useDeleteEvent } from '@/features/patrimonio/hooks/use-events';
+import { EQUIPMENT_STATUS_LABEL } from '@/features/patrimonio/domain/equipment-status';
+import { Badge } from '@/shared/ui/badge';
+import { Button } from '@/shared/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/card';
+import { Checkbox } from '@/shared/ui/checkbox';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { useToast } from '@/components/ui/use-toast';
+} from '@/shared/ui/dialog';
+import { Input } from '@/shared/ui/input';
+import { Label } from '@/shared/ui/label';
+import { Textarea } from '@/shared/ui/textarea';
+import { useToast } from '@/shared/ui/use-toast';
 
 interface EventFormState {
   name: string;
@@ -29,7 +30,10 @@ interface EventFormState {
 }
 
 export function EventsContent() {
-  const { equipment, events, addEvent, deleteEvent, getEquipmentById } = useEquipment();
+  const { data: equipment = [], isLoading: isLoadingEquipment } = useEquipmentList();
+  const { data: events = [], isLoading: isLoadingEvents } = useEventsList();
+  const createEventMutation = useCreateEvent();
+  const deleteEventMutation = useDeleteEvent();
   const { toast } = useToast();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [formData, setFormData] = useState<EventFormState>(() => ({
@@ -44,6 +48,29 @@ export function EventsContent() {
     () => [...events].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()),
     [events]
   );
+
+  if (isLoadingEquipment || isLoadingEvents) {
+    return (
+      <div className="space-y-6">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div>
+            <div className="h-9 w-48 animate-pulse rounded bg-muted" />
+            <div className="mt-2 h-5 w-64 animate-pulse rounded bg-muted/70" />
+          </div>
+          <div className="h-10 w-32 animate-pulse rounded bg-muted" />
+        </div>
+        <Card>
+          <CardContent className="py-12">
+            <div className="space-y-3">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="h-32 animate-pulse rounded bg-muted" />
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   const handleToggleEquipment = (id: string) => {
     setSelectedEquipment((prev) => {
@@ -69,31 +96,53 @@ export function EventsContent() {
       return;
     }
 
-    addEvent({
-      ...formData,
+    createEventMutation.mutate({
+      name: formData.name,
+      date: formData.date,
+      location: formData.location,
+      notes: formData.notes || undefined,
       equipmentIds: Array.from(selectedEquipment),
-    });
+    }, {
+      onSuccess: () => {
+        toast({
+          title: 'Evento criado',
+          description: `${selectedEquipment.size} equipamento(s) adicionados.`,
+        });
 
-    toast({
-      title: 'Evento criado',
-      description: `${selectedEquipment.size} equipamento(s) adicionados.`,
+        setFormData({
+          name: '',
+          date: new Date().toISOString().split('T')[0] ?? '',
+          location: '',
+          notes: '',
+        });
+        setSelectedEquipment(new Set());
+        setIsDialogOpen(false);
+      },
+      onError: (error) => {
+        toast({
+          title: 'Erro ao criar evento',
+          description: error.message,
+          variant: 'destructive',
+        });
+      },
     });
-
-    setFormData({
-      name: '',
-      date: new Date().toISOString().split('T')[0] ?? '',
-      location: '',
-      notes: '',
-    });
-    setSelectedEquipment(new Set());
-    setIsDialogOpen(false);
   };
 
   const handleDelete = (id: string) => {
-    deleteEvent(id);
-    toast({
-      title: 'Evento excluído',
-      description: 'O evento foi removido do sistema.',
+    deleteEventMutation.mutate(id, {
+      onSuccess: () => {
+        toast({
+          title: 'Evento excluído',
+          description: 'O evento foi removido do sistema.',
+        });
+      },
+      onError: (error) => {
+        toast({
+          title: 'Erro ao excluir',
+          description: error.message,
+          variant: 'destructive',
+        });
+      },
     });
   };
 
@@ -109,7 +158,7 @@ export function EventsContent() {
 
     const rows = current.equipmentIds
       .map((id) => {
-        const item = getEquipmentById(id);
+        const item = equipment.find((eq) => eq.id === id);
         if (!item) {
           return '';
         }
@@ -188,7 +237,7 @@ export function EventsContent() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Eventos</h1>
+          <h1 className="text-3xl font-medium text-foreground">Eventos</h1>
           <p className="text-muted-foreground">Gerencie eventos e equipamentos externos</p>
         </div>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -310,7 +359,7 @@ export function EventsContent() {
               <CardHeader>
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                   <div className="space-y-2">
-                    <CardTitle className="flex flex-wrap items-center gap-2 text-lg font-semibold">
+                    <CardTitle className="flex flex-wrap items-center gap-2 text-lg font-medium">
                       {event.name}
                       <Badge variant="outline">{event.equipmentIds.length} equipamentos</Badge>
                     </CardTitle>
@@ -337,10 +386,10 @@ export function EventsContent() {
                   <p className="mb-4 text-sm text-muted-foreground">{event.notes}</p>
                 ) : null}
                 <div className="space-y-2">
-                  <p className="text-xs font-semibold uppercase text-muted-foreground">Equipamentos</p>
+                  <p className="text-xs font-medium uppercase text-muted-foreground">Equipamentos</p>
                   <div className="flex flex-wrap gap-2">
                     {event.equipmentIds.map((id) => {
-                      const item = getEquipmentById(id);
+                      const item = equipment.find((eq) => eq.id === id);
                       if (!item) {
                         return null;
                       }
@@ -365,3 +414,6 @@ export function EventsContent() {
 function Field({ children }: { children: ReactNode }) {
   return <div className="space-y-2">{children}</div>;
 }
+
+
+

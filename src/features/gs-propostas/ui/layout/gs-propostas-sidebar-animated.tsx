@@ -1,7 +1,7 @@
 "use client";
 
-import { cn } from "@/lib/utils";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/shared/lib/utils";
+import { ScrollArea } from "@/shared/ui/scroll-area";
 import { motion } from "framer-motion";
 import {
   Briefcase,
@@ -25,8 +25,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useMemo, memo, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
+import { Button } from "@/shared/ui/button";
+import { Separator } from "@/shared/ui/separator";
 import { useTheme } from "next-themes";
 
 const sidebarVariants = {
@@ -97,11 +97,11 @@ const NavigationLink = memo(({
       sidebarBackgroundRingOffsetClass,
       isActive
         ? cn(
-          "border-l-4 font-semibold text-foreground shadow-sm pl-2 pr-3",
+          "border-l-4 font-medium text-foreground shadow-sm pl-2 pr-3",
           activeItemBorderColorClass,
           activeItemBackgroundClass
         )
-        : cn("text-gray-400 hover:text-foreground px-3", inactiveItemHoverClass)
+        : cn("hover:text-foreground px-3", inactiveLinkTextClass, inactiveItemHoverClass)
     )}
   >
     <Icon
@@ -147,7 +147,7 @@ const SubNavigationLink = memo(({
           activeItemBorderColorClass,
           activeItemBackgroundClass
         )
-        : cn("text-gray-400 hover:text-foreground", inactiveItemHoverClass)
+        : cn(inactiveLinkTextClass, "hover:text-foreground", inactiveItemHoverClass)
     )}
   >
     <Icon
@@ -167,7 +167,11 @@ export function GsPropostasSidebarAnimated() {
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
-  const { theme, setTheme } = useTheme();
+  const { theme, resolvedTheme, setTheme } = useTheme();
+  const themeMode = resolvedTheme ?? theme;
+  const logoSrc = mounted && themeMode === "dark"
+    ? "/images/gs-logo-2.svg"
+    : "/images/SVG/gs-logo.svg";
 
   useEffect(() => {
     setMounted(true);
@@ -201,7 +205,7 @@ export function GsPropostasSidebarAnimated() {
       onMouseLeave={() => setIsCollapsed(true)}
     >
       <motion.div
-        className={`relative z-40 flex text-muted-foreground h-full shrink-0 flex-col border-r transition-all`}
+        className={cn("relative z-40 flex h-full shrink-0 flex-col border-r transition-all", sidebarTextClass)}
         variants={contentVariants}
       >
         <motion.ul variants={staggerVariants} className="flex h-full flex-col">
@@ -211,8 +215,8 @@ export function GsPropostasSidebarAnimated() {
               <div className="mt-[1.5px] flex w-full items-center gap-2 px-2 overflow-hidden">
                 <div className="relative h-8 w-7 shrink-0">
                   <Image
-                    src="/images/gs-logo-2.svg"
-                    alt="GS Produções"
+                    src={logoSrc}
+                    alt="GS Producoes"
                     fill
                     className="object-contain"
                   />
@@ -250,10 +254,10 @@ export function GsPropostasSidebarAnimated() {
                     {/* Cadastro */}
                     <div className="space-y-1" role="group" aria-label="Menu de cadastro">
                       <div className="flex h-8 w-full flex-row items-center px-3 py-2">
-                        <FileText className="h-4 w-4 text-gray-400" aria-hidden="true" />
+                        <FileText className={cn("h-4 w-4", sectionIconClass)} aria-hidden="true" />
                         <motion.li variants={variants}>
                           {!isCollapsed && (
-                            <p className="ml-2 text-xs uppercase tracking-wider text-gray-400 font-semibold">
+                            <p className={cn("ml-2 text-xs uppercase tracking-wider font-medium", sectionLabelClass)}>
                               Cadastro
                             </p>
                           )}
@@ -313,10 +317,10 @@ export function GsPropostasSidebarAnimated() {
                     {/* Propostas */}
                     <div className="space-y-1" role="group" aria-label="Menu de propostas">
                       <div className="flex h-8 w-full flex-row items-center px-3 py-2">
-                        <Briefcase className="h-4 w-4 text-gray-400" aria-hidden="true" />
+                        <Briefcase className={cn("h-4 w-4", sectionIconClass)} aria-hidden="true" />
                         <motion.li variants={variants}>
                           {!isCollapsed && (
-                            <p className="ml-2 text-xs uppercase tracking-wider text-gray-400 font-semibold">
+                            <p className={cn("ml-2 text-xs uppercase tracking-wider font-medium", sectionLabelClass)}>
                               Propostas
                             </p>
                           )}
@@ -401,11 +405,19 @@ export function GsPropostasSidebarAnimated() {
 }
 
 // Design tokens para cores da sidebar - seguindo padrão das sidebars Patrimônio e Drive QR
-const sidebarBackgroundClass = 'bg-[hsl(222.2_47.4%_13%)]';
-const sidebarHeaderGradientClass = 'bg-[radial-gradient(circle_at_top,_rgba(120,40,255,0.22),_transparent_65%)]';
-const activeItemBackgroundClass = 'bg-[hsla(263,70%,52%,0.18)]';
-const activeItemBorderColorClass = 'border-l-[hsl(263_70%_52%)]';
-const inactiveItemHoverClass = 'hover:bg-[hsla(263,70%,52%,0.12)]';
-const activeIconColorClass = 'text-[hsl(263_70%_60%)]';
-const inactiveIconColorClass = 'text-muted-foreground';
-const sidebarBackgroundRingOffsetClass = 'focus-visible:ring-offset-[hsl(222.2_47.4%_13%)]';
+const sidebarBackgroundClass = 'bg-surface-base dark:bg-background';
+const sidebarHeaderGradientClass = 'bg-[radial-gradient(circle_at_top,_rgba(100,34,242,0.16),_rgba(226,232,255,0.6)_60%,_transparent_80%)] dark:bg-[radial-gradient(circle_at_top,_rgba(100,34,242,0.22),_transparent_65%)]';
+const activeItemBackgroundClass = 'bg-accent/70 dark:bg-[hsla(263,70%,52%,0.18)]';
+const activeItemBorderColorClass = 'border-l-primary dark:border-l-[hsl(263_70%_52%)]';
+const inactiveItemHoverClass = 'hover:bg-surface-elevated dark:hover:bg-[hsla(263,70%,52%,0.12)]';
+const activeIconColorClass = 'text-primary dark:text-[hsl(263_70%_60%)]';
+const inactiveIconColorClass = 'text-muted-foreground dark:text-muted-foreground';
+const inactiveLinkTextClass = 'text-foreground/80 dark:text-muted-foreground';
+const sectionLabelClass = 'text-muted-foreground dark:text-muted-foreground';
+const sectionIconClass = 'text-muted-foreground dark:text-muted-foreground';
+const sidebarTextClass = 'text-foreground/70 dark:text-muted-foreground';
+const sidebarBackgroundRingOffsetClass = 'focus-visible:ring-offset-[hsl(var(--surface-base))] dark:focus-visible:ring-offset-[hsl(var(--background))]';
+
+
+
+
