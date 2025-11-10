@@ -5,26 +5,26 @@ import * as React from 'react';
 import { cn } from '@/shared/lib/utils';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium transition-colors outline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring/70 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0',
+  'inline-flex items-center justify-center whitespace-nowrap rounded-[12px] text-sm font-medium font-inter transition-all duration-200 outline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring/70 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 active:scale-[0.98]',
   {
     variants: {
       variant: {
         default:
-          'bg-primary text-primary-foreground shadow-sm shadow-black/5 hover:bg-primary/90',
+          'bg-[#6422F2] text-white shadow-light hover:shadow-hover hover:bg-[#6422F2]/90 active:shadow-sm',
         destructive:
-          'bg-destructive text-destructive-foreground shadow-sm shadow-black/5 hover:bg-destructive/90',
+          'bg-[#FF3B30] text-white shadow-light hover:shadow-hover hover:bg-[#FF3B30]/90 active:shadow-sm',
         outline:
-          'border border-input bg-background shadow-sm shadow-black/5 hover:bg-accent hover:text-accent-foreground',
+          'border border-[#D1D1D6] bg-white shadow-light hover:shadow-hover hover:bg-[#F2F2F7] hover:border-[#C7C7CC] active:shadow-sm dark:border-[#48484A] dark:bg-[#1C1C1E] dark:hover:bg-[#2C2C2E]',
         secondary:
-          'bg-secondary text-secondary-foreground shadow-sm shadow-black/5 hover:bg-secondary/80',
-        ghost: 'hover:bg-accent hover:text-accent-foreground',
-        link: 'text-primary underline-offset-4 hover:underline',
+          'bg-[#F2F2F7] text-[#1D1D1F] shadow-light hover:shadow-hover hover:bg-[#E5E5EA] active:shadow-sm dark:bg-[#2C2C2E] dark:text-[#F0EEEF] dark:hover:bg-[#3A3A3C]',
+        ghost: 'hover:bg-[#F2F2F7] hover:text-[#1D1D1F] dark:hover:bg-[#2C2C2E] dark:hover:text-[#F0EEEF]',
+        link: 'text-[#6422F2] underline-offset-4 hover:underline',
       },
       size: {
-        default: 'h-9 px-4 py-2',
-        sm: 'h-8 rounded-lg px-3 text-xs',
-        lg: 'h-10 rounded-lg px-8',
-        icon: 'h-9 w-9',
+        default: 'h-[44px] px-5 py-[10px]',
+        sm: 'h-[36px] rounded-[8px] px-4 py-[6px] text-xs',
+        lg: 'h-[52px] rounded-[16px] px-8 py-[14px] text-base',
+        icon: 'h-[44px] w-[44px] p-0',
       },
     },
     defaultVariants: {
