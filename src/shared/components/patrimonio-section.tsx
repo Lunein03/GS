@@ -50,7 +50,7 @@ export function PatrimonioSection() {
             Controle de Patrimônio
           </h2>
           
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto leading-[1.6] font-inter">
+          <p className="text-foreground/80 text-lg max-w-2xl mx-auto leading-[1.6] font-inter">
             Gerencie, localize e solicite os ativos e equipamentos da empresa de forma rápida e centralizada
           </p>
         </motion.div>
@@ -66,16 +66,16 @@ export function PatrimonioSection() {
               transition={{ duration: 0.5, delay: index * 0.1 }}
               className="group"
             >
-              <div className="h-full p-6 rounded-lg border border-border bg-card shadow-light hover:shadow-hover transition-all duration-300 font-inter focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
-                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/15 transition-colors">
-                  <feature.icon className="w-6 h-6 text-primary" />
+              <div className="h-full p-6 rounded-lg border border-border bg-card backdrop-blur-xl shadow-light hover:shadow-hover transition-all duration-300 font-inter focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                <div className="w-12 h-12 rounded-lg bg-primary flex items-center justify-center mb-4 group-hover:bg-primary/90 transition-colors">
+                  <feature.icon className="w-6 h-6 text-primary-foreground" />
                 </div>
                 
-                <h3 className="text-lg font-semibold mb-3 text-card-foreground leading-tight tracking-[-0.01em] font-inter">
+                <h3 className="text-lg font-semibold mb-3 text-foreground leading-tight tracking-[-0.01em] font-inter">
                   {feature.title}
                 </h3>
                 
-                <p className="text-sm text-muted-foreground leading-relaxed font-inter">
+                <p className="text-sm text-foreground/70 leading-relaxed font-inter">
                   {feature.description}
                 </p>
               </div>
@@ -101,7 +101,7 @@ export function PatrimonioSection() {
             </Button>
           </Link>
           
-          <p className="text-sm text-muted-foreground mt-4 font-inter">
+          <p className="text-sm text-foreground/60 mt-4 font-inter">
             Acesso disponível apenas para colaboradores autorizados
           </p>
         </motion.div>

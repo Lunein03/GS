@@ -82,15 +82,15 @@ export function DriveQrSection() {
                   <feature.icon className="w-6 h-6 text-primary-foreground" />
                 </div>
                 
-                <h3 className="text-lg font-semibold mb-3 text-card-foreground leading-tight tracking-[-0.01em] font-inter">
+                <h3 className="text-lg font-semibold mb-3 text-foreground leading-tight tracking-[-0.01em] font-inter">
                   {feature.title}
                 </h3>
                 
-                <p className="text-sm text-muted-foreground leading-relaxed font-inter mb-3">
+                <p className="text-sm text-foreground/70 leading-relaxed font-inter mb-3">
                   {feature.description}
                 </p>
                 
-                <p className="text-sm font-medium text-primary font-inter">
+                <p className="text-sm font-medium text-foreground font-inter">
                   {feature.highlight}
                 </p>
               </div>
@@ -115,7 +115,7 @@ export function DriveQrSection() {
             </Button>
           </Link>
           
-          <p className="text-sm text-muted-foreground mt-4 font-inter">
+          <p className="text-sm text-foreground/60 mt-4 font-inter">
             Disponível para times de produção e operações. Acesse com seu login corporativo.
           </p>
         </motion.div>
