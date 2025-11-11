@@ -6,7 +6,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict
 
-from app.models.enums import EquipmentStatus
+from app.models.enums import EquipmentStatus, EventStatus
 
 
 class EquipmentBase(BaseModel):
@@ -49,9 +49,11 @@ class EquipmentRead(EquipmentBase):
 
 class EventBase(BaseModel):
     name: str
-    date: datetime
+    start_date: datetime
+    end_date: datetime
     location: str
     notes: Optional[str] = None
+    status: EventStatus = EventStatus.PENDING
 
 
 class EventCreate(EventBase):
@@ -60,9 +62,11 @@ class EventCreate(EventBase):
 
 class EventUpdate(BaseModel):
     name: Optional[str] = None
-    date: Optional[datetime] = None
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
     location: Optional[str] = None
     notes: Optional[str] = None
+    status: Optional[EventStatus] = None
 
 
 class EventRead(EventBase):

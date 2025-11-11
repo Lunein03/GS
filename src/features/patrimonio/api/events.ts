@@ -5,17 +5,20 @@ import type { Event } from '@/features/patrimonio/domain/types/equipment';
 type ApiEvent = {
   id: string;
   name: string;
-  date: string;
+  start_date: string;
+  end_date: string;
   location: string;
   notes?: string | null;
   created_at: string;
   deleted_at?: string | null;
   equipment_ids: string[];
+  status: 'pending' | 'completed';
 };
 
 export type CreateEventInput = {
   name: string;
-  date: string;
+  startDate: string;
+  endDate: string;
   location: string;
   notes?: string;
   equipmentIds?: string[];
@@ -24,9 +27,11 @@ export type CreateEventInput = {
 export type UpdateEventInput = {
   id: string;
   name?: string;
-  date?: string;
+  startDate?: string;
+  endDate?: string;
   location?: string;
   notes?: string;
+  status?: 'pending' | 'completed';
 };
 
 const API_BASE = '/inventory/events';
@@ -47,11 +52,13 @@ const failure = <T>(
 const mapEvent = (input: ApiEvent): Event => ({
   id: input.id,
   name: input.name,
-  date: input.date,
+  startDate: input.start_date,
+  endDate: input.end_date,
   location: input.location,
   notes: input.notes ?? undefined,
   createdAt: input.created_at,
   equipmentIds: input.equipment_ids,
+  status: input.status,
 });
 
 export async function getEvents(): Promise<ActionResponse<{ events: Event[] }>> {
@@ -83,9 +90,11 @@ export async function createEvent(input: CreateEventInput): Promise<ActionRespon
       method: 'POST',
       body: JSON.stringify({
         name: input.name,
-        date: input.date,
+        start_date: input.startDate,
+        end_date: input.endDate,
         location: input.location,
         notes: input.notes ?? null,
+        status: 'pending',
       }),
     });
 
@@ -96,7 +105,12 @@ export async function createEvent(input: CreateEventInput): Promise<ActionRespon
       for (const equipmentId of input.equipmentIds) {
         await addEquipmentToEvent(event.id, equipmentId);
       }
-      event.equipmentIds = input.equipmentIds;
+      
+      // Fetch the updated event to get the correct equipment_ids
+      const updatedEventResult = await getEventById(event.id);
+      if (updatedEventResult.success) {
+        return success(updatedEventResult.data);
+      }
     }
 
     return success(event);
@@ -111,9 +125,11 @@ export async function updateEvent(input: UpdateEventInput): Promise<ActionRespon
     const payload: Record<string, unknown> = {};
 
     if (input.name !== undefined) payload.name = input.name;
-    if (input.date !== undefined) payload.date = input.date;
+    if (input.startDate !== undefined) payload.start_date = input.startDate;
+    if (input.endDate !== undefined) payload.end_date = input.endDate;
     if (input.location !== undefined) payload.location = input.location;
     if (input.notes !== undefined) payload.notes = input.notes;
+    if (input.status !== undefined) payload.status = input.status;
 
     const response = await fetchApi<ApiEvent>(`${API_BASE}/${input.id}`, {
       method: 'PUT',
@@ -171,6 +187,22 @@ export async function removeEquipmentFromEvent(
   } catch (error) {
     const message =
       error instanceof Error ? error.message : 'Erro ao remover equipamento do evento.';
+    return failure(message);
+  }
+}
+
+export async function updateEventStatus(
+  eventId: string,
+  status: 'pending' | 'completed',
+): Promise<ActionResponse<Event>> {
+  try {
+    const response = await fetchApi<ApiEvent>(`${API_BASE}/${eventId}`, {
+      method: 'PUT',
+      body: JSON.stringify({ status }),
+    });
+    return success(mapEvent(response));
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Erro ao atualizar status do evento.';
     return failure(message);
   }
 }

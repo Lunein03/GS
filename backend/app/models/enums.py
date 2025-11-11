@@ -56,3 +56,8 @@ class EquipmentStatus(str, Enum):
     IN_USE = "in-use"
     MAINTENANCE = "maintenance"
     RETIRED = "retired"
+
+
+class EventStatus(str, Enum):
+    PENDING = "pending"
+    COMPLETED = "completed"

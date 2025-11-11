@@ -148,3 +148,27 @@ export function useRefreshEvents() {
     await queryClient.invalidateQueries({ queryKey: ['patrimonio', 'events'] });
   }, [queryClient]);
 }
+
+export function useUpdateEventStatus(
+  options?: UseMutationOptions<Event, Error, { eventId: string; status: 'pending' | 'completed' }>,
+) {
+  const queryClient = useQueryClient();
+
+  return useMutation<Event, Error, { eventId: string; status: 'pending' | 'completed' }>({
+    ...options,
+    mutationFn: async ({ eventId, status }) => {
+      const { updateEventStatus } = await import('@/features/patrimonio/api/events');
+      const result = await updateEventStatus(eventId, status);
+      if (!result.success) {
+        throw new Error(result.error.message);
+      }
+      return result.data;
+    },
+    onSuccess: async (event, variables, context) => {
+      await queryClient.invalidateQueries({ queryKey: ['patrimonio', 'events'] });
+      if (options?.onSuccess) {
+        options.onSuccess(event, variables, context);
+      }
+    },
+  });
+}

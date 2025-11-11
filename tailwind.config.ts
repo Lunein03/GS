@@ -16,42 +16,23 @@ const config: Config = {
         inter: ['var(--font-inter)', 'system-ui', 'sans-serif'],
       },
       colors: {
-        // Brand Colors - Paleta Oficial
-        primary: {
-          DEFAULT: '#6422F2', // Roxo Primário (corrigido)
-          light: '#8952F5',
-          dark: '#4C18B4',
-          foreground: '#FFFFFF',
-        },
-        secondary: {
-          DEFAULT: '#2A2451', // Roxo Secundário (substituiu ciano)
-          light: '#3D3570',
-          dark: '#1F1A3D',
-          foreground: '#FFFFFF',
-        },
-        // Paleta Oficial Adicional
-        brand: {
-          lightBg: '#F0EEEF',    // Branco Suave (Light Mode Background)
-          darkBg: '#1D1D1F',     // Preto Neutro (Dark Mode Background)
-          grayUI: '#DADADA',     // Cinza UI (Bordas e Divisores)
-          purple: '#6422F2',     // Roxo Primário
-          purpleDark: '#2A2451', // Roxo Secundário
-          white: '#FFFFFF',      // Branco Puro
-        },
-        // Logo Color
-        logo: {
-          text: '#000000',
-        },
-        // UI Colors
+        // Apple Neutral Design System
+        border: 'hsl(var(--border))',
+        input: 'hsl(var(--input))',
+        ring: 'hsl(var(--ring))',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
-        card: {
-          DEFAULT: 'hsl(var(--card))',
-          foreground: 'hsl(var(--card-foreground))',
+        primary: {
+          DEFAULT: 'hsl(var(--primary))',
+          foreground: 'hsl(var(--primary-foreground))',
         },
-        popover: {
-          DEFAULT: 'hsl(var(--popover))',
-          foreground: 'hsl(var(--popover-foreground))',
+        secondary: {
+          DEFAULT: 'hsl(var(--secondary))',
+          foreground: 'hsl(var(--secondary-foreground))',
+        },
+        destructive: {
+          DEFAULT: 'hsl(var(--destructive))',
+          foreground: 'hsl(var(--destructive-foreground))',
         },
         muted: {
           DEFAULT: 'hsl(var(--muted))',
@@ -61,26 +42,37 @@ const config: Config = {
           DEFAULT: 'hsl(var(--accent))',
           foreground: 'hsl(var(--accent-foreground))',
         },
-        destructive: {
-          DEFAULT: 'hsl(var(--destructive))',
-          foreground: 'hsl(var(--destructive-foreground))',
+        popover: {
+          DEFAULT: 'hsl(var(--popover))',
+          foreground: 'hsl(var(--popover-foreground))',
         },
-        border: 'hsl(var(--border))',
-        input: 'hsl(var(--input))',
-        ring: 'hsl(var(--ring))',
+        card: {
+          DEFAULT: 'hsl(var(--card))',
+          foreground: 'hsl(var(--card-foreground))',
+        },
+        // Apple Status Colors
+        success: {
+          DEFAULT: 'hsl(var(--success))',
+          foreground: 'hsl(var(--success-foreground))',
+        },
+        warning: {
+          DEFAULT: 'hsl(var(--warning))',
+          foreground: 'hsl(var(--warning-foreground))',
+        },
+        error: {
+          DEFAULT: 'hsl(var(--error))',
+          foreground: 'hsl(var(--error-foreground))',
+        },
+        // Purple accent for decorative icons only
+        purple: {
+          DEFAULT: 'hsl(var(--icon-purple))',
+        },
         chart: {
           '1': 'hsl(var(--chart-1))',
           '2': 'hsl(var(--chart-2))',
           '3': 'hsl(var(--chart-3))',
           '4': 'hsl(var(--chart-4))',
           '5': 'hsl(var(--chart-5))',
-        },
-        surface: {
-          DEFAULT: 'hsl(var(--surface-base))',
-          base: 'hsl(var(--surface-base))',
-          elevated: 'hsl(var(--surface-elevated))',
-          muted: 'hsl(var(--surface-muted))',
-          inset: 'hsl(var(--surface-inset))',
         },
       },
       backgroundImage: {
@@ -94,9 +86,9 @@ const config: Config = {
         sm: 'calc(var(--radius) - 4px)',
       },
       boxShadow: {
-        'light': 'var(--shadow-light)',
-        'dark': 'var(--shadow-dark)',
-        'hover': 'var(--shadow-hover)',
+        'sm': '0 1px 2px rgba(0,0,0,0.04)',
+        'md': '0 2px 8px rgba(0,0,0,0.08)',
+        'lg': '0 4px 16px rgba(0,0,0,0.12)',
       },
       keyframes: {
         'accordion-down': {

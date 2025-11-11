@@ -1,11 +1,12 @@
 'use client';
 
 import { useMemo, useState, type ReactNode } from 'react';
-import { Calendar, Plus, Printer, Trash2 } from 'lucide-react';
+import { Calendar, CheckCircle, Plus, Printer, Trash2 } from 'lucide-react';
 
 import { useEquipmentList } from '@/features/patrimonio/hooks/use-equipment';
 import { useEventsList, useCreateEvent, useDeleteEvent } from '@/features/patrimonio/hooks/use-events';
 import { EQUIPMENT_STATUS_LABEL } from '@/features/patrimonio/domain/equipment-status';
+import type { Event as InventoryEvent } from '@/features/patrimonio/domain/types/equipment';
 import { Badge } from '@/shared/ui/badge';
 import { Button } from '@/shared/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/card';
@@ -21,10 +22,12 @@ import { Input } from '@/shared/ui/input';
 import { Label } from '@/shared/ui/label';
 import { Textarea } from '@/shared/ui/textarea';
 import { useToast } from '@/shared/ui/use-toast';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/ui/tabs';
 
 interface EventFormState {
   name: string;
-  date: string;
+  startDate: string;
+  endDate: string;
   location: string;
   notes: string;
 }
@@ -38,16 +41,32 @@ export function EventsContent() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [formData, setFormData] = useState<EventFormState>(() => ({
     name: '',
-    date: new Date().toISOString().split('T')[0] ?? '',
+    startDate: new Date().toISOString().split('T')[0] ?? '',
+    endDate: new Date().toISOString().split('T')[0] ?? '',
     location: '',
     notes: '',
   }));
   const [selectedEquipment, setSelectedEquipment] = useState<Set<string>>(new Set());
+  const { activeEvents, completedEvents } = useMemo(() => {
+    const active: InventoryEvent[] = [];
+    const completed: InventoryEvent[] = [];
 
-  const sortedEvents = useMemo(
-    () => [...events].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()),
-    [events]
-  );
+    const sortByStartDateDesc = (list: InventoryEvent[]) =>
+      list.sort((first, second) => new Date(second.startDate).getTime() - new Date(first.startDate).getTime());
+
+    events.forEach((currentEvent) => {
+      if (currentEvent.status === 'completed') {
+        completed.push(currentEvent);
+        return;
+      }
+      active.push(currentEvent);
+    });
+
+    return {
+      activeEvents: sortByStartDateDesc(active),
+      completedEvents: sortByStartDateDesc(completed),
+    };
+  }, [events]);
 
   if (isLoadingEquipment || isLoadingEvents) {
     return (
@@ -98,7 +117,8 @@ export function EventsContent() {
 
     createEventMutation.mutate({
       name: formData.name,
-      date: formData.date,
+      startDate: formData.startDate,
+      endDate: formData.endDate,
       location: formData.location,
       notes: formData.notes || undefined,
       equipmentIds: Array.from(selectedEquipment),
@@ -111,7 +131,8 @@ export function EventsContent() {
 
         setFormData({
           name: '',
-          date: new Date().toISOString().split('T')[0] ?? '',
+          startDate: new Date().toISOString().split('T')[0] ?? '',
+          endDate: new Date().toISOString().split('T')[0] ?? '',
           location: '',
           notes: '',
         });
@@ -201,7 +222,7 @@ export function EventsContent() {
         <body>
           <h1>Lista de equipamentos - ${current.name}</h1>
           <div class="info">
-            <p class="info-item"><strong>Data do evento:</strong> ${new Date(current.date).toLocaleDateString('pt-BR')}</p>
+            <p class="info-item"><strong>Período:</strong> ${new Date(current.startDate).toLocaleDateString('pt-BR')} até ${new Date(current.endDate).toLocaleDateString('pt-BR')}</p>
             <p class="info-item"><strong>Local:</strong> ${current.location}</p>
             ${current.notes ? `<p class="info-item"><strong>Observações:</strong> ${current.notes}</p>` : ''}
             <p class="info-item"><strong>Total de equipamentos:</strong> ${current.equipmentIds.length}</p>
@@ -233,6 +254,98 @@ export function EventsContent() {
     printWindow.print();
   };
 
+  const renderEventList = (
+    eventList: InventoryEvent[],
+    emptyMessage: string,
+    emptyIcon: ReactNode,
+  ): ReactNode => {
+    if (eventList.length === 0) {
+      return (
+        <Card>
+          <CardContent className="flex flex-col items-center gap-4 py-12 text-center text-muted-foreground">
+            {emptyIcon}
+            <span>{emptyMessage}</span>
+          </CardContent>
+        </Card>
+      );
+    }
+
+    return (
+      <div className="space-y-4">
+        {eventList.map((eventItem) => (
+          <Card key={eventItem.id}>
+            <CardHeader>
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                <div className="space-y-2">
+                  <CardTitle className="flex flex-wrap items-center gap-2 text-lg font-medium">
+                    {eventItem.name}
+                    <Badge variant="outline">{eventItem.equipmentIds.length} equipamentos</Badge>
+                  </CardTitle>
+                  <div className="space-y-1 text-sm text-muted-foreground">
+                    <p className="flex items-center gap-2">
+                      <Calendar className="h-4 w-4" aria-hidden="true" />
+                      {new Date(eventItem.startDate).toLocaleDateString('pt-BR')} até{' '}
+                      {new Date(eventItem.endDate).toLocaleDateString('pt-BR')}
+                    </p>
+                    <p>{eventItem.location}</p>
+                    {eventItem.status === 'completed' ? (
+                      <p className="flex items-center gap-1 text-green-600">
+                        <CheckCircle className="h-3 w-3" aria-hidden="true" />
+                        Concluído
+                      </p>
+                    ) : null}
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => handlePrint(eventItem.id)}
+                    title="Imprimir lista"
+                  >
+                    <Printer className="h-4 w-4" aria-hidden="true" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleDelete(eventItem.id)}
+                    title="Excluir evento"
+                  >
+                    <Trash2 className="h-4 w-4 text-destructive" aria-hidden="true" />
+                  </Button>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {eventItem.notes ? (
+                <p className="mb-4 text-sm text-muted-foreground">{eventItem.notes}</p>
+              ) : null}
+              <div className="space-y-2">
+                <p className="text-xs font-medium uppercase text-muted-foreground">Equipamentos</p>
+                <div className="flex flex-wrap gap-2">
+                  {eventItem.equipmentIds.map((equipmentId) => {
+                    const item = equipment.find((equipmentItem) => equipmentItem.id === equipmentId);
+                    if (!item) {
+                      return null;
+                    }
+
+                    return (
+                      <Badge key={equipmentId} variant="secondary">
+                        {item.code} — {item.name}
+                      </Badge>
+                    );
+                  })}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    );
+  };
+
+  const defaultTab = activeEvents.length > 0 ? 'ativos' : 'concluidos';
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -252,25 +365,37 @@ export function EventsContent() {
               <DialogTitle>Criar novo evento</DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-6">
+              <Field>
+                <Label htmlFor="event-name">Nome do evento *</Label>
+                <Input
+                  id="event-name"
+                  required
+                  value={formData.name}
+                  onChange={(event) => setFormData((prev) => ({ ...prev, name: event.target.value }))}
+                  placeholder="Ex: Feira de Tecnologia 2025"
+                />
+              </Field>
+
               <div className="grid gap-4 md:grid-cols-2">
                 <Field>
-                  <Label htmlFor="event-name">Nome do evento *</Label>
+                  <Label htmlFor="event-start-date">Data de início *</Label>
                   <Input
-                    id="event-name"
+                    id="event-start-date"
+                    type="date"
                     required
-                    value={formData.name}
-                    onChange={(event) => setFormData((prev) => ({ ...prev, name: event.target.value }))}
-                    placeholder="Ex: Feira de Tecnologia 2025"
+                    value={formData.startDate}
+                    onChange={(event) => setFormData((prev) => ({ ...prev, startDate: event.target.value }))}
                   />
                 </Field>
                 <Field>
-                  <Label htmlFor="event-date">Data *</Label>
+                  <Label htmlFor="event-end-date">Data de término *</Label>
                   <Input
-                    id="event-date"
+                    id="event-end-date"
                     type="date"
                     required
-                    value={formData.date}
-                    onChange={(event) => setFormData((prev) => ({ ...prev, date: event.target.value }))}
+                    value={formData.endDate}
+                    min={formData.startDate}
+                    onChange={(event) => setFormData((prev) => ({ ...prev, endDate: event.target.value }))}
                   />
                 </Field>
               </div>
@@ -345,68 +470,26 @@ export function EventsContent() {
         </Dialog>
       </div>
 
-      {sortedEvents.length === 0 ? (
-        <Card>
-          <CardContent className="py-12 text-center text-muted-foreground">
-            <Calendar className="mx-auto mb-4 h-12 w-12 text-muted-foreground" aria-hidden="true" />
-            Nenhum evento cadastrado
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="space-y-4">
-          {sortedEvents.map((event) => (
-            <Card key={event.id}>
-              <CardHeader>
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                  <div className="space-y-2">
-                    <CardTitle className="flex flex-wrap items-center gap-2 text-lg font-medium">
-                      {event.name}
-                      <Badge variant="outline">{event.equipmentIds.length} equipamentos</Badge>
-                    </CardTitle>
-                    <div className="space-y-1 text-sm text-muted-foreground">
-                      <p className="flex items-center gap-2">
-                        <Calendar className="h-4 w-4" aria-hidden="true" />
-                        {new Date(event.date).toLocaleDateString('pt-BR')}
-                      </p>
-                      <p>{event.location}</p>
-                    </div>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button variant="outline" size="icon" onClick={() => handlePrint(event.id)} title="Imprimir lista">
-                      <Printer className="h-4 w-4" aria-hidden="true" />
-                    </Button>
-                    <Button variant="ghost" size="icon" onClick={() => handleDelete(event.id)} title="Excluir evento">
-                      <Trash2 className="h-4 w-4 text-destructive" aria-hidden="true" />
-                    </Button>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                {event.notes ? (
-                  <p className="mb-4 text-sm text-muted-foreground">{event.notes}</p>
-                ) : null}
-                <div className="space-y-2">
-                  <p className="text-xs font-medium uppercase text-muted-foreground">Equipamentos</p>
-                  <div className="flex flex-wrap gap-2">
-                    {event.equipmentIds.map((id) => {
-                      const item = equipment.find((eq) => eq.id === id);
-                      if (!item) {
-                        return null;
-                      }
-
-                      return (
-                        <Badge key={id} variant="secondary">
-                          {item.code} — {item.name}
-                        </Badge>
-                      );
-                    })}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
+      <Tabs defaultValue={defaultTab} className="space-y-4">
+        <TabsList className="w-full sm:w-auto">
+          <TabsTrigger value="ativos">Eventos ativos</TabsTrigger>
+          <TabsTrigger value="concluidos">Eventos concluídos</TabsTrigger>
+        </TabsList>
+        <TabsContent value="ativos">
+          {renderEventList(
+            activeEvents,
+            'Nenhum evento em andamento',
+            <Calendar className="h-12 w-12 text-muted-foreground" aria-hidden="true" />,
+          )}
+        </TabsContent>
+        <TabsContent value="concluidos">
+          {renderEventList(
+            completedEvents,
+            'Nenhum evento concluído',
+            <CheckCircle className="h-12 w-12 text-muted-foreground" aria-hidden="true" />,
+          )}
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

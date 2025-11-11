@@ -5,7 +5,7 @@ import sqlalchemy as sa
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
-from app.models.enums import EquipmentStatus
+from app.models.enums import EquipmentStatus, EventStatus
 
 from .crm import UUID_PK, default_uuid, enum_column
 
@@ -73,9 +73,16 @@ class Event(Base):
         server_default=sa.text("gen_random_uuid()"),
     )
     name: Mapped[str] = mapped_column("name", sa.Text, nullable=False)
-    date: Mapped[sa.DateTime] = mapped_column("date", sa.DateTime(timezone=True), nullable=False)
+    start_date: Mapped[sa.DateTime] = mapped_column("start_date", sa.DateTime(timezone=True), nullable=False)
+    end_date: Mapped[sa.DateTime] = mapped_column("end_date", sa.DateTime(timezone=True), nullable=False)
     location: Mapped[str] = mapped_column("location", sa.Text, nullable=False)
     notes: Mapped[str | None] = mapped_column("notes", sa.Text)
+    status: Mapped[EventStatus] = mapped_column(
+        "status",
+        enum_column(EventStatus, "event_status"),
+        nullable=False,
+        server_default=sa.text(f"'{EventStatus.PENDING.value}'"),
+    )
     created_at: Mapped[sa.DateTime] = mapped_column(
         "created_at",
         sa.DateTime(timezone=True),

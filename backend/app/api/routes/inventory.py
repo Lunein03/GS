@@ -26,9 +26,11 @@ def serialize_event(event: Event) -> EventRead:
     return EventRead(
         id=event.id,
         name=event.name,
-        date=event.date,
+        start_date=event.start_date,
+        end_date=event.end_date,
         location=event.location,
         notes=event.notes,
+        status=event.status,
         created_at=event.created_at,
         deleted_at=event.deleted_at,
         equipment_ids=[equipment.id for equipment in event.equipment],
@@ -104,7 +106,7 @@ def delete_equipment(equipment_id: UUID, db: Session = Depends(get_db)) -> Respo
 
 @router.get("/events", response_model=list[EventRead])
 def list_events(db: Session = Depends(get_db)) -> list[EventRead]:
-    events = db.query(Event).order_by(Event.date.desc()).all()
+    events = db.query(Event).order_by(Event.start_date.desc()).all()
     return [serialize_event(event) for event in events]
 
 

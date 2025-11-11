@@ -4,10 +4,11 @@ import Link from 'next/link';
 import { Calendar, CheckCircle, Package, Wrench } from 'lucide-react';
 
 import { useEquipmentList } from '@/features/patrimonio/hooks/use-equipment';
-import { useEventsList } from '@/features/patrimonio/hooks/use-events';
+import { useEventsList, useUpdateEventStatus } from '@/features/patrimonio/hooks/use-events';
 import { EQUIPMENT_STATUS_LABEL, EQUIPMENT_STATUS_STYLES } from '@/features/patrimonio/domain/equipment-status';
 import { Button } from '@/shared/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/card';
+import { useToast } from '@/shared/ui/use-toast';
 
 // Função auxiliar local para combinar classes
 function cn(...classes: (string | undefined | null | false)[]): string {
@@ -17,6 +18,29 @@ function cn(...classes: (string | undefined | null | false)[]): string {
 export function DashboardContent() {
   const { data: equipment = [], isLoading: isLoadingEquipment } = useEquipmentList();
   const { data: events = [], isLoading: isLoadingEvents } = useEventsList();
+  const updateStatusMutation = useUpdateEventStatus();
+  const { toast } = useToast();
+
+  const handleCompleteEvent = (eventId: string, eventName: string) => {
+    updateStatusMutation.mutate(
+      { eventId, status: 'completed' },
+      {
+        onSuccess: () => {
+          toast({
+            title: 'Evento concluído',
+            description: `${eventName} foi marcado como concluído e os equipamentos foram liberados.`,
+          });
+        },
+        onError: (error) => {
+          toast({
+            title: 'Erro ao concluir evento',
+            description: error.message,
+            variant: 'destructive',
+          });
+        },
+      }
+    );
+  };
 
   if (isLoadingEquipment || isLoadingEvents) {
     return (
@@ -47,9 +71,19 @@ export function DashboardContent() {
   };
 
   const recentEquipment = [...equipment].slice(-5).reverse();
-  const upcomingEvents = events
-    .filter((event) => new Date(event.date) >= new Date())
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+  
+  // Filter events: show ongoing events (between startDate and endDate, status pending)
+  const today = new Date();
+  const todayDateString = today.toISOString().split('T')[0]; // YYYY-MM-DD
+  
+  const ongoingEvents = events
+    .filter((event) => {
+      if (event.status === 'completed') return false;
+      const startDateString = event.startDate.split('T')[0];
+      const endDateString = event.endDate.split('T')[0];
+      return startDateString <= todayDateString && endDateString >= todayDateString;
+    })
+    .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
     .slice(0, 3);
 
   return (
@@ -129,34 +163,46 @@ export function DashboardContent() {
         <Card className="order-2">
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center justify-between text-base font-medium sm:text-lg">
-              Próximos eventos
+              Eventos em andamento
               <Button asChild variant="ghost" size="sm">
                 <Link href="/patrimonio/eventos">Ver todos</Link>
               </Button>
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-0">
-            {upcomingEvents.length === 0 ? (
+            {ongoingEvents.length === 0 ? (
               <p className="py-8 text-center text-sm text-muted-foreground">
-                Nenhum evento programado
+                Nenhum evento em andamento
               </p>
             ) : (
               <div className="space-y-2 sm:space-y-3">
-                {upcomingEvents.map((event) => (
+                {ongoingEvents.map((event) => (
                   <article
                     key={event.id}
                     className="flex items-start gap-3 rounded-lg bg-muted/50 p-3 transition-colors hover:bg-muted sm:p-4"
                   >
-                    <Calendar className="mt-1 h-5 w-5 text-primary" aria-hidden="true" />
+                    <Calendar className="mt-1 h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium text-foreground">{event.name}</p>
                       <p className="text-xs text-muted-foreground">
-                        {new Date(event.date).toLocaleDateString('pt-BR')} • {event.location}
+                        {new Date(event.startDate).toLocaleDateString('pt-BR')} até{' '}
+                        {new Date(event.endDate).toLocaleDateString('pt-BR')}
                       </p>
+                      <p className="text-xs text-muted-foreground">{event.location}</p>
                       <p className="mt-1 text-xs text-muted-foreground">
                         {event.equipmentIds.length} equipamento(s)
                       </p>
                     </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleCompleteEvent(event.id, event.name)}
+                      disabled={updateStatusMutation.isPending}
+                      className="shrink-0"
+                    >
+                      <CheckCircle className="mr-1 h-3 w-3" />
+                      Concluir
+                    </Button>
                   </article>
                 ))}
               </div>

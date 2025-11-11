@@ -17,11 +17,13 @@ export interface Equipment {
 export interface Event {
   id: string;
   name: string;
-  date: string;
+  startDate: string;
+  endDate: string;
   location: string;
   equipmentIds: string[];
   createdAt: string;
   notes?: string;
+  status: 'pending' | 'completed';
 }
 
 export type EquipmentFormData = Omit<Equipment, 'id' | 'code' | 'createdAt' | 'updatedAt'>;
