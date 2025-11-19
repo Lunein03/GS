@@ -12,6 +12,10 @@ type ApiEvent = {
   created_at: string;
   deleted_at?: string | null;
   equipment_ids: string[];
+  equipment_allocations: {
+    equipment_id: string;
+    quantity: number;
+  }[];
   status: 'pending' | 'completed';
 };
 
@@ -21,7 +25,7 @@ export type CreateEventInput = {
   endDate: string;
   location: string;
   notes?: string;
-  equipmentIds?: string[];
+  equipmentAllocations?: { equipmentId: string; quantity: number }[];
 };
 
 export type UpdateEventInput = {
@@ -57,7 +61,14 @@ const mapEvent = (input: ApiEvent): Event => ({
   location: input.location,
   notes: input.notes ?? undefined,
   createdAt: input.created_at,
-  equipmentIds: input.equipment_ids,
+  equipmentIds:
+    input.equipment_ids.length > 0
+      ? input.equipment_ids
+      : input.equipment_allocations.map((allocation) => allocation.equipment_id),
+  equipmentAllocations: input.equipment_allocations.map((allocation) => ({
+    equipmentId: allocation.equipment_id,
+    quantity: allocation.quantity,
+  })),
   status: input.status,
 });
 
@@ -95,25 +106,14 @@ export async function createEvent(input: CreateEventInput): Promise<ActionRespon
         location: input.location,
         notes: input.notes ?? null,
         status: 'pending',
+        equipment_allocations: input.equipmentAllocations?.map((allocation) => ({
+          equipment_id: allocation.equipmentId,
+          quantity: allocation.quantity,
+        })),
       }),
     });
 
-    const event = mapEvent(response);
-
-    // Add equipment associations if provided
-    if (input.equipmentIds && input.equipmentIds.length > 0) {
-      for (const equipmentId of input.equipmentIds) {
-        await addEquipmentToEvent(event.id, equipmentId);
-      }
-      
-      // Fetch the updated event to get the correct equipment_ids
-      const updatedEventResult = await getEventById(event.id);
-      if (updatedEventResult.success) {
-        return success(updatedEventResult.data);
-      }
-    }
-
-    return success(event);
+    return success(mapEvent(response));
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Erro ao criar evento.';
     return failure(message);
@@ -162,10 +162,12 @@ export async function deleteEvent(id: string): Promise<ActionResponse<{ id: stri
 export async function addEquipmentToEvent(
   eventId: string,
   equipmentId: string,
+  quantity: number,
 ): Promise<ActionResponse<void>> {
   try {
     await fetchApi(`${API_BASE}/${eventId}/equipment/${equipmentId}`, {
       method: 'POST',
+      body: JSON.stringify({ quantity }),
     });
     return success(undefined);
   } catch (error) {

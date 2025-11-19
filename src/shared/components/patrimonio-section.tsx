@@ -30,33 +30,33 @@ export function PatrimonioSection() {
   ];
 
   return (
-    <section id="patrimonio" className="py-12 md:py-[72px] lg:py-[112px] bg-gray-100 dark:bg-gray-900 relative overflow-hidden font-inter">
+    <section id="patrimonio" className="py-12 md:py-20 lg:py-28 bg-gray-50 dark:bg-[#0B0B0C] relative overflow-hidden font-inter transition-colors duration-300">
       
-      <div className="container mx-auto px-4 relative z-10">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl relative z-10">
         {/* Header da seção */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-12 md:mb-16"
+          className="text-center mb-12"
         >
-          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-primary/10 text-primary mb-6 font-inter border border-primary/20">
-            <Package className="w-4 h-4" />
-            <span className="text-sm font-medium">Sistema de Gestão</span>
+          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-primary/10 dark:bg-primary/5 text-primary mb-6 font-inter border border-primary/20 dark:border-primary/30 backdrop-blur-sm transition-all duration-300">
+            <Package className="w-4 h-4" aria-hidden="true" />
+            <span className="text-sm font-medium tracking-wide">Sistema de Gestão</span>
           </div>
           
-          <h2 className="text-4xl md:text-5xl font-medium mb-6 leading-[1.1] tracking-[-0.02em] text-foreground font-inter">
+          <h2 className="text-4xl md:text-5xl font-semibold mb-6 leading-[1.1] tracking-[-0.02em] text-foreground font-inter">
             Controle de Patrimônio
           </h2>
           
-          <p className="text-foreground/80 text-lg max-w-2xl mx-auto leading-[1.6] font-inter">
+          <p className="text-muted-foreground text-base md:text-lg max-w-2xl mx-auto leading-relaxed font-inter">
             Gerencie, localize e solicite os ativos e equipamentos da empresa de forma rápida e centralizada
           </p>
         </motion.div>
 
         {/* Grid de features */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8 mb-12">
           {features.map((feature, index) => (
             <motion.div
               key={feature.title}
@@ -66,16 +66,16 @@ export function PatrimonioSection() {
               transition={{ duration: 0.5, delay: index * 0.1 }}
               className="group"
             >
-              <div className="h-full p-6 rounded-lg border border-border bg-card backdrop-blur-xl shadow-light hover:shadow-hover transition-all duration-300 font-inter focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
-                <div className="w-12 h-12 rounded-lg bg-primary flex items-center justify-center mb-4 group-hover:bg-primary/90 transition-colors">
-                  <feature.icon className="w-6 h-6 text-primary-foreground" />
+              <div className="h-full p-6 rounded-xl border border-border dark:border-[#262629] bg-card dark:bg-[#18181B] backdrop-blur-sm shadow-sm dark:shadow-none hover:shadow-md dark:hover:shadow-[0_8px_32px_rgba(100,34,242,0.15)] transition-all duration-300 font-inter focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                <div className="w-12 h-12 rounded-lg bg-primary/10 dark:bg-primary/15 flex items-center justify-center mb-4 group-hover:bg-primary/20 dark:group-hover:bg-primary/25 transition-colors duration-300">
+                  <feature.icon className="w-6 h-6 text-primary" aria-hidden="true" />
                 </div>
                 
                 <h3 className="text-lg font-semibold mb-3 text-foreground leading-tight tracking-[-0.01em] font-inter">
                   {feature.title}
                 </h3>
                 
-                <p className="text-sm text-foreground/70 leading-relaxed font-inter">
+                <p className="text-sm text-muted-foreground leading-relaxed font-inter">
                   {feature.description}
                 </p>
               </div>
@@ -94,14 +94,14 @@ export function PatrimonioSection() {
           <Link href="/patrimonio" passHref>
             <Button 
               size="lg" 
-              className="group text-base px-8 py-4 font-medium font-inter focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              className="group text-base px-8 py-4 font-medium font-inter bg-primary hover:bg-secondary dark:hover:bg-[rgba(42,36,81,0.9)] text-primary-foreground shadow-md hover:shadow-lg transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
               Acessar Patrimônio
-              <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
             </Button>
           </Link>
           
-          <p className="text-sm text-foreground/60 mt-4 font-inter">
+          <p className="text-sm text-muted-foreground mt-6 font-inter">
             Acesso disponível apenas para colaboradores autorizados
           </p>
         </motion.div>

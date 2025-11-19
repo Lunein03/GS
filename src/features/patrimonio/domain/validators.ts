@@ -60,6 +60,21 @@ export const eventFiltersSchema = z.object({
   includeDeleted: z.boolean().optional(),
 });
 
+// Schema para o formulário de cadastro/edição (frontend)
+export const equipmentFormSchema = z.object({
+  name: z.string().trim().min(3, 'Informe ao menos 3 caracteres'),
+  category: z.string().trim().min(2, 'Informe ao menos 2 caracteres'),
+  brand: optionalString,
+  model: optionalString,
+  serialNumber: optionalString,
+  acquisitionDate: z.string().min(1, 'Data de aquisição é obrigatória'),
+  status: equipmentStatusSchema,
+  location: optionalString,
+  notes: optionalString,
+  acquisitionValue: z.string().trim().min(1, 'Informe o valor unitário'),
+  quantity: z.coerce.number().int('Quantidade deve ser um número inteiro').min(1, 'Quantidade mínima é 1'),
+});
+
 export type CreateEquipmentInput = z.infer<typeof createEquipmentSchema>;
 export type UpdateEquipmentInput = z.infer<typeof updateEquipmentSchema>;
 export type CreateEventInput = z.infer<typeof createEventSchema>;
@@ -67,3 +82,4 @@ export type EquipmentFiltersInput = z.infer<typeof equipmentFiltersSchema>;
 export type EventFiltersInput = z.infer<typeof eventFiltersSchema>;
 export type DeleteEquipmentInput = z.infer<typeof deleteEquipmentSchema>;
 export type DeleteEventInput = z.infer<typeof deleteEventSchema>;
+export type EquipmentFormInput = z.infer<typeof equipmentFormSchema>;

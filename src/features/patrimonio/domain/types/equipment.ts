@@ -10,8 +10,16 @@ export interface Equipment {
   status: 'available' | 'in-use' | 'maintenance' | 'retired';
   location?: string;
   notes?: string;
+  acquisitionValueCents?: number;
+  quantity?: number;
+  unitValueCents?: number;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface EquipmentAllocation {
+  equipmentId: string;
+  quantity: number;
 }
 
 export interface Event {
@@ -21,9 +29,12 @@ export interface Event {
   endDate: string;
   location: string;
   equipmentIds: string[];
+  equipmentAllocations: EquipmentAllocation[];
   createdAt: string;
   notes?: string;
   status: 'pending' | 'completed';
 }
 
-export type EquipmentFormData = Omit<Equipment, 'id' | 'code' | 'createdAt' | 'updatedAt'>;
+export type EquipmentFormData = Omit<Equipment, 'id' | 'code' | 'createdAt' | 'updatedAt' | 'acquisitionValueCents'> & {
+  acquisitionValue?: string;
+};

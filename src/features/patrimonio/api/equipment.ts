@@ -1,3 +1,8 @@
+import {
+  coerceCents,
+  extractAcquisitionCentsFromNotes,
+  parseBRLToCents,
+} from '@/lib/currency';
 import { fetchApi, HttpError } from '@/shared/lib/api-client';
 import type { ActionResponse } from '@/shared/lib/types/actions';
 import type { Equipment } from '@/features/patrimonio/domain/types/equipment';
@@ -17,6 +22,11 @@ type ApiEquipment = {
   created_at: string;
   updated_at: string;
   deleted_at?: string | null;
+  // Campos antigos (compat):
+  valor_aquisicao_cents?: number | null;
+  // Campos atuais do backend:
+  quantity?: number | null;
+  unit_value_cents?: number | null;
 };
 
 export type CreateEquipmentInput = {
@@ -30,6 +40,10 @@ export type CreateEquipmentInput = {
   status?: 'available' | 'in-use' | 'maintenance' | 'retired';
   location?: string;
   notes?: string;
+  // Preferir unitValueCents; manter acquisitionValueCents por compatibilidade
+  unitValueCents?: number;
+  acquisitionValueCents?: number;
+  quantity?: number;
 };
 
 export type UpdateEquipmentInput = {
@@ -43,6 +57,9 @@ export type UpdateEquipmentInput = {
   status?: 'available' | 'in-use' | 'maintenance' | 'retired';
   location?: string;
   notes?: string;
+  unitValueCents?: number;
+  acquisitionValueCents?: number;
+  quantity?: number;
 };
 
 const API_BASE = '/inventory/equipment';
@@ -60,21 +77,35 @@ const failure = <T>(
   error: { code, message },
 });
 
-const mapEquipment = (input: ApiEquipment): Equipment => ({
-  id: input.id,
-  code: input.code,
-  name: input.name,
-  category: input.category,
-  brand: input.brand ?? undefined,
-  model: input.model ?? undefined,
-  serialNumber: input.serial_number ?? undefined,
-  acquisitionDate: input.acquisition_date,
-  status: input.status,
-  location: input.location ?? undefined,
-  notes: input.notes ?? undefined,
-  createdAt: input.created_at,
-  updatedAt: input.updated_at,
-});
+const mapEquipment = (input: ApiEquipment): Equipment => {
+  const centsFromNewField = coerceCents(input.unit_value_cents);
+  const centsFromLegacyField = coerceCents(input.valor_aquisicao_cents);
+  const centsFromNotes =
+    centsFromNewField === undefined && centsFromLegacyField === undefined
+      ? extractAcquisitionCentsFromNotes(input.notes) ?? (input.notes ? parseBRLToCents(input.notes) : undefined)
+      : undefined;
+
+  const normalizedCents = centsFromNewField ?? centsFromLegacyField ?? centsFromNotes;
+
+  return {
+    id: input.id,
+    code: input.code,
+    name: input.name,
+    category: input.category,
+    brand: input.brand ?? undefined,
+    model: input.model ?? undefined,
+    serialNumber: input.serial_number ?? undefined,
+    acquisitionDate: input.acquisition_date,
+    status: input.status,
+    location: input.location ?? undefined,
+    notes: input.notes ?? undefined,
+    acquisitionValueCents: normalizedCents,
+    quantity: input.quantity ?? undefined,
+    unitValueCents: normalizedCents,
+    createdAt: input.created_at,
+    updatedAt: input.updated_at,
+  };
+};
 
 export async function getEquipment(): Promise<ActionResponse<{ equipment: Equipment[] }>> {
   try {
@@ -116,6 +147,8 @@ export async function createEquipment(
         status: input.status ?? 'available',
         location: input.location ?? null,
         notes: input.notes ?? null,
+        quantity: input.quantity ?? 1,
+        unit_value_cents: input.unitValueCents ?? input.acquisitionValueCents ?? null,
       }),
     });
 
@@ -144,6 +177,11 @@ export async function updateEquipment(
     if (input.status !== undefined) payload.status = input.status;
     if (input.location !== undefined) payload.location = input.location;
     if (input.notes !== undefined) payload.notes = input.notes;
+    if (input.quantity !== undefined) payload.quantity = input.quantity;
+    if (input.unitValueCents !== undefined) payload.unit_value_cents = input.unitValueCents;
+    if (input.acquisitionValueCents !== undefined && payload.unit_value_cents === undefined) {
+      payload.unit_value_cents = input.acquisitionValueCents;
+    }
 
     const response = await fetchApi<ApiEquipment>(`${API_BASE}/${input.id}`, {
       method: 'PUT',

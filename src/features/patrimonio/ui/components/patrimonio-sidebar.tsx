@@ -12,7 +12,6 @@ import {
   LogOut,
   Moon,
   Package,
-  Plus,
   Sun,
 } from 'lucide-react'
 import { useTheme } from 'next-themes'
@@ -184,7 +183,7 @@ export function PatrimonioSidebar() {
   return (
     <motion.div
       className={cn(
-        'sidebar fixed left-0 top-0 z-40 h-full shrink-0 border-r border-border/60 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]',
+        'sidebar fixed inset-y-0 left-0 z-40 h-screen shrink-0 border-r border-border/60 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]',
         sidebarBackgroundClass
       )}
       initial={isCollapsed ? 'closed' : 'open'}
@@ -198,8 +197,8 @@ export function PatrimonioSidebar() {
         className={cn('relative z-40 flex h-full shrink-0 flex-col border-r transition-all', sidebarTextClass)}
         variants={contentVariants}
       >
-        <motion.ul variants={staggerVariants} className="flex h-full flex-col">
-          <div className="flex grow flex-col items-center">
+        <motion.ul variants={staggerVariants} className="flex h-full min-h-0 flex-col">
+          <div className="flex grow flex-col items-center min-h-0">
             <div className={cn('flex h-[54px] w-full shrink-0 border-b p-2', sidebarHeaderGradientClass)}>
               <div className="mt-[1.5px] flex w-full items-center gap-2 overflow-hidden px-2">
                 <div className="relative h-8 w-7 shrink-0">
@@ -230,9 +229,9 @@ export function PatrimonioSidebar() {
               </div>
             </div>
 
-            <nav className="flex h-full w-full flex-col" aria-label="Navegacao principal do Patrimonio">
-              <div className="flex grow flex-col gap-4">
-                <ScrollArea className="h-16 grow p-2">
+            <nav className="flex h-full min-h-0 w-full flex-col" aria-label="Navegacao principal do Patrimonio">
+              <div className="flex grow flex-col gap-4 min-h-0">
+                <ScrollArea className="grow p-2">
                   <div className={cn('flex w-full flex-col gap-1')}>
                     <NavigationLink
                       href="/patrimonio"
@@ -280,12 +279,6 @@ export function PatrimonioSidebar() {
                               isActive={isEquipamentosActive}
                               icon={Package}
                               label="Equipamentos"
-                            />
-                            <SubNavigationLink
-                              href="/patrimonio/cadastrar"
-                              isActive={isCadastrarActive}
-                              icon={Plus}
-                              label="Novo equipamento"
                             />
                             <SubNavigationLink
                               href="/patrimonio/eventos"

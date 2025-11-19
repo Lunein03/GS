@@ -5,15 +5,20 @@ import { Calendar, CheckCircle, Package, Wrench } from 'lucide-react';
 
 import { useEquipmentList } from '@/features/patrimonio/hooks/use-equipment';
 import { useEventsList, useUpdateEventStatus } from '@/features/patrimonio/hooks/use-events';
-import { EQUIPMENT_STATUS_LABEL, EQUIPMENT_STATUS_STYLES } from '@/features/patrimonio/domain/equipment-status';
+import { EQUIPMENT_STATUS_LABEL } from '@/features/patrimonio/domain/equipment-status';
+import { SectionShell } from '@/shared/components/section-shell';
+import { cn } from '@/shared/lib/utils';
 import { Button } from '@/shared/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/card';
 import { useToast } from '@/shared/ui/use-toast';
 
-// Função auxiliar local para combinar classes
-function cn(...classes: (string | undefined | null | false)[]): string {
-  return classes.filter(Boolean).join(' ');
-}
+const STATUS_BADGE_CLASS =
+  'rounded-full border border-accent/20 bg-accent/10 px-2 py-0.5 text-xs font-medium uppercase tracking-wide text-accent';
+
+const KPI_CARD_CLASS = 'rounded-2xl border border-border bg-card/80 p-6 backdrop-blur-xl transition-all hover:bg-card/90';
+
+const LIST_CARD_CLASS = 'rounded-2xl border border-border bg-card/80 p-6 backdrop-blur-xl';
+
+const LIST_ITEM_CLASS = 'rounded-xl border border-border bg-card/60 p-4 transition-colors hover:bg-card/80';
 
 export function DashboardContent() {
   const { data: equipment = [], isLoading: isLoadingEquipment } = useEquipmentList();
@@ -44,22 +49,34 @@ export function DashboardContent() {
 
   if (isLoadingEquipment || isLoadingEvents) {
     return (
-      <div className="space-y-6">
-        <div className="space-y-2">
-          <div className="h-7 w-48 animate-pulse rounded bg-muted" />
-          <div className="h-4 w-64 animate-pulse rounded bg-muted/70" />
+      <SectionShell title="Dashboard" subtitle="Visão geral do patrimônio da empresa">
+        <div className="space-y-12 lg:space-y-16">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:gap-6 xl:grid-cols-4">
+            {Array.from({ length: 4 }).map((_, index) => (
+              <div key={`dashboard-skeleton-${index}`} className={cn(KPI_CARD_CLASS, 'animate-pulse')}>
+                <div className="h-4 w-28 rounded bg-card/50" />
+                <div className="mt-4 h-8 w-16 rounded bg-card/60" />
+              </div>
+            ))}
+          </div>
+
+          <div className="grid gap-6 lg:grid-cols-2">
+            {Array.from({ length: 2 }).map((_, index) => (
+              <div key={`dashboard-list-skeleton-${index}`} className={cn(LIST_CARD_CLASS, 'animate-pulse space-y-4')}>
+                <div className="flex items-center justify-between">
+                  <div className="h-4 w-40 rounded bg-card/50" />
+                  <div className="h-8 w-20 rounded bg-card/40" />
+                </div>
+                <div className="space-y-3">
+                  {Array.from({ length: 3 }).map((__, itemIndex) => (
+                    <div key={`skeleton-item-${itemIndex}`} className="h-14 rounded bg-card/50" />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {Array.from({ length: 4 }).map((_, index) => (
-            <Card key={`skeleton-${index}`} className="border-dashed">
-              <CardHeader className="space-y-3">
-                <div className="h-4 w-32 animate-pulse rounded bg-muted" />
-                <div className="h-8 w-20 animate-pulse rounded bg-muted" />
-              </CardHeader>
-            </Card>
-          ))}
-        </div>
-      </div>
+      </SectionShell>
     );
   }
 
@@ -86,154 +103,156 @@ export function DashboardContent() {
     .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
     .slice(0, 3);
 
+  const kpiCards = [
+    {
+      id: 'total',
+      title: 'Total de Equipamentos',
+      value: stats.total,
+      icon: <Package className="h-5 w-5" aria-hidden="true" />,
+      iconClass: 'bg-primary/10 text-primary',
+    },
+    {
+      id: 'available',
+      title: 'Disponíveis',
+      value: stats.available,
+      icon: <CheckCircle className="h-5 w-5" aria-hidden="true" />,
+      iconClass: 'bg-accent/10 text-accent',
+    },
+    {
+      id: 'in-use',
+      title: 'Em uso',
+      value: stats.inUse,
+      icon: <Package className="h-5 w-5" aria-hidden="true" />,
+      iconClass: 'bg-primary/10 text-primary',
+    },
+    {
+      id: 'maintenance',
+      title: 'Manutenção',
+      value: stats.maintenance,
+      icon: <Wrench className="h-5 w-5" aria-hidden="true" />,
+      iconClass: 'bg-destructive/10 text-destructive',
+    },
+  ];
+
   return (
-    <div className="space-y-6 sm:space-y-8">
-      <header className="space-y-2">
-        <h1 className="text-2xl font-medium text-foreground sm:text-3xl">Dashboard</h1>
-        <p className="text-sm text-muted-foreground sm:text-base">Visão geral do patrimônio da empresa</p>
-      </header>
+    <SectionShell title="Dashboard" subtitle="Visão geral do patrimônio da empresa">
+      <div className="space-y-12 lg:space-y-16">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:gap-6 xl:grid-cols-4">
+          {kpiCards.map((card) => (
+            <div key={card.id} className={KPI_CARD_CLASS}>
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                  {card.title}
+                </span>
+                <span
+                  className={cn(
+                    'flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-card/60',
+                    card.iconClass,
+                  )}
+                >
+                  {card.icon}
+                </span>
+              </div>
+              <p className="mt-4 text-4xl font-semibold text-foreground">{card.value}</p>
+            </div>
+          ))}
+        </div>
 
-      <section className="grid gap-4 sm:gap-6 md:grid-cols-2 xl:grid-cols-4">
-        <DashboardStatCard
-          title="Total de Equipamentos"
-          value={stats.total}
-          icon={<Package className="h-5 w-5 text-primary" aria-hidden="true" />}
-        />
-        <DashboardStatCard
-          title="Disponíveis"
-          value={stats.available}
-          icon={<CheckCircle className="h-5 w-5 text-accent" aria-hidden="true" />}
-          accentClass="border-l-accent"
-        />
-        <DashboardStatCard
-          title="Em uso"
-          value={stats.inUse}
-          icon={<Package className="h-5 w-5 text-[hsl(var(--primary-glow))]" aria-hidden="true" />}
-          accentClass="border-l-[hsl(var(--primary-glow))]"
-        />
-        <DashboardStatCard
-          title="Manutenção"
-          value={stats.maintenance}
-          icon={<Wrench className="h-5 w-5 text-destructive" aria-hidden="true" />}
-          accentClass="border-l-destructive"
-        />
-      </section>
-
-      <section className="grid gap-6 lg:grid-cols-2">
-        <Card className="order-1">
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center justify-between text-base font-medium sm:text-lg">
-              Equipamentos recentes
-              <Button asChild variant="ghost" size="sm">
+        <div className="grid gap-6 lg:grid-cols-2">
+          <div className={LIST_CARD_CLASS}>
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <h2 className="text-2xl font-semibold text-foreground">Equipamentos recentes</h2>
+                <p className="text-xs text-muted-foreground">Últimos cadastros sincronizados</p>
+              </div>
+              <Button asChild variant="ghost" size="sm" className="h-9 rounded-lg px-4">
                 <Link href="/patrimonio/equipamentos">Ver todos</Link>
               </Button>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-0">
+            </div>
+
             {recentEquipment.length === 0 ? (
-              <p className="py-8 text-center text-sm text-muted-foreground">
+              <p className="mt-6 rounded-xl border border-dashed border-border/60 bg-card/40 py-10 text-center text-sm text-muted-foreground">
                 Nenhum equipamento cadastrado ainda
               </p>
             ) : (
-              <div className="space-y-2 sm:space-y-3">
+              <div className="mt-6 space-y-3">
                 {recentEquipment.map((item) => (
-                  <article
-                    key={item.id}
-                    className="flex items-center justify-between rounded-lg bg-muted/50 p-3 transition-colors hover:bg-muted sm:p-4"
-                  >
-                    <div>
-                      <p className="text-sm font-medium text-foreground">{item.name}</p>
-                      <p className="text-xs text-muted-foreground">{item.code}</p>
+                  <article key={item.id} className={LIST_ITEM_CLASS}>
+                    <div className="flex flex-wrap items-start justify-between gap-4">
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-medium text-foreground">{item.name}</p>
+                        <p className="text-xs text-muted-foreground">{item.code}</p>
+                      </div>
+                      <span className={STATUS_BADGE_CLASS}>{EQUIPMENT_STATUS_LABEL[item.status]}</span>
                     </div>
-                    <span
-                      className={cn(
-                        'rounded-full px-2.5 py-1 text-xs font-medium uppercase tracking-wide',
-                        EQUIPMENT_STATUS_STYLES[item.status]
-                      )}
-                    >
-                      {EQUIPMENT_STATUS_LABEL[item.status]}
-                    </span>
                   </article>
                 ))}
               </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
 
-        <Card className="order-2">
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center justify-between text-base font-medium sm:text-lg">
-              Eventos em andamento
-              <Button asChild variant="ghost" size="sm">
+          <div className={LIST_CARD_CLASS}>
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <h2 className="text-2xl font-semibold text-foreground">Eventos em andamento</h2>
+                <p className="text-xs text-muted-foreground">Agenda e movimentação de equipamentos</p>
+              </div>
+              <Button asChild variant="ghost" size="sm" className="h-9 rounded-lg px-4">
                 <Link href="/patrimonio/eventos">Ver todos</Link>
               </Button>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-0">
+            </div>
+
             {ongoingEvents.length === 0 ? (
-              <p className="py-8 text-center text-sm text-muted-foreground">
+              <p className="mt-6 rounded-xl border border-dashed border-border/60 bg-card/40 py-10 text-center text-sm text-muted-foreground">
                 Nenhum evento em andamento
               </p>
             ) : (
-              <div className="space-y-2 sm:space-y-3">
-                {ongoingEvents.map((event) => (
-                  <article
-                    key={event.id}
-                    className="flex items-start gap-3 rounded-lg bg-muted/50 p-3 transition-colors hover:bg-muted sm:p-4"
-                  >
-                    <Calendar className="mt-1 h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-medium text-foreground">{event.name}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {new Date(event.startDate).toLocaleDateString('pt-BR')} até{' '}
-                        {new Date(event.endDate).toLocaleDateString('pt-BR')}
-                      </p>
-                      <p className="text-xs text-muted-foreground">{event.location}</p>
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        {event.equipmentIds.length} equipamento(s)
-                      </p>
+              <div className="mt-6 space-y-3">
+                {ongoingEvents.map((event) => {
+                  const totalUnits = event.equipmentAllocations.reduce(
+                    (sum, allocation) => sum + allocation.quantity,
+                    0,
+                  );
+                  return (
+                  <article key={event.id} className={LIST_ITEM_CLASS}>
+                    <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                      <div className="flex gap-3">
+                        <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-card/60 text-primary">
+                          <Calendar className="h-5 w-5" aria-hidden="true" />
+                        </span>
+                        <div className="min-w-0 space-y-1">
+                          <p className="truncate text-sm font-medium text-foreground">{event.name}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {new Date(event.startDate).toLocaleDateString('pt-BR')} até{' '}
+                            {new Date(event.endDate).toLocaleDateString('pt-BR')}
+                          </p>
+                          <p className="text-xs text-muted-foreground">{event.location}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {event.equipmentAllocations.length} equipamento(s)
+                            {totalUnits !== event.equipmentAllocations.length ? ` · ${totalUnits} unidades` : ''}
+                          </p>
+                        </div>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleCompleteEvent(event.id, event.name)}
+                        disabled={updateStatusMutation.isPending}
+                        className="h-9 rounded-lg px-4"
+                      >
+                        <CheckCircle className="mr-2 h-4 w-4" aria-hidden="true" />
+                        Concluir
+                      </Button>
                     </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleCompleteEvent(event.id, event.name)}
-                      disabled={updateStatusMutation.isPending}
-                      className="shrink-0"
-                    >
-                      <CheckCircle className="mr-1 h-3 w-3" />
-                      Concluir
-                    </Button>
-                  </article>
-                ))}
+                    </article>
+                  );
+                })}
               </div>
             )}
-          </CardContent>
-        </Card>
-      </section>
-    </div>
-  );
-}
-
-interface DashboardStatCardProps {
-  title: string;
-  value: number;
-  icon: React.ReactNode;
-  accentClass?: string;
-}
-
-function DashboardStatCard({ title, value, icon, accentClass }: DashboardStatCardProps) {
-  return (
-    <Card className={cn('border-l-4 transition-all hover:shadow-md', accentClass ?? 'border-l-primary')}>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-xs font-medium text-muted-foreground sm:text-sm">{title}</CardTitle>
-        <div className="shrink-0">
-          {icon}
+          </div>
         </div>
-      </CardHeader>
-      <CardContent className="pt-0">
-        <p className="text-2xl font-medium text-foreground sm:text-3xl">{value}</p>
-      </CardContent>
-    </Card>
+      </div>
+    </SectionShell>
   );
 }
 

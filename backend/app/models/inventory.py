@@ -40,6 +40,8 @@ class Equipment(Base):
     )
     location: Mapped[str | None] = mapped_column("location", sa.Text)
     notes: Mapped[str | None] = mapped_column("notes", sa.Text)
+    quantity: Mapped[int] = mapped_column("quantity", sa.Integer, nullable=False, server_default="1")
+    unit_value_cents: Mapped[int | None] = mapped_column("unit_value_cents", sa.Integer)
     created_at: Mapped[sa.DateTime] = mapped_column(
         "created_at",
         sa.DateTime(timezone=True),
@@ -57,6 +59,10 @@ class Equipment(Base):
 
     events: Mapped[List["Event"]] = relationship(
         secondary="event_equipment",
+        back_populates="equipment",
+        passive_deletes=True,
+    )
+    equipment_associations: Mapped[List["EventEquipment"]] = relationship(
         back_populates="equipment",
         passive_deletes=True,
     )
@@ -91,6 +97,11 @@ class Event(Base):
     )
     deleted_at: Mapped[sa.DateTime | None] = mapped_column("deleted_at", sa.DateTime(timezone=True))
 
+    equipment_associations: Mapped[List["EventEquipment"]] = relationship(
+        back_populates="event",
+        cascade="all, delete-orphan",
+        lazy="selectin",
+    )
     equipment: Mapped[List[Equipment]] = relationship(
         secondary="event_equipment",
         back_populates="events",
@@ -121,3 +132,7 @@ class EventEquipment(Base):
         nullable=False,
         server_default=sa.func.now(),
     )
+    quantity: Mapped[int] = mapped_column("quantity", sa.Integer, nullable=False, server_default="1")
+
+    event: Mapped[Event] = relationship(back_populates="equipment_associations")
+    equipment: Mapped[Equipment] = relationship(back_populates="equipment_associations")
