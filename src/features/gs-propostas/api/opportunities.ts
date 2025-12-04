@@ -112,3 +112,56 @@ export async function updateOpportunityStatus(
     throw error;
   }
 }
+
+export async function listOpportunityStatuses(): Promise<{ id: OpportunityStatus; title: string; color: string }[]> {
+  try {
+    return await fetchApi<{ id: OpportunityStatus; title: string; color: string }[]>('/crm/opportunities/statuses');
+  } catch (error) {
+    if (error instanceof HttpError) {
+      throw new Error(error.message);
+    }
+    throw error;
+  }
+}
+
+export async function updateOpportunity(
+  id: string,
+  payload: Partial<CreateOpportunityPayload>
+): Promise<Opportunity> {
+  try {
+    const response = await fetchApi<ApiOpportunity>(`/crm/opportunities/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({
+        title: payload.title,
+        description: payload.description,
+        value: payload.value,
+        probability: payload.probability,
+        next_step: payload.nextStep,
+        client_name: payload.clientName,
+        client_email: payload.clientEmail,
+        responsible_user: payload.responsibleUser,
+        tags: payload.tags,
+      }),
+    });
+
+    return mapOpportunity(response);
+  } catch (error) {
+    if (error instanceof HttpError) {
+      throw new Error(error.message);
+    }
+    throw error;
+  }
+}
+
+export async function deleteOpportunity(id: string): Promise<void> {
+  try {
+    await fetchApi(`/crm/opportunities/${id}`, {
+      method: 'DELETE',
+    });
+  } catch (error) {
+    if (error instanceof HttpError) {
+      throw new Error(error.message);
+    }
+    throw error;
+  }
+}

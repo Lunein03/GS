@@ -14,7 +14,7 @@ import {
 } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { toast } from "sonner";
-import { listOpportunities, updateOpportunityStatus } from "@/features/gs-propostas/api/opportunities";
+import { listOpportunities, updateOpportunityStatus, listOpportunityStatuses } from "@/features/gs-propostas/api/opportunities";
 import type { Opportunity, OpportunityStatus } from "@/features/gs-propostas/domain/types";
 import { OpportunityCard } from "./opportunity-card";
 import { KanbanColumn } from "./kanban-column";
@@ -22,22 +22,23 @@ import { Plus } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { opportunityQueryKeys } from "@/features/gs-propostas/domain/query-keys";
 
-const COLUMNS: { id: OpportunityStatus; title: string; color: string }[] = [
-  { id: "OPEN", title: "Aberto", color: "bg-blue-500" },
-  { id: "IN_PROGRESS", title: "Em Andamento", color: "bg-yellow-500" },
-  { id: "WON", title: "Ganha", color: "bg-green-500" },
-  { id: "LOST", title: "Perdida", color: "bg-red-500" },
-];
+import { SKELETON_DEFAULT_COUNT } from "@/features/gs-propostas/config/constants";
+import { NewOpportunityModal } from "@/features/gs-propostas/ui/components/new-opportunity-modal";
 
 export function OpportunityKanbanBoard({ initialData }: OpportunityKanbanBoardProps) {
   const queryClient = useQueryClient();
   const [activeId, setActiveId] = useState<string | null>(null);
   const [isCreating, setIsCreating] = useState(false);
 
-  const { data: opportunities = initialData, isLoading } = useQuery({
+  const { data: opportunities = initialData, isLoading: isLoadingOpportunities } = useQuery({
     queryKey: opportunityQueryKeys.lists(),
     queryFn: listOpportunities,
     initialData,
+  });
+
+  const { data: statuses = [], isLoading: isLoadingStatuses } = useQuery<{ id: OpportunityStatus; title: string; color: string }[]>({
+    queryKey: ["opportunity-statuses"], // TODO: Add to query-keys.ts if needed
+    queryFn: listOpportunityStatuses,
   });
 
   const sensors = useSensors(
@@ -49,21 +50,26 @@ export function OpportunityKanbanBoard({ initialData }: OpportunityKanbanBoardPr
   );
 
   const opportunitiesByStatus = useMemo(() => {
-    const grouped: Record<OpportunityStatus, Opportunity[]> = {
-      OPEN: [],
-      IN_PROGRESS: [],
-      WON: [],
-      LOST: [],
-    };
+    const grouped: Record<string, Opportunity[]> = {};
+    
+    // Initialize all statuses with empty arrays
+    statuses.forEach(status => {
+      grouped[status.id] = [];
+    });
 
+    // Group opportunities
     opportunities.forEach((opp: Opportunity) => {
-      if (opp.status in grouped) {
+      if (grouped[opp.status]) {
         grouped[opp.status].push(opp);
+      } else if (statuses.length > 0) {
+        // Fallback for opportunities with unknown status, maybe put in the first one or ignore
+        // For now, let's ignore or handle as needed. 
+        // Ideally backend ensures consistency.
       }
     });
 
     return grouped;
-  }, [opportunities]);
+  }, [opportunities, statuses]);
 
   const activeOpportunity = useMemo(
     () => opportunities.find((opp: Opportunity) => opp.id === activeId),
@@ -121,12 +127,14 @@ export function OpportunityKanbanBoard({ initialData }: OpportunityKanbanBoardPr
     }
   };
 
+  const isLoading = isLoadingOpportunities || isLoadingStatuses;
+
   if (isLoading) {
     return (
       <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-        {COLUMNS.map((column) => (
+        {[1, 2, 3, 4].map((i) => (
           <div
-            key={column.id}
+            key={i}
             className="rounded-2xl border border-border bg-card p-4 animate-pulse"
           >
             <div className="h-8 bg-muted rounded mb-4" />
@@ -144,10 +152,12 @@ export function OpportunityKanbanBoard({ initialData }: OpportunityKanbanBoardPr
     return (
       <section className="flex flex-col items-center justify-center gap-4 rounded-2xl border border-dashed border-muted-foreground/30 bg-card/30 p-10 text-center">
         <p className="text-muted-foreground">Nenhuma oportunidade cadastrada ainda.</p>
-        <Button onClick={() => setIsCreating(true)}>
-          <Plus className="w-4 h-4 mr-2" />
-          Criar primeira oportunidade
-        </Button>
+        <NewOpportunityModal>
+          <Button>
+            <Plus className="w-4 h-4 mr-2" />
+            Criar primeira oportunidade
+          </Button>
+        </NewOpportunityModal>
       </section>
     );
   }
@@ -160,18 +170,18 @@ export function OpportunityKanbanBoard({ initialData }: OpportunityKanbanBoardPr
       onDragEnd={handleDragEnd}
     >
       <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-        {COLUMNS.map((column) => (
+        {statuses.map((column) => (
           <SortableContext
             key={column.id}
             id={column.id}
-            items={opportunitiesByStatus[column.id].map((opp: Opportunity) => opp.id)}
+            items={opportunitiesByStatus[column.id]?.map((opp: Opportunity) => opp.id) || []}
             strategy={verticalListSortingStrategy}
           >
             <KanbanColumn
               id={column.id}
               title={column.title}
               color={column.color}
-              opportunities={opportunitiesByStatus[column.id]}
+              opportunities={opportunitiesByStatus[column.id] || []}
             />
           </SortableContext>
         ))}

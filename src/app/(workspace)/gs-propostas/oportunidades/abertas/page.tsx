@@ -1,2 +1,2 @@
-export { default } from '@/features/gs-propostas/app/app-legacy/oportunidades/abertas/page';
-export * from '@/features/gs-propostas/app/app-legacy/oportunidades/abertas/page';
+export { default } from '@/features/gs-propostas/pages/opportunities/open-opportunities-page';
+export * from '@/features/gs-propostas/pages/opportunities/open-opportunities-page';

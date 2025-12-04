@@ -8,6 +8,7 @@ import { QueryProvider } from '@/shared/providers/query-provider';
 import { ParallaxBackground } from '@/shared/ui/parallax-background';
 import { ConditionalNavbar } from './conditional-navbar';
 import { ConditionalFooter } from './conditional-footer';
+import { MainContent } from './main-content';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -66,7 +67,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <ParallaxBackground />
             <div className="flex min-h-screen flex-col overflow-x-hidden">
               <ConditionalNavbar />
-              <main className="flex-1 pt-16">{children}</main>
+              <MainContent>{children}</MainContent>
               <ConditionalFooter />
             </div>
           </ThemeProvider>
