@@ -112,9 +112,9 @@ export function useDeleteEvent(options?: UseMutationOptions<string, Error, strin
 export function useAddEquipmentToEvent() {
   const queryClient = useQueryClient();
 
-  return useMutation<void, Error, { eventId: string; equipmentId: string }>({
-    mutationFn: async ({ eventId, equipmentId }) => {
-      const result = await addEquipmentToEvent(eventId, equipmentId);
+  return useMutation<void, Error, { eventId: string; equipmentId: string; quantity?: number }>({
+    mutationFn: async ({ eventId, equipmentId, quantity = 1 }) => {
+      const result = await addEquipmentToEvent(eventId, equipmentId, quantity);
       if (!result.success) {
         throw new Error(result.error.message);
       }
@@ -164,11 +164,10 @@ export function useUpdateEventStatus(
       }
       return result.data;
     },
-    onSuccess: async (event, variables, context) => {
+    onSuccess: async (...args) => {
       await queryClient.invalidateQueries({ queryKey: ['patrimonio', 'events'] });
-      if (options?.onSuccess) {
-        options.onSuccess(event, variables, context);
-      }
+      await options?.onSuccess?.(...args);
     },
   });
 }
+

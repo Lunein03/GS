@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useEffect, useState } from "react"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Tabs, TabsList, TabsTrigger } from "@/shared/ui/tabs"
 import { AnimatePresence, motion } from "framer-motion"
 import {
   Check,
@@ -15,14 +15,14 @@ import {
 } from "lucide-react"
 import { useTheme } from "next-themes"
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/shared/lib/utils"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+} from "@/shared/ui/dropdown-menu"
+import { RadioGroup, RadioGroupItem } from "@/shared/ui/radio-group"
 
 const themeIcons = {
   light: Sun,
@@ -30,6 +30,11 @@ const themeIcons = {
   sunset: Sunset,
   ocean: Waves,
   forest: Trees,
+}
+
+// Type guard moved to module scope to avoid ES5 strict mode issues
+const isTheme = (value: unknown): value is Theme => {
+  return typeof value === "string" && ["light", "dark"].includes(value)
 }
 
 export type ThemeToggleVariant =
@@ -80,11 +85,6 @@ export function Theme({
   if (!isMounted) return null
 
   if (variant === "button") {
-    function isTheme(value: unknown): value is Theme {
-      return (
-        typeof value === "string" && ["light", "dark"].includes(value)
-      )
-    }
 
     const safeTheme: Theme =
       isTheme(theme) && themes.includes(theme) ? theme : "light"
@@ -171,12 +171,6 @@ export function Theme({
   }
 
   if (variant === "dropdown") {
-    function isTheme(value: unknown): value is Theme {
-      return (
-        typeof value === "string" && ["light", "dark"].includes(value)
-      )
-    }
-
     const safeTheme: Theme =
       isTheme(theme) && themes?.includes(theme) ? theme : "light"
 
@@ -370,12 +364,6 @@ export function Theme({
   if (variant === "radial") {
     const radius = size === "sm" ? 60 : size === "md" ? 80 : 100
     const centerSize = size === "sm" ? 40 : size === "md" ? 48 : 56
-
-    function isTheme(value: unknown): value is Theme {
-      return (
-        typeof value === "string" && ["light", "dark"].includes(value)
-      )
-    }
 
     const safeTheme: Theme =
       isTheme(theme) && themes?.includes(theme) ? theme : "light"

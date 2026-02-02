@@ -1,1 +1,0 @@
-export { default, metadata } from './(core)/layout/root-layout';

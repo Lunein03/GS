@@ -6,7 +6,7 @@ import { AlertCircle, CheckCircle2, ExternalLink, HardDrive, Loader2, Volume2, X
 import { Badge } from '@/shared/ui/badge';
 import { Card } from '@/shared/ui/card';
 
-import type { DriveQrResult } from '../types';
+import type { DriveQrResult } from '../../domain/types';
 import { CustomAudioPlayer } from './custom-audio-player';
 
 export function QRCodeResults({ results }: QRCodeResultsProps) {

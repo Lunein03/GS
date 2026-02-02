@@ -4,11 +4,12 @@ import { Plus, Clock } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import Link from "next/link";
 import { listOpportunities } from "@/features/gs-propostas/api/opportunities";
+import type { Opportunity } from "@/features/gs-propostas/domain/types";
 
 export const dynamic = 'force-dynamic';
 
 export default async function OportunidadesAbertasPage() {
-  let opportunities = [];
+  let opportunities: Opportunity[] = [];
 
   try {
     const all = await listOpportunities();

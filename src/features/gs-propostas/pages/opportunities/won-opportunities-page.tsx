@@ -32,7 +32,7 @@ export default async function WonOpportunitiesPage() {
         <NewOpportunityModal>
           <Button size="lg">
             <Plus className="w-4 h-4 mr-2" />
-            Nova Oportunidade
+            Nova Proposta
           </Button>
         </NewOpportunityModal>
       </header>

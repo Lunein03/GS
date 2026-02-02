@@ -18,12 +18,19 @@ import { listOpportunities, updateOpportunityStatus, listOpportunityStatuses } f
 import type { Opportunity, OpportunityStatus } from "@/features/gs-propostas/domain/types";
 import { OpportunityCard } from "./opportunity-card";
 import { KanbanColumn } from "./kanban-column";
-import { Plus } from "lucide-react";
+import { Plus, Clock, Trophy, XCircle, LucideIcon } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { opportunityQueryKeys } from "@/features/gs-propostas/domain/query-keys";
 
 import { SKELETON_DEFAULT_COUNT } from "@/features/gs-propostas/config/constants";
 import { NewOpportunityModal } from "@/features/gs-propostas/ui/components/new-opportunity-modal";
+import { OpportunityCardView } from "./opportunity-card-view";
+
+const DEFAULT_STATUSES: { id: OpportunityStatus; title: string; color: string; icon: LucideIcon }[] = [
+  { id: "OPEN", title: "Abertas", color: "text-blue-500", icon: Clock },
+  { id: "WON", title: "Ganhas", color: "text-green-500", icon: Trophy },
+  { id: "LOST", title: "Perdidas", color: "text-red-500", icon: XCircle },
+];
 
 export function OpportunityKanbanBoard({ initialData }: OpportunityKanbanBoardProps) {
   const queryClient = useQueryClient();
@@ -36,9 +43,17 @@ export function OpportunityKanbanBoard({ initialData }: OpportunityKanbanBoardPr
     initialData,
   });
 
-  const { data: statuses = [], isLoading: isLoadingStatuses } = useQuery<{ id: OpportunityStatus; title: string; color: string }[]>({
-    queryKey: ["opportunity-statuses"], // TODO: Add to query-keys.ts if needed
-    queryFn: listOpportunityStatuses,
+  const { data: statuses = [], isLoading: isLoadingStatuses } = useQuery<{ id: OpportunityStatus; title: string; color: string; icon: LucideIcon }[]>({
+    queryKey: ["opportunity-statuses"],
+    queryFn: async () => {
+      try {
+        // We force the frontend specific statuses to ensure alignment with sidebar
+        return DEFAULT_STATUSES;
+      } catch {
+        return DEFAULT_STATUSES;
+      }
+    },
+    initialData: DEFAULT_STATUSES,
   });
 
   const sensors = useSensors(
@@ -59,12 +74,11 @@ export function OpportunityKanbanBoard({ initialData }: OpportunityKanbanBoardPr
 
     // Group opportunities
     opportunities.forEach((opp: Opportunity) => {
-      if (grouped[opp.status]) {
-        grouped[opp.status].push(opp);
-      } else if (statuses.length > 0) {
-        // Fallback for opportunities with unknown status, maybe put in the first one or ignore
-        // For now, let's ignore or handle as needed. 
-        // Ideally backend ensures consistency.
+      // Treat IN_PROGRESS as OPEN to align with the 3-column layout
+      const statusKey = opp.status === 'IN_PROGRESS' ? 'OPEN' : opp.status;
+      
+      if (grouped[statusKey]) {
+        grouped[statusKey].push(opp);
       }
     });
 
@@ -131,8 +145,8 @@ export function OpportunityKanbanBoard({ initialData }: OpportunityKanbanBoardPr
 
   if (isLoading) {
     return (
-      <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-        {[1, 2, 3, 4].map((i) => (
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {[1, 2, 3].map((i) => (
           <div
             key={i}
             className="rounded-2xl border border-border bg-card p-4 animate-pulse"
@@ -169,7 +183,7 @@ export function OpportunityKanbanBoard({ initialData }: OpportunityKanbanBoardPr
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {statuses.map((column) => (
           <SortableContext
             key={column.id}
@@ -181,15 +195,22 @@ export function OpportunityKanbanBoard({ initialData }: OpportunityKanbanBoardPr
               id={column.id}
               title={column.title}
               color={column.color}
+              icon={column.icon}
               opportunities={opportunitiesByStatus[column.id] || []}
             />
           </SortableContext>
         ))}
       </div>
 
-      <DragOverlay>
+      <DragOverlay dropAnimation={{
+          duration: 250,
+          easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)',
+        }}>
         {activeOpportunity ? (
-          <OpportunityCard opportunity={activeOpportunity} isDragging />
+          <OpportunityCardView 
+            opportunity={activeOpportunity} 
+            className="cursor-grabbing shadow-2xl scale-105 rotate-2 z-50 ring-2 ring-primary ring-offset-2 opacity-100"
+          />
         ) : null}
       </DragOverlay>
     </DndContext>

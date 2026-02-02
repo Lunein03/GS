@@ -1,3 +1,6 @@
+/* Google font for slide titles (Poppins 600/700) */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -38,9 +41,9 @@
     --radius: 0.5rem;
 
     /* Apple-like Shadows */
-    --shadow-light: 0px 1px 2px rgba(0,0,0,0.04);
-    --shadow-dark: 0px 2px 4px rgba(0,0,0,0.16);
-    --shadow-hover: 0px 8px 24px rgba(100,34,242,0.16);
+    --shadow-light: 0px 1px 2px rgba(0, 0, 0, 0.04);
+    --shadow-dark: 0px 2px 4px rgba(0, 0, 0, 0.16);
+    --shadow-hover: 0px 8px 24px rgba(100, 34, 242, 0.16);
 
     /* Surface variants */
     --surface-base: 300 11% 94%;
@@ -49,7 +52,7 @@
     --surface-inset: 0 0% 90%;
     --shadow-soft: 240 3% 11% / 0.03;
   }
- 
+
   .dark {
     /* Paleta Apple Clean - Dark Mode */
     /* #0B0B0C - Grafite Profundo (Fundo Principal) */
@@ -89,14 +92,14 @@
     /* #262629 - Bordas Sutis */
     --border: 240 4% 15%;
     --input: 240 5% 10%;
-    
+
     /* Roxo primário para ring */
     --ring: 264 89% 54%;
 
     /* Apple-like Shadows - Dark Mode */
-    --shadow-light: 0px 1px 3px rgba(0,0,0,0.12);
-    --shadow-dark: 0px 4px 16px rgba(0,0,0,0.24);
-    --shadow-hover: 0px 8px 32px rgba(100,34,242,0.24);
+    --shadow-light: 0px 1px 3px rgba(0, 0, 0, 0.12);
+    --shadow-dark: 0px 4px 16px rgba(0, 0, 0, 0.24);
+    --shadow-hover: 0px 8px 32px rgba(100, 34, 242, 0.24);
 
     /* Success e Warning */
     --success: 149 80% 52%;
@@ -105,7 +108,7 @@
     --warning-foreground: 0 0% 100%;
     --error: 4 90% 60%;
     --error-foreground: 0 0% 100%;
-    
+
     /* Icon Purple - apenas para ícones decorativos */
     --icon-purple: 264 89% 54%;
 
@@ -122,18 +125,18 @@
   * {
     @apply border-border;
   }
-  
+
   html {
     position: relative;
   }
-  
+
   html,
   body {
     @apply bg-background text-foreground overflow-x-hidden;
     width: 100%;
     position: relative;
   }
-  
+
   /* Prevenir movimento indesejado durante a troca de tema */
   html.overflow-x-hidden,
   body.overflow-x-hidden {
@@ -141,27 +144,32 @@
     width: 100%;
     position: relative;
   }
-  
-  h1, h2, h3, h4, h5, h6 {
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-medium tracking-tight text-foreground;
   }
-  
+
   h1 {
     @apply text-4xl md:text-5xl lg:text-6xl;
   }
-  
+
   h2 {
     @apply text-3xl md:text-4xl;
   }
-  
+
   h3 {
     @apply text-2xl md:text-3xl;
   }
-  
+
   h4 {
     @apply text-xl md:text-2xl;
   }
-  
+
   p {
     @apply leading-7 text-foreground;
   }
@@ -180,7 +188,7 @@
     white-space: nowrap;
     border-width: 0;
   }
-  
+
   /* Torna elemento visível quando focado (útil para skip links) */
   .sr-only-focusable:focus {
     position: static;
@@ -198,54 +206,58 @@
   .font-inter {
     font-family: var(--font-inter), sans-serif;
   }
-  
+
+  .font-poppins {
+    font-family: "Poppins", var(--font-inter), sans-serif;
+  }
+
   .hero-gradient {
     background: linear-gradient(187deg, #6422f2 0%, #2a2451 100%);
   }
-  
+
   .hero-gradient-accent {
     background: linear-gradient(187deg, #6422f2 0%, #2a2451 100%);
   }
-  
+
   .text-gradient {
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    background-image: linear-gradient(90deg, #6422F2, #2A2451);
+    background-image: linear-gradient(90deg, #6422f2, #2a2451);
   }
-  
+
   .card {
     @apply font-inter;
   }
-  
+
   .card-hover {
     @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
   }
-  
+
   .nav-link {
     @apply relative inline-block py-2 transition-colors duration-300 hover:text-primary;
   }
-  
+
   .nav-link::after {
     @apply absolute bottom-0 left-0 h-0.5 w-0 bg-secondary transition-all duration-300 content-[''];
   }
-  
+
   .nav-link:hover::after {
     @apply w-full;
   }
-  
+
   .container-custom {
     @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
   }
-  
+
   .btn-primary {
     @apply inline-flex items-center justify-center whitespace-nowrap rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50;
   }
-  
+
   .btn-secondary {
     @apply inline-flex items-center justify-center whitespace-nowrap rounded-md bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground shadow transition-colors hover:bg-secondary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50;
   }
-  
+
   .section-padding {
     @apply py-12 md:py-16 lg:py-24;
   }
@@ -255,178 +267,195 @@
     color: #1a2545; /* Destaque Escuro Vibrante para palavras-chave */
   }
 
-
-  
   .dark .syntax-string {
     color: #201a30; /* Roxo Escuro Sutil para strings */
   }
-  
+
   .dark .syntax-comment {
     color: #454555; /* Cinza mais claro baseado no Cinza Chumbo para comentários */
   }
-  
+
   .dark .syntax-function {
     color: #121f40; /* Azul Petróleo Escuro para funções */
   }
-  
+
   .dark .syntax-number {
     color: #2a2a33; /* Cinza Chumbo Azulado para números */
   }
-  
+
   .dark .syntax-variable {
     color: #80858f; /* Cor clara para variáveis */
   }
-  
+
   .dark .editor-active-line {
-    background: rgba(42, 42, 51, 0.2); /* Cinza Chumbo Azulado com transparência */
+    background: rgba(
+      42,
+      42,
+      51,
+      0.2
+    ); /* Cinza Chumbo Azulado com transparência */
   }
-  
+
   .dark .editor-selection {
-    background: rgba(26, 37, 69, 0.3); /* Destaque Escuro Vibrante com transparência */
+    background: rgba(
+      26,
+      37,
+      69,
+      0.3
+    ); /* Destaque Escuro Vibrante com transparência */
   }
-  
+
   .dark .editor-cursor {
     background: #1a2545; /* Destaque Escuro Vibrante para cursor */
     border-color: #1a2545;
   }
-  
+
   .dark .editor-gutter {
     background: #151c2a; /* Cor Base Principal para gutter */
     border-right: 1px solid #201a30; /* Roxo Escuro Sutil para borda */
   }
-  
+
   .dark .editor-indent-guide {
-    border-color: rgba(32, 26, 48, 0.3); /* Roxo Escuro Sutil com transparência */
+    border-color: rgba(
+      32,
+      26,
+      48,
+      0.3
+    ); /* Roxo Escuro Sutil com transparência */
   }
-  
+
   .dark .editor-container {
     background-color: #151c2a;
     border: 1px solid #201a30;
     border-radius: var(--radius);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+    box-shadow:
+      0 4px 6px rgba(0, 0, 0, 0.1),
+      0 1px 3px rgba(0, 0, 0, 0.08);
   }
-  
+
   .dark .editor-sidebar {
     background-color: #151c2a;
     border-right: 1px solid #201a30;
   }
-  
+
   .dark .editor-tab {
     background-color: #151c2a;
     color: #80858f;
     border: 1px solid transparent;
     transition: all 0.2s ease;
   }
-  
+
   .dark .editor-tab-active {
     background-color: #1a2545;
     color: #f8fafc;
     border-bottom: 2px solid #121f40;
   }
-  
+
   .dark .editor-tab:hover:not(.editor-tab-active) {
     background-color: #201a30;
     border-bottom: 2px solid #201a30;
   }
-  
+
   .dark .editor-statusbar {
     background-color: #151c2a;
     color: #80858f;
     border-top: 1px solid #201a30;
   }
-  
+
   .dark .editor-button {
     background-color: #121f40;
     color: #f8fafc;
     transition: all 0.2s ease;
   }
-  
+
   .dark .editor-button:hover {
     background-color: #1a2545;
   }
-  
+
   .dark .editor-scrollbar {
     background-color: #151c2a;
   }
-  
+
   .dark .editor-scrollbar-thumb {
     background-color: #201a30;
     border-radius: 4px;
   }
-  
+
   .dark .editor-scrollbar-thumb:hover {
     background-color: #2a2a33;
   }
-  
+
   .dark .editor-tooltip {
     background-color: #1a2545;
     color: #f8fafc;
     border: 1px solid #201a30;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+    box-shadow:
+      0 4px 6px rgba(0, 0, 0, 0.1),
+      0 1px 3px rgba(0, 0, 0, 0.08);
   }
-  
+
   .dark .editor-search-highlight {
     background-color: rgba(26, 37, 69, 0.3);
     border: 1px solid #121f40;
   }
-  
+
   .dark .editor-error {
     border-bottom: 2px wavy #ff5757;
   }
-  
+
   .dark .editor-warning {
     border-bottom: 2px wavy #ffb757;
   }
-  
+
   .dark .editor-file-explorer-item:hover {
     background-color: #201a30;
   }
-  
+
   .dark .editor-file-explorer-item-selected {
     background-color: #1a2545;
   }
-  
+
   .dark .editor-terminal {
     background-color: #151c2a;
     color: #f8fafc;
     border-top: 1px solid #201a30;
   }
-  
+
   .dark .editor-terminal-input {
     background-color: transparent;
     color: #f8fafc;
     border: none;
   }
-  
+
   .dark .editor-terminal-prompt {
     color: #121f40;
   }
-  
+
   .dark .editor-bracket-match {
     background-color: rgba(26, 37, 69, 0.3);
     border: 1px solid #1a2545;
   }
-  
+
   .dark .editor-find-replace {
     background-color: #151c2a;
     border: 1px solid #201a30;
   }
-  
+
   .dark .editor-diff-added {
     background-color: rgba(34, 197, 94, 0.1);
     border-left: 3px solid #22c55e;
   }
-  
+
   .dark .editor-diff-removed {
     background-color: rgba(239, 68, 68, 0.1);
     border-left: 3px solid #ef4444;
   }
-  
+
   .dark .editor-diff-modified {
     background-color: rgba(59, 130, 246, 0.1);
     border-left: 3px solid #3b82f6;
   }
-  
+
   /* Estilos para placeholders no tema dark */
   .dark input::placeholder,
   .dark textarea::placeholder,
@@ -434,7 +463,7 @@
     color: #6b7280;
     opacity: 0.7;
   }
-  
+
   /* Estilos personalizados para campos de formulário no tema dark */
   .dark input:focus,
   .dark textarea:focus,
@@ -443,7 +472,7 @@
     outline: none;
     box-shadow: 0 0 0 2px rgba(18, 31, 64, 0.2);
   }
-  
+
   .dark input:-webkit-autofill,
   .dark input:-webkit-autofill:hover,
   .dark input:-webkit-autofill:focus {
@@ -453,21 +482,40 @@
   }
 }
 
+/* Base font-face declarations */
+@layer base {
+  @font-face {
+    font-family: "Neoverse Sans";
+    src: url("/fonts/neoversesans-bold.woff2") format("woff2");
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+  }
+}
+
+@layer components {
+  .font-neoverse {
+    font-family: "Neoverse Sans", var(--font-inter), sans-serif;
+    font-weight: 700;
+  }
+}
+
 /* Adicionar no final do arquivo ou em uma seção de variáveis de tema */
 :root {
   /* Tema Claro */
-  --bg-start-color: theme('colors.blue.100');
-  --bg-end-color: theme('colors.purple.100');
+  --bg-start-color: theme("colors.blue.100");
+  --bg-end-color: theme("colors.purple.100");
 }
 
 .dark {
   /* Tema Escuro */
-  --bg-start-color: theme('colors.blue.900');
-  --bg-end-color: theme('colors.purple.900');
+  --bg-start-color: theme("colors.blue.900");
+  --bg-end-color: theme("colors.purple.900");
 }
 
 @keyframes gradient-x {
-  0%, 100% {
+  0%,
+  100% {
     background-position: 0% 50%;
   }
   50% {
@@ -478,7 +526,7 @@
 .animate-gradient-x {
   background-size: 200% 200%;
   animation: gradient-x 15s ease infinite;
-} 
+}
 
 /* Background sem noise effect */
 .noise-background {
@@ -510,7 +558,11 @@
 .floating-light-1 {
   width: 300px;
   height: 300px;
-  background: radial-gradient(circle, rgba(139, 92, 246, 0.3) 0%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(139, 92, 246, 0.3) 0%,
+    transparent 70%
+  );
   top: 10%;
   left: 10%;
   animation-duration: 25s;
@@ -520,7 +572,11 @@
 .floating-light-2 {
   width: 250px;
   height: 250px;
-  background: radial-gradient(circle, rgba(59, 130, 246, 0.25) 0%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(59, 130, 246, 0.25) 0%,
+    transparent 70%
+  );
   top: 60%;
   right: 15%;
   animation-duration: 30s;
@@ -530,7 +586,11 @@
 .floating-light-3 {
   width: 200px;
   height: 200px;
-  background: radial-gradient(circle, rgba(168, 85, 247, 0.2) 0%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(168, 85, 247, 0.2) 0%,
+    transparent 70%
+  );
   bottom: 20%;
   left: 20%;
   animation-duration: 22s;
@@ -540,7 +600,11 @@
 .floating-light-4 {
   width: 280px;
   height: 280px;
-  background: radial-gradient(circle, rgba(99, 102, 241, 0.25) 0%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(99, 102, 241, 0.25) 0%,
+    transparent 70%
+  );
   top: 40%;
   right: 30%;
   animation-duration: 28s;
@@ -550,7 +614,11 @@
 .floating-light-5 {
   width: 220px;
   height: 220px;
-  background: radial-gradient(circle, rgba(147, 51, 234, 0.2) 0%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(147, 51, 234, 0.2) 0%,
+    transparent 70%
+  );
   bottom: 40%;
   left: 50%;
   animation-duration: 26s;
@@ -558,7 +626,8 @@
 }
 
 @keyframes float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translate(0, 0) scale(1);
   }
   25% {
@@ -569,5 +638,76 @@
   }
   75% {
     transform: translate(20px, 30px) scale(1.05);
+  }
+}
+
+/* TipTap Editor Styles */
+.ProseMirror {
+  outline: none;
+  min-height: 200px;
+}
+
+.ProseMirror p {
+  margin-bottom: 0.75rem;
+}
+
+.ProseMirror h1,
+.ProseMirror h2,
+.ProseMirror h3 {
+  font-weight: 600;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  color: #18181b;
+}
+
+.ProseMirror h1 {
+  font-size: 1.5rem;
+}
+
+.ProseMirror h2 {
+  font-size: 1.25rem;
+}
+
+.ProseMirror h3 {
+  font-size: 1.125rem;
+}
+
+.ProseMirror ul,
+.ProseMirror ol {
+  padding-left: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.ProseMirror li {
+  margin-bottom: 0.25rem;
+}
+
+.ProseMirror blockquote {
+  border-left: 3px solid #e4e4e7;
+  padding-left: 1rem;
+  margin-left: 0;
+  color: #71717a;
+  font-style: italic;
+}
+
+.ProseMirror p.is-editor-empty:first-child::before {
+  color: #a1a1aa;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+/* Toolbar button active state */
+button[data-active="true"] {
+  background-color: hsl(var(--muted));
+}
+
+/* Print styles for PDF */
+@media print {
+  #proposal-document-content {
+    box-shadow: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
 }

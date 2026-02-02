@@ -7,9 +7,9 @@ const USER_AGENT =
 
 export async function GET(
   request: NextRequest,
-  context: { params: { fileId?: string } }
+  { params }: { params: Promise<{ fileId: string }> }
 ): Promise<NextResponse> {
-  const fileId = context.params.fileId;
+  const { fileId } = await params;
 
   if (!fileId) {
     return NextResponse.json(

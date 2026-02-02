@@ -1,6 +1,6 @@
 import { fetchApi, HttpError } from '@/shared/lib/api-client';
 import { removeNonNumeric } from '@/shared/lib/validators';
-import type { ActionResponse } from '@/shared/lib/types/actions';
+import type { ActionResponse, AppErrorCode } from '@/shared/lib/types/actions';
 import {
   companySchema,
   createCompanySchema,
@@ -46,7 +46,7 @@ const success = <T>(data: T): ActionResponse<T> => ({
 });
 
 const failure = <T>(
-  code: ActionResponse<T>['error']['code'],
+  code: AppErrorCode,
   message: string,
 ): ActionResponse<T> => ({
   success: false,

@@ -15,7 +15,7 @@ import {
 import type { Equipment } from "@/features/patrimonio/domain/types/equipment";
 import { equipmentFormSchema, type EquipmentFormInput } from "@/features/patrimonio/domain/validators";
 import { CategorySelect } from "@/features/patrimonio/ui/components/category-select";
-import { formatBRLInput, formatCentsToBRL, parseBRLToCents } from "@/lib/currency";
+import { formatBRLInput, formatCentsToBRL, parseBRLToCents } from "@/shared/lib/currency";
 import { cn } from "@/shared/lib/utils";
 import { useToast } from "@/shared/ui/use-toast";
 import { Badge } from "@/shared/ui/badge";

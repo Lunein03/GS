@@ -59,6 +59,7 @@ function NoiseOverlay({
       canvasElement.height = canvasDimension;
       canvasElement.style.width = VIEWPORT_FULL_WIDTH;
       canvasElement.style.height = VIEWPORT_FULL_HEIGHT;
+      canvasElement.style.transform = `scale(${_patternScaleX}, ${_patternScaleY})`;
     };
 
     const renderGrain = () => {
@@ -144,4 +145,4 @@ const RIGHT_ACCENT_GRADIENT = "radial-gradient(circle 620px at 85% 50%,rgba(100,
 const BASE_GRADIENT_TRANSITION: Transition = { duration: 55, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" };
 const ACCENT_GRADIENT_TRANSITION: Transition = { duration: 44, repeat: Infinity, repeatType: "mirror", ease: "easeInOut" };
 
-// TODO: [Background Noise] Mapear comportamento de escala utilizando patternScaleX e patternScaleY quando a direção de design estiver definida.
+

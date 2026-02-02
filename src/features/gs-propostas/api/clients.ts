@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { fetchApi, HttpError } from '@/shared/lib/api-client';
-import type { ActionResponse } from '@/shared/lib/types/actions';
+import type { ActionResponse, AppErrorCode } from '@/shared/lib/types/actions';
 import {
   clienteFormSchema,
   contatoSecundarioSchema,
@@ -76,7 +76,7 @@ const success = <T>(data: T): ActionResponse<T> => ({
 
 const failure = <T>(
   message: string,
-  code: ActionResponse<T>['error']['code'] = 'UNEXPECTED_ERROR',
+  code: AppErrorCode = 'UNEXPECTED_ERROR',
 ): ActionResponse<T> => ({
   success: false,
   error: { code, message },
@@ -310,7 +310,7 @@ export async function updateCliente(
         }
       }
 
-      for (const remaining of byId.values()) {
+      for (const remaining of Array.from(byId.values())) {
         await fetchApi(`${BASE_PATH}/${id}/contacts/${remaining.id}`, { method: 'DELETE' });
       }
     }

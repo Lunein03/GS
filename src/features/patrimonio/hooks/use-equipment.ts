@@ -67,11 +67,9 @@ export function useCreateEquipment(
         await createEquipment(payload),
         'Nao foi possivel criar o equipamento.',
       ),
-    onSuccess: async (equipment, variables, context) => {
+    onSuccess: async (...args) => {
       await queryClient.invalidateQueries({ queryKey: ['patrimonio', 'equipment'] });
-      if (options?.onSuccess) {
-        options.onSuccess(equipment, variables, context);
-      }
+      await options?.onSuccess?.(...args);
     },
   });
 }
@@ -88,11 +86,9 @@ export function useUpdateEquipment(
         await updateEquipment(payload),
         'Nao foi possivel atualizar o equipamento.',
       ),
-    onSuccess: async (equipment, variables, context) => {
+    onSuccess: async (...args) => {
       await queryClient.invalidateQueries({ queryKey: ['patrimonio', 'equipment'] });
-      if (options?.onSuccess) {
-        options.onSuccess(equipment, variables, context);
-      }
+      await options?.onSuccess?.(...args);
     },
   });
 }
@@ -106,11 +102,9 @@ export function useDeleteEquipment(
     ...options,
     mutationFn: async (id) =>
       ensureDeleted(await deleteEquipment(id), 'Nao foi possivel remover o equipamento.'),
-    onSuccess: async (id, variables, context) => {
+    onSuccess: async (...args) => {
       await queryClient.invalidateQueries({ queryKey: ['patrimonio', 'equipment'] });
-      if (options?.onSuccess) {
-        options.onSuccess(id, variables, context);
-      }
+      await options?.onSuccess?.(...args);
     },
   });
 }

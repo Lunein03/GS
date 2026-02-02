@@ -16,5 +16,7 @@
     "**/.next": true,
     "**/dist": true,
     "**/build": true
-  }
+  },
+  "containers.commands.build": "docker compose -f docker/docker-compose.dev.yml build",
+  "containers.commands.logs": "docker compose -f docker/docker-compose.dev.yml logs -f"
 }

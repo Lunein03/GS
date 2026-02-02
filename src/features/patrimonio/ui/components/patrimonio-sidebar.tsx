@@ -14,6 +14,7 @@ import {
   Sun,
   PanelLeftClose,
   PanelLeftOpen,
+  LucideIcon,
 } from 'lucide-react'
 import { useTheme } from 'next-themes'
 
@@ -50,7 +51,7 @@ const NavigationLink = memo(
   }: {
     href: string
     isActive: boolean
-    icon: any
+    icon: LucideIcon | React.ElementType
     label: string
     isCollapsed: boolean
   }) => {
@@ -108,7 +109,7 @@ const NavigationLink = memo(
 NavigationLink.displayName = 'NavigationLink'
 
 const SubNavigationLink = memo(
-  ({ href, isActive, icon: Icon, label, isCollapsed }: { href: string; isActive: boolean; icon: any; label: string; isCollapsed: boolean }) => (
+  ({ href, isActive, icon: Icon, label, isCollapsed }: { href: string; isActive: boolean; icon: LucideIcon | React.ElementType; label: string; isCollapsed: boolean }) => (
     <Link
       href={href}
       aria-current={isActive ? 'page' : undefined}

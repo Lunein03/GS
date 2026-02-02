@@ -2,7 +2,7 @@ import {
   coerceCents,
   extractAcquisitionCentsFromNotes,
   parseBRLToCents,
-} from '@/lib/currency';
+} from '@/shared/lib/currency';
 import { fetchApi, HttpError } from '@/shared/lib/api-client';
 import type { ActionResponse } from '@/shared/lib/types/actions';
 import type { Equipment } from '@/features/patrimonio/domain/types/equipment';

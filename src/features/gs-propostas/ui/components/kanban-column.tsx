@@ -3,16 +3,18 @@
 import { useDroppable } from "@dnd-kit/core";
 import type { Opportunity, OpportunityStatus } from "@/features/gs-propostas/domain/types";
 import { OpportunityCard } from "./opportunity-card";
+import { LucideIcon } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
 
 interface KanbanColumnProps {
   id: OpportunityStatus;
   title: string;
   color: string;
+  icon?: LucideIcon | React.ElementType;
   opportunities: Opportunity[];
 }
 
-export function KanbanColumn({ id, title, color, opportunities }: KanbanColumnProps) {
+export function KanbanColumn({ id, title, color, icon: Icon, opportunities }: KanbanColumnProps) {
   const { setNodeRef, isOver } = useDroppable({ id });
 
   const totalValue = opportunities.reduce(
@@ -30,7 +32,11 @@ export function KanbanColumn({ id, title, color, opportunities }: KanbanColumnPr
     >
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className={cn("h-3 w-3 rounded-full", color)} />
+          {Icon ? (
+             <Icon className={cn("h-4 w-4", color)} />
+          ) : (
+             <div className={cn("h-3 w-3 rounded-full", color.replace('text-', 'bg-'))} />
+          )}
           <h3 className="font-medium">{title}</h3>
           <span className="text-sm text-muted-foreground">
             ({opportunities.length})

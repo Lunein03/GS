@@ -22,6 +22,7 @@ import {
   Sun,
   PanelLeftClose,
   PanelLeftOpen,
+  LucideIcon,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -69,7 +70,7 @@ const NavigationLink = memo(({
 }: {
   href: string;
   isActive: boolean;
-  icon: any;
+  icon: LucideIcon | React.ElementType;
   label: string;
   isCollapsed: boolean;
 }) => {
@@ -135,7 +136,7 @@ const SubNavigationLink = memo(({
 }: {
   href: string;
   isActive: boolean;
-  icon: any;
+  icon: LucideIcon | React.ElementType;
   label: string;
   isCollapsed: boolean;
 }) => {

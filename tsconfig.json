@@ -28,9 +28,6 @@
       ],
       "@/components/*": [
         "./components/*"
-      ],
-      "@/lib/*": [
-        "./lib/*"
       ]
     }
   },

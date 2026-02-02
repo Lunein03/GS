@@ -16,6 +16,15 @@ const config: Config = {
         inter: ['var(--font-inter)', 'system-ui', 'sans-serif'],
       },
       colors: {
+        // GS Produções Brand Colors
+        brand: {
+          indigo: '#6422F2',    // Electric Indigo
+          turquesa: '#19E6C5',  // Turquesa Viva
+          'dark-indigo': '#2A2451', // Azul Índigo Escuro
+          charcoal: '#333333',  // Cinza Carvão
+          snow: '#F0EEEF',      // Cinza Neve
+          vanilla: '#F4E1C1',   // Vanilla
+        },
         // Apple Neutral Design System
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',

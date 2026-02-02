@@ -10,15 +10,16 @@ from app.db.session import engine
 def create_app() -> FastAPI:
     app = FastAPI(title=settings.app_name)
 
-    # Configure CORS
+    # Configure CORS (make it flexible for LAN/dev usage)
+    allow_origin_regex = (
+        r"http://192\.168\.\d{1,3}\.\d{1,3}(:\d+)?"
+        if settings.allow_lan_cors
+        else None
+    )
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=[
-            "http://localhost:3000",
-            "http://127.0.0.1:3000",
-            "http://localhost:3001",
-            "http://127.0.0.1:3001",
-        ],
+        allow_origins=settings.cors_origins,
+        allow_origin_regex=allow_origin_regex,
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
@@ -27,7 +28,9 @@ def create_app() -> FastAPI:
     @app.on_event("startup")
     def startup() -> None:
         # Ensure tables exist when running without Alembic (development convenience).
-        Base.metadata.create_all(bind=engine)
+        # Only if database is configured
+        if engine is not None:
+            Base.metadata.create_all(bind=engine)
 
     @app.get("/health", tags=["health"])
     def healthcheck() -> dict[str, str]:

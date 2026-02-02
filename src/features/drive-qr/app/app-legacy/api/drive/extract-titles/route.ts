@@ -42,10 +42,10 @@ export async function POST(request: Request): Promise<NextResponse<ActionRespons
           return { ...metadata, url };
         } catch (error) {
           return {
-            success: false,
+            success: false as const,
             fileId: null,
             title: 'Erro ao processar URL',
-            method: 'error',
+            method: 'error' as const,
             audio: {
               isAudio: false,
               proxyPath: null,
@@ -66,10 +66,10 @@ export async function POST(request: Request): Promise<NextResponse<ActionRespons
 
       // Em caso de rejeição, retornar erro
       return {
-        success: false,
+        success: false as const,
         fileId: null,
         title: 'Falha ao processar',
-        method: 'error',
+        method: 'error' as const,
         audio: {
           isAudio: false,
           proxyPath: null,

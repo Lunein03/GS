@@ -214,8 +214,8 @@ export default function AssinaturasPage() {
     selectedSignature.status === 'pending';
 
   return (
-    <div className="flex flex-col gap-6">
-      <header className="flex flex-wrap items-center justify-between gap-4">
+    <div className="flex flex-col gap-6 w-full h-full bg-background text-foreground py-4 px-4 justify-start">
+      <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <PenTool className="h-10 w-10 text-primary" />
           <div>

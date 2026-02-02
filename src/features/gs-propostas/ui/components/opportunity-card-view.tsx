@@ -73,21 +73,15 @@ export const OpportunityCardView = forwardRef<HTMLDivElement, OpportunityCardVie
           ref={ref}
           style={style}
           className={cn(
-            "group relative rounded-xl border border-border bg-background p-4 shadow-sm transition-all hover:shadow-md",
-            isDragging && "opacity-50 cursor-grabbing",
+            "group relative rounded-xl border border-border bg-card p-4 shadow-sm transition-all hover:shadow-md hover:border-primary/20 overflow-hidden",
+            isDragging && "opacity-50 grayscale",
             !isDragging && withDragHandle && "cursor-grab",
             className
           )}
           {...props}
+          {...(withDragHandle ? dragHandleProps : {})}
         >
-          {withDragHandle && (
-            <div
-              {...dragHandleProps}
-              className="absolute left-2 top-2 cursor-grab opacity-0 transition-opacity group-hover:opacity-100"
-            >
-              <GripVertical className="h-4 w-4 text-muted-foreground" />
-            </div>
-          )}
+
 
           <div className="absolute right-2 top-2 opacity-0 transition-opacity group-hover:opacity-100">
             <DropdownMenu>

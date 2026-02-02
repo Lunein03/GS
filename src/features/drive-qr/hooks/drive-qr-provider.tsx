@@ -8,7 +8,7 @@ import { generateId } from '@/shared/lib/utils';
 
 import { fetchDriveMetadata } from './lib/drive-client';
 import { detectAudioByNameOrUrl, isGoogleDriveLink, scanQrCode } from './lib/qr-processor';
-import type { DriveQrResult } from '../types';
+import type { DriveQrResult } from '../domain/types';
 
 export const DriveQrContext = createContext<DriveQrContextValue | undefined>(undefined);
 

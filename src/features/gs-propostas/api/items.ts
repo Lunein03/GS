@@ -1,5 +1,5 @@
 import { fetchApi, HttpError } from '@/shared/lib/api-client';
-import type { ActionResponse } from '@/shared/lib/types/actions';
+import type { ActionResponse, AppErrorCode } from '@/shared/lib/types/actions';
 import {
   itemFormSchema,
   getItemsSchema,
@@ -32,7 +32,7 @@ const success = <T>(data: T): ActionResponse<T> => ({ success: true, data });
 
 const failure = <T>(
   message: string,
-  code: ActionResponse<T>['error']['code'] = 'UNEXPECTED_ERROR',
+  code: AppErrorCode = 'UNEXPECTED_ERROR',
 ): ActionResponse<T> => ({
   success: false,
   error: { code, message },

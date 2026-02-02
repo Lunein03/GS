@@ -5,12 +5,13 @@ import { Button } from "@/shared/ui/button";
 import Link from "next/link";
 import { GsPropostasHeroBackground } from "@/features/gs-propostas/ui/layout/gs-propostas-hero-background";
 import { listOpportunities } from "@/features/gs-propostas/api/opportunities";
+import type { Opportunity } from "@/features/gs-propostas/domain/types";
 
 // Marcar como dinâmico para evitar SSG durante build
 export const dynamic = 'force-dynamic';
 
 export default async function GsPropostasDashboardPage() {
-  let initialOpportunities = [];
+  let initialOpportunities: Opportunity[] = [];
 
   try {
     initialOpportunities = await listOpportunities();

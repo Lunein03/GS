@@ -3,6 +3,9 @@ const nextConfig = {
   reactStrictMode: true,
   // Output standalone para Docker (gera servidor Node.js otimizado)
   output: 'standalone',
+  // Garante que @react-pdf/renderer seja empacotado em vez de externalizado,
+  // evitando erros do Turbopack com ESM externo.
+  transpilePackages: ['@react-pdf/renderer'],
   typescript: {
     ignoreBuildErrors: true,
   },

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <style>
+    @page { size: A4; margin: 25mm 20mm 20mm 20mm; }
+    body { font-family: "DejaVu Sans", Helvetica, Arial, sans-serif; color: #1f2937; position: relative; }
+    .watermark {
+      position: fixed;
+      top: 35%;
+      left: 50%;
+      width: 320px;
+      height: 320px;
+      transform: translate(-50%, -50%);
+      opacity: {{ watermark_opacity }};
+      z-index: 0;
+    }
+    .watermark img { width: 100%; height: 100%; }
+    .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 18px; }
+    .logo { width: 72px; }
+    .title { text-align: right; }
+    .title h1 { margin: 0; font-size: 22px; }
+    .title p { margin: 2px 0 0; color: #6b7280; font-size: 12px; }
+    .meta { display: flex; justify-content: space-between; border-top: 1px solid #e5e7eb; border-bottom: 1px solid #e5e7eb; padding: 10px 0; margin-bottom: 18px; font-size: 11px; }
+    .section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; color: #111827; }
+    .row { display: flex; gap: 32px; margin-bottom: 18px; }
+    .col { flex: 1; font-size: 11px; }
+    .label { font-weight: 600; color: #111827; }
+    .value { color: #4b5563; }
+    table { width: 100%; border-collapse: collapse; font-size: 10px; margin-top: 6px; }
+    thead { background: #f4f4f5; }
+    th, td { padding: 8px; border-bottom: 1px solid #e5e7eb; }
+    th { text-transform: uppercase; font-weight: 700; color: #111827; font-size: 9px; }
+    td { color: #4b5563; }
+    .right { text-align: right; }
+    .center { text-align: center; }
+    .total-row { border-top: 2px solid #111827; font-weight: 700; font-size: 11px; }
+    .observ { margin-top: 18px; }
+    .signature { margin-top: 40px; }
+    .signature .line { width: 60%; border-top: 1px solid #d1d5db; margin-bottom: 8px; }
+    .signature .name { font-weight: 600; color: #111827; }
+    .signature .company { text-transform: uppercase; letter-spacing: 1px; font-size: 9px; color: #6b7280; }
+  </style>
+</head>
+<body>
+  <div class="watermark">
+    <img src="{{ watermark_data_url }}" alt="Marca d'água" />
+  </div>
+
+  <div class="header">
+    <img class="logo" src="{{ logo_data_url }}" alt="Logo" />
+    <div class="title">
+      <h1>Proposta Comercial</h1>
+      <p>{{ data.name or "Nova Proposta" }}</p>
+    </div>
+  </div>
+
+  <div class="meta">
+    <div>
+      <div><span class="label">Código:</span> {{ data.code or "-----" }}</div>
+      <div><span class="label">Status da Proposta:</span> {{ data.status or "Aberto" }}</div>
+    </div>
+    <div>
+      <div><span class="label">Data da Proposta:</span> {{ date_str }}</div>
+      <div><span class="label">Validade:</span> {{ validity_str }}</div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <div class="section-title">Empresa</div>
+      <div class="label">{{ company.name }}</div>
+      <div class="value">CNPJ: {{ company.cnpj }}</div>
+      <div class="value">{{ company.address }}, {{ company.neighborhood }}</div>
+      <div class="value">{{ company.city }} - {{ company.state }} - {{ company.zip_code }}</div>
+      <div class="value">E-mail: {{ company.email }}</div>
+      <div class="value">Telefone: {{ company.phone }}</div>
+    </div>
+    <div class="col">
+      <div class="section-title">Cliente</div>
+      {% if client.name %}
+        <div class="label">{{ client.name }}</div>
+        {% if client.contact_name %}<div class="value">{{ client.contact_name }}</div>{% endif %}
+        {% if client.cnpj %}<div class="value">CNPJ: {{ client.cnpj }}</div>{% endif %}
+        {% if client.cpf %}<div class="value">CPF: {{ client.cpf }}</div>{% endif %}
+        {% if client.address %}<div class="value">{{ client.address }}</div>{% endif %}
+        {% if client.email %}<div class="value">E-mail: {{ client.email }}</div>{% endif %}
+        {% if client.phone %}<div class="value">Telefone: {{ client.phone }}</div>{% endif %}
+      {% else %}
+        <div class="value">Contratante</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div>
+    <div class="section-title">Itens</div>
+    {% if items %}
+    <table>
+      <thead>
+        <tr>
+          <th class="left">Descrição</th>
+          <th class="center" style="width:60px;">Qtd</th>
+          <th class="right" style="width:100px;">Valor Unit.</th>
+          <th class="right" style="width:100px;">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+        <tr>
+          <td>{{ item.description }}</td>
+          <td class="center">{{ item.quantity }}</td>
+          <td class="right">{{ item.unit_value_fmt }}</td>
+          <td class="right">{{ item.total_fmt }}</td>
+        </tr>
+        {% endfor %}
+        <tr class="total-row">
+          <td colspan="3" class="right">Total:</td>
+          <td class="right">{{ total_fmt }}</td>
+        </tr>
+      </tbody>
+    </table>
+    {% else %}
+      <div class="value">Nenhum item adicionado.</div>
+    {% endif %}
+  </div>
+
+  <div class="observ">
+    <div class="section-title">Observações</div>
+    <div class="value">{{ observations or "Sem observações adicionais." }}</div>
+  </div>
+
+  <div class="signature">
+    <div class="value">Rio de Janeiro, {{ today_full }}.</div>
+    <div class="line"></div>
+    <div class="name">{{ signature.name }}</div>
+    <div class="company">{{ signature.company }}</div>
+  </div>
+</body>
+</html>

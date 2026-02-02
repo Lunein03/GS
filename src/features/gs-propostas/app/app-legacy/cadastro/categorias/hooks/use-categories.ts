@@ -14,6 +14,7 @@ import {
   getCategories,
   updateCategory,
 } from '@/features/gs-propostas/api/categories';
+import type { ActionResponse } from '@/shared/lib/types/actions';
 import type {
   Category,
   CreateCategoryInput,

@@ -195,7 +195,7 @@ export type GetClienteByIdInput = z.infer<typeof getClienteByIdSchema>;
 export type CheckDocumentExistsInput = z.infer<typeof checkDocumentExistsSchema>;
 export type GetClientesInput = z.infer<typeof getClientesSchema>;
 export type ContatoSecundarioSchema = z.infer<typeof contatoSecundarioSchema>;
-export type CreateContatoSecundarioInput = z.infer<typeof createContatoSecundarioSchema>;
+export type CreateContatoSecundarioInput = z.infer<typeof contatoSecundarioSchema>;
 export type UpdateContatoSecundarioInput = z.infer<typeof updateContatoSecundarioSchema>;
 export type DeleteContatoSecundarioInput = z.infer<typeof deleteContatoSecundarioSchema>;
 

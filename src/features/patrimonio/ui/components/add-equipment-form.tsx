@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { useCreateEquipment } from '@/features/patrimonio/hooks/use-equipment';
-import { formatBRLInput, parseBRLToCents } from '@/lib/currency';
+import { formatBRLInput, parseBRLToCents } from '@/shared/lib/currency';
 import { Button } from '@/shared/ui/button';
 import { Input } from '@/shared/ui/input';
 import { Label } from '@/shared/ui/label';

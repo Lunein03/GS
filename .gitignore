@@ -189,3 +189,4 @@ $RECYCLE.BIN/
 **/.hg/
 public/videos/*.mp4
 _temp_videos/
+tmp-edge-profile/

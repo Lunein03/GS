@@ -1,0 +1,1 @@
+export const SKELETON_DEFAULT_COUNT = 4;

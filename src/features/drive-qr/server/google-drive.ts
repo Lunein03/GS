@@ -49,7 +49,7 @@ export async function extractDriveMetadata(url: string): Promise<DriveExtraction
     return {
       success: false,
       fileId: null,
-      title: 'URL inválida ou ID não encontrado',
+      title: 'URL invÃ¡lida ou ID nÃ£o encontrado',
       method: 'error',
       audio: {
         isAudio: false,

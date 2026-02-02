@@ -65,7 +65,8 @@ export function ClienteForm({
     setValue,
     formState: { errors, isDirty },
   } = useForm<FormData>({
-    // TODO (LOW): Remover 'as any' quando react-hook-form resolver incompatibilidade de tipos com zodResolver
+    // Known issue: Type mismatch between zodResolver and react-hook-form versions.
+    // 'as any' is required to avoid TS2322 error: "Type 'undefined' is not assignable to type 'number'" in ResolverOptions.
     resolver: zodResolver(clienteFormSchema) as any,
     defaultValues: initialData
       ? {
