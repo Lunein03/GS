@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
     paddingTop: 32,
     paddingBottom: 60,
-    paddingHorizontal: 60,
+    paddingHorizontal: 46,
     backgroundColor: "#ffffff",
     color: "#18181b",
   },
@@ -31,11 +31,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
-    gap: 16,
-    marginBottom: 10,
-    paddingBottom: 12,
+    gap: 12,
+    marginBottom: 8,
+    paddingBottom: 10,
     borderBottomWidth: 1,
-    borderColor: "#e5e7eb",
+    borderColor: "#d4d4d8",
   },
   headerLeft: {
     flex: 1,
@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
   },
   headerRight: {
     textAlign: "right",
-    paddingTop: 6,
+    paddingTop: 4,
     width: 60,
     alignItems: "flex-end",
   },
@@ -69,17 +69,20 @@ const styles = StyleSheet.create({
     gap: 1,
   },
   docTitleBlock: {
-    marginTop: 8,
-    marginBottom: 12,
+    marginTop: 6,
+    marginBottom: 10,
+    alignItems: "center",
+    textAlign: "center",
+    gap: 3,
   },
   docTitle: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: 700,
-    color: "#18181b",
+    color: "#1f2937",
   },
   docSubtitle: {
     fontSize: 12,
-    color: "#6b7280",
+    color: "#4b5563",
     fontWeight: 500,
     marginTop: 2,
   },
@@ -88,54 +91,49 @@ const styles = StyleSheet.create({
     color: "#4b5563",
   },
   // Metadata section
-  metadataRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    borderTopWidth: 1,
+  metadataBlock: {
     borderBottomWidth: 1,
-    borderColor: "#f4f4f5",
-    paddingVertical: 16,
-    marginBottom: 24,
-  },
-  metadataCol: {
-    gap: 4,
-  },
-  metadataColRight: {
-    gap: 4,
-    textAlign: "right",
-    alignItems: "flex-end",
-  },
-  metadataLabel: {
-    fontWeight: 600,
-    color: "#18181b",
-  },
-  metadataValue: {
-    color: "#52525b",
+    borderColor: "#d4d4d8",
+    paddingVertical: 8,
+    marginBottom: 8,
+    gap: 2,
   },
   metadataLine: {
-    flexDirection: "row",
-    gap: 4,
+    fontSize: 10.5,
+    color: "#111827",
+  },
+  metadataLabelInline: {
+    fontWeight: 700,
+  },
+  serviceBlock: {
+    marginBottom: 10,
+    paddingBottom: 8,
+    borderBottomWidth: 1,
+    borderColor: "#d4d4d8",
+  },
+  serviceTitle: {
     fontSize: 11,
+    fontWeight: 700,
+    marginBottom: 4,
   },
   // Entities section
   entitiesRow: {
     flexDirection: "row",
-    gap: 40,
-    marginBottom: 30,
+    gap: 20,
+    marginBottom: 14,
+    paddingVertical: 10,
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+    borderColor: "#d4d4d8",
   },
   entityCol: {
     flex: 1,
   },
   sectionTitle: {
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: 700,
     color: "#18181b",
-    textTransform: "uppercase",
-    letterSpacing: 1,
-    borderBottomWidth: 1,
-    borderColor: "#f4f4f5",
-    paddingBottom: 4,
-    marginBottom: 10,
+    marginBottom: 6,
   },
   entityName: {
     fontSize: 11,
@@ -171,16 +169,27 @@ const styles = StyleSheet.create({
   },
   // Signature section
   signatureSection: {
-    marginTop: "auto",
-    paddingTop: 40,
+    marginTop: 36,
+    paddingTop: 12,
   },
   signatureDate: {
     fontSize: 10,
     color: "#52525b",
-    marginBottom: 50,
+    marginBottom: 20,
+  },
+  signatureRow: {
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    gap: 32,
+  },
+  signatureBox: {
+    alignItems: "center",
+    flex: 1,
   },
   signatureLine: {
-    width: "60%",
+    width: "78%",
+    maxWidth: 240,
+    alignSelf: "center",
     borderTopWidth: 1,
     borderColor: "#d4d4d8",
     paddingTop: 10,
@@ -209,108 +218,112 @@ const styles = StyleSheet.create({
     height: 260,
     opacity: 0.05, // 5% keeps readability
   },
-  // Page 2 - Client signature
-  page2Header: {
-    marginBottom: 40,
-  },
-  logoSmall: {
-    width: 50,
-    height: 50,
-  },
-  clientSignatureArea: {
-    flex: 1,
-    justifyContent: "flex-start",
-    alignItems: "center",
-    paddingTop: 80,
-  },
-  clientSignatureLine: {
-    width: "60%",
-    borderTopWidth: 1,
-    borderColor: "#71717a",
-    paddingTop: 10,
-  },
-  clientSignatureLabel: {
-    fontSize: 11,
-    color: "#52525b",
-    textAlign: "center",
-  },
-  watermarkPage2: {
-    position: "absolute",
-    // Centered, slightly smaller on page 2
-    top: 301,
-    left: 178,
-    width: 240,
-    height: 240,
-    opacity: 0.05,
-  },
+
   // Items table
   itemsSection: {
-    marginBottom: 20,
+    marginBottom: 18,
+    gap: 6,
   },
+
   itemsTable: {
     width: "100%",
-    marginTop: 8,
+    marginTop: 10,
+    borderWidth: 1,
+    borderColor: "#d4d4d8",
+    borderRadius: 3,
   },
   itemsHeader: {
     flexDirection: "row",
-    backgroundColor: "#f4f4f5",
-    paddingVertical: 8,
-    paddingHorizontal: 8,
+    backgroundColor: "#f5f5f5",
+    paddingVertical: 6,
+    paddingHorizontal: 6,
     borderBottomWidth: 1,
-    borderColor: "#e4e4e7",
+    borderColor: "#d4d4d8",
+    borderLeftWidth: 1,
+    borderLeftColor: "#d4d4d8",
+    borderRightWidth: 1,
+    borderRightColor: "#d4d4d8",
   },
   itemsHeaderText: {
-    fontSize: 9,
-    fontWeight: 600,
-    color: "#18181b",
-    textTransform: "uppercase",
+    fontSize: 9.5,
+    fontWeight: 700,
+    color: "#111827",
   },
   itemRow: {
     flexDirection: "row",
-    paddingVertical: 8,
-    paddingHorizontal: 8,
+    paddingVertical: 6,
+    paddingHorizontal: 6,
     borderBottomWidth: 1,
-    borderColor: "#f4f4f5",
+    borderColor: "#d4d4d8",
+    borderLeftWidth: 1,
+    borderLeftColor: "#d4d4d8",
+    borderRightWidth: 1,
+    borderRightColor: "#d4d4d8",
   },
-  itemColDesc: {
-    flex: 3,
+  itemColName: { 
+    width: "30%", 
+    borderRightWidth: 1, 
+    borderRightColor: "#d4d4d8",
+    paddingRight: 4,
   },
-  itemColQty: {
-    flex: 1,
-    textAlign: "center",
+  itemColDesc: { 
+    width: "35%", 
+    borderRightWidth: 1, 
+    borderRightColor: "#d4d4d8",
+    paddingRight: 4,
+    paddingLeft: 4,
   },
-  itemColValue: {
-    flex: 1,
+  itemColQty: { 
+    width: "10%", 
+    textAlign: "center", 
+    borderRightWidth: 1, 
+    borderRightColor: "#d4d4d8", 
+  },
+  itemColValue: { 
+    width: "12.5%", 
+    textAlign: "right", 
+    borderRightWidth: 1, 
+    borderRightColor: "#d4d4d8",
+    paddingRight: 4, 
+  },
+  itemColTotal: { 
+    width: "12.5%", 
     textAlign: "right",
-  },
-  itemColTotal: {
-    flex: 1,
-    textAlign: "right",
+    paddingRight: 4,
   },
   itemText: {
-    fontSize: 10,
-    color: "#52525b",
+    fontSize: 9.5,
+    color: "#111827",
   },
   // Footer/Total
   totalRow: {
     flexDirection: "row",
     justifyContent: "flex-end",
-    paddingTop: 12,
-    paddingRight: 8,
-    marginTop: 8,
-    borderTopWidth: 2,
-    borderColor: "#18181b",
+    paddingVertical: 8,
+    paddingHorizontal: 8,
+    backgroundColor: "#f9fafb",
   },
   totalLabel: {
     fontSize: 11,
     fontWeight: 600,
     color: "#18181b",
-    marginRight: 20,
+    marginRight: 8,
   },
   totalValue: {
     fontSize: 11,
     fontWeight: 700,
     color: "#18181b",
+  },
+  itemNoteTitle: {
+    fontSize: 10,
+    fontWeight: 700,
+    marginTop: 6,
+    marginBottom: 2,
+  },
+  itemNoteText: {
+    fontSize: 9.5,
+    color: "#52525b",
+    lineHeight: 1.5,
   },
 });
 
@@ -319,6 +332,7 @@ export interface ProposalItem {
   description: string;
   quantity: number;
   unitValue: number;
+  itemObservation?: string;
 }
 
 export interface ProposalPdfData {
@@ -332,6 +346,10 @@ export interface ProposalPdfData {
   companyName?: string;
   companyCnpj?: string;
   companyAddress?: string;
+  companyNeighborhood?: string;
+  companyCity?: string;
+  companyState?: string;
+  companyZip?: string;
   companyEmail?: string;
   companyPhone?: string;
   responsibleName?: string;
@@ -401,6 +419,26 @@ export function ProposalPdfDocument({ data }: ProposalPdfDocumentProps) {
     return format(new Date(), "dd 'de' MMMM 'de' yyyy", { locale: ptBR });
   };
 
+  const formatCompanyLocation = () => {
+    const placeParts = [data.companyNeighborhood, data.companyCity].filter(Boolean);
+    const place = placeParts.join(", ");
+    const ufZip = [data.companyState, data.companyZip].filter(Boolean).join(" - ");
+
+    if (place && ufZip) return `${place} - ${ufZip}`;
+    return place || ufZip;
+  };
+
+  const companyLocationLine = formatCompanyLocation();
+  const companyEmailLine = data.companyEmail ? `E-mail: ${data.companyEmail}` : '';
+  const companyPhoneLine = data.companyPhone ? `Telefone: ${data.companyPhone}` : '';
+
+  const serviceSummary =
+    data.observations && data.observations.trim().length > 0
+      ? data.observations
+      : data.items && data.items[0]
+        ? `Prestação de serviço: ${data.items[0].description}`
+        : "Contratação de intérprete(s) de Libras conforme condições descritas abaixo.";
+
   return (
     <Document>
       {/* Page 1 - Main Content */}
@@ -415,13 +453,23 @@ export function ProposalPdfDocument({ data }: ProposalPdfDocumentProps) {
         <View style={styles.headerLeft}>
           <View style={styles.companyBlock}>
             <Text style={[styles.companyLine, { fontWeight: 700 }]}>
-              {data.companyName || "GS PRODUÇÕES E ACESSIBILIDADE"}
+              {data.companyName ?? "GS PRODUÇÕES E ACESSIBILIDADE"}
             </Text>
-            <Text style={styles.companyLine}>CNPJ: {data.companyCnpj || "35.282.691/0001-48"}</Text>
-            <Text style={styles.companyLine}>{data.companyAddress || "Rua Cinco de Julho, 388, APT 103"}</Text>
-            <Text style={styles.companyLine}>Copacabana, Rio de Janeiro - RJ - 22051-030</Text>
-            <Text style={styles.companyLine}>E-mail: {data.companyEmail || "comercial@gsproducao.com"}</Text>
-            <Text style={styles.companyLine}>Telefone: {data.companyPhone || "+55 21 96819-9637"}</Text>
+            {data.companyCnpj && (
+              <Text style={styles.companyLine}>CNPJ: {data.companyCnpj}</Text>
+            )}
+            {data.companyAddress && (
+              <Text style={styles.companyLine}>{data.companyAddress}</Text>
+            )}
+            {companyLocationLine ? (
+              <Text style={styles.companyLine}>{companyLocationLine}</Text>
+            ) : null}
+            {companyEmailLine ? (
+              <Text style={styles.companyLine}>{companyEmailLine}</Text>
+            ) : null}
+            {companyPhoneLine ? (
+              <Text style={styles.companyLine}>{companyPhoneLine}</Text>
+            ) : null}
           </View>
         </View>
         <View style={styles.headerRight}>
@@ -432,33 +480,31 @@ export function ProposalPdfDocument({ data }: ProposalPdfDocumentProps) {
       {/* Document Title (separate from header) */}
       <View style={styles.docTitleBlock}>
         <Text style={styles.docTitle}>Proposta Comercial</Text>
-        {data.name && data.name !== "Nova Proposta" && (
-          <Text style={styles.docSubtitle}>{data.name}</Text>
+        {data.clientName && (
+          <Text style={styles.docSubtitle}>{data.clientName}</Text>
         )}
       </View>
 
         {/* Metadata */}
-        <View style={styles.metadataRow}>
-          <View style={styles.metadataCol}>
-            <View style={styles.metadataLine}>
-              <Text style={styles.metadataLabel}>Código:</Text>
-              <Text style={styles.metadataValue}> {data.code || "------"}</Text>
-            </View>
-            <View style={styles.metadataLine}>
-              <Text style={styles.metadataLabel}>Status da Proposta:</Text>
-              <Text style={styles.metadataValue}> {data.status || "Aberto"}</Text>
-            </View>
-          </View>
-          <View style={styles.metadataColRight}>
-            <View style={styles.metadataLine}>
-              <Text style={styles.metadataLabel}>Data da Proposta:</Text>
-              <Text style={styles.metadataValue}> {formatDate(data.date || new Date())}</Text>
-            </View>
-            <View style={styles.metadataLine}>
-              <Text style={styles.metadataLabel}>Validade:</Text>
-              <Text style={styles.metadataValue}> {formatDate(data.validity)}</Text>
-            </View>
-          </View>
+        <View style={styles.metadataBlock}>
+          <Text style={styles.metadataLine}>
+            <Text style={styles.metadataLabelInline}>Código: </Text>{data.code || "------"}
+          </Text>
+          <Text style={styles.metadataLine}>
+            <Text style={styles.metadataLabelInline}>Status da Proposta: </Text>{data.status || "Aberto"}
+          </Text>
+          <Text style={styles.metadataLine}>
+            <Text style={styles.metadataLabelInline}>Data da Proposta: </Text>{formatDate(data.date || new Date())}
+          </Text>
+          <Text style={styles.metadataLine}>
+            <Text style={styles.metadataLabelInline}>Validade: </Text>{formatDate(data.validity)}
+          </Text>
+        </View>
+
+        {/* Service summary */}
+        <View style={styles.serviceBlock}>
+          <Text style={styles.serviceTitle}>Prestação de Serviço</Text>
+          <Text style={styles.contentText}>{serviceSummary}</Text>
         </View>
 
         {/* Entities */}
@@ -466,8 +512,23 @@ export function ProposalPdfDocument({ data }: ProposalPdfDocumentProps) {
           <View style={styles.entityCol}>
             <Text style={styles.sectionTitle}>Empresa</Text>
             <Text style={styles.entityName}>
-              {data.companyName || "GS PRODUÇÕES E ACESSIBILIDADE"}
+              {data.companyName ?? "GS PRODUÇÕES E ACESSIBILIDADE"}
             </Text>
+            {data.companyCnpj && (
+              <Text style={styles.entityDetail}>{data.companyCnpj}</Text>
+            )}
+            {data.companyAddress && (
+              <Text style={styles.entityDetail}>{data.companyAddress}</Text>
+            )}
+            {companyLocationLine ? (
+              <Text style={styles.entityDetail}>{companyLocationLine}</Text>
+            ) : null}
+            {companyEmailLine ? (
+              <Text style={styles.entityDetail}>{companyEmailLine}</Text>
+            ) : null}
+            {companyPhoneLine ? (
+              <Text style={styles.entityDetail}>{companyPhoneLine}</Text>
+            ) : null}
           </View>
           <View style={styles.entityCol}>
             <Text style={styles.sectionTitle}>Cliente</Text>
@@ -488,30 +549,44 @@ export function ProposalPdfDocument({ data }: ProposalPdfDocumentProps) {
         <View style={styles.itemsSection}>
           <Text style={styles.contentTitle}>Itens</Text>
           {data.items && data.items.length > 0 ? (
-            <View style={styles.itemsTable}>
-              <View style={styles.itemsHeader}>
-                <Text style={[styles.itemsHeaderText, styles.itemColDesc]}>Descrição</Text>
-                <Text style={[styles.itemsHeaderText, styles.itemColQty]}>Qtd</Text>
-                <Text style={[styles.itemsHeaderText, styles.itemColValue]}>Valor Unit.</Text>
-                <Text style={[styles.itemsHeaderText, styles.itemColTotal]}>Total</Text>
-              </View>
-              {data.items.map((item) => (
-                <View key={item.id} style={styles.itemRow}>
-                  <Text style={[styles.itemText, styles.itemColDesc]}>{item.description}</Text>
-                  <Text style={[styles.itemText, styles.itemColQty]}>{item.quantity}</Text>
-                  <Text style={[styles.itemText, styles.itemColValue]}>
-                    {formatCurrency(item.unitValue)}
-                  </Text>
-                  <Text style={[styles.itemText, styles.itemColTotal]}>
-                    {formatCurrency(item.quantity * item.unitValue)}
-                  </Text>
+            <>
+
+
+              <View style={styles.itemsTable}>
+                <View style={styles.itemsHeader}>
+                  <Text style={[styles.itemsHeaderText, styles.itemColName]}>Item</Text>
+                  <Text style={[styles.itemsHeaderText, styles.itemColDesc]}>Descrição</Text>
+                  <Text style={[styles.itemsHeaderText, styles.itemColQty]}>Prazo/Qtd.</Text>
+                  <Text style={[styles.itemsHeaderText, styles.itemColValue]}>Valor Un.</Text>
+                  <Text style={[styles.itemsHeaderText, styles.itemColTotal]}>Total</Text>
                 </View>
-              ))}
-              <View style={styles.totalRow}>
-                <Text style={styles.totalLabel}>Total:</Text>
-                <Text style={styles.totalValue}>{formatCurrency(calculateTotal())}</Text>
+                {data.items.map((item, index) => (
+                  <View key={item.id} style={styles.itemRow}>
+                    <Text style={[styles.itemText, styles.itemColName]}>{item.description}</Text>
+                    <Text style={[styles.itemText, styles.itemColDesc]}>{item.itemObservation || ""}</Text>
+                    <Text style={[styles.itemText, styles.itemColQty]}>
+                      {item.quantity?.toFixed(2) ?? "0,00"}
+                    </Text>
+                    <Text style={[styles.itemText, styles.itemColValue]}>
+                      {formatCurrency(item.unitValue)}
+                    </Text>
+                    <Text style={[styles.itemText, styles.itemColTotal]}>
+                      {formatCurrency(item.quantity * item.unitValue)}
+                    </Text>
+                  </View>
+                ))}
+                <View style={styles.totalRow}>
+                  <Text style={styles.totalLabel}>Valor Total:</Text>
+                  <Text style={styles.totalValue}>{formatCurrency(calculateTotal())}</Text>
+                </View>
               </View>
-            </View>
+              {data.observations && (
+                <View>
+                  <Text style={styles.itemNoteTitle}>Observação</Text>
+                  <Text style={styles.itemNoteText}>{data.observations}</Text>
+                </View>
+              )}
+            </>
           ) : (
             <Text style={styles.contentText}>
               Adicione os itens e serviÃ§os da proposta aqui...
@@ -519,43 +594,34 @@ export function ProposalPdfDocument({ data }: ProposalPdfDocumentProps) {
           )}
         </View>
 
-        {/* Observations */}
-        <View style={styles.contentSection}>
-            <Text style={styles.contentTitle}>Observações</Text>
-          <Text style={styles.contentText}>
-            {data.observations ||
-              "Os objetivos na contratação dos intérpretes de Libras - português foram logrados, visando uma estrutura operacional para dar apoio a esse nicho da população, atendendo à legislação ao dispor profissionais proficientes em Libras, para os surdos exercerem seus direitos em um grande evento aberto a todos os públicos, sob a perspectiva da promoção da diversidade."}
-          </Text>
-        </View>
+
 
         {/* Signature Section */}
-        <View style={styles.signatureSection}>
-          <Text style={styles.signatureDate}>Rio de Janeiro, {formatFullDate()}.</Text>
-          <View style={styles.signatureLine}>
-            <Text style={styles.signatureName}>
-              {data.responsibleName || "Gabriel Sampaio Verissimo"}
-            </Text>
-            <Text style={styles.signatureCompany}>GS Produções</Text>
-          </View>
-        </View>
-      </Page>
+        <View style={styles.signatureSection} wrap={false}>
+          <Text style={styles.signatureDate}>
+            Rio de Janeiro, {formatFullDate()}.
+          </Text>
 
-      {/* Page 2 - Client Signature */}
-      <Page size="A4" style={styles.page}>
-        {/* Watermark */}
-        <View style={styles.watermarkPage2}>
-          <GsLogo size={220} opacity={0.05} />
-        </View>
+          <View style={styles.signatureRow}>
+            {/* GS Signature */}
+            <View style={styles.signatureBox}>
+              <View style={styles.signatureLine}>
+                <Text style={styles.signatureName}>
+                  {data.responsibleName || "Gabriel Sampaio Verissimo"}
+                </Text>
+                <Text style={styles.signatureCompany}>GS Produções</Text>
+              </View>
+            </View>
 
-        {/* Header */}
-        <View style={styles.page2Header}>
-          <GsLogo size={50} />
-        </View>
-
-        {/* Client Signature Area */}
-        <View style={styles.clientSignatureArea}>
-          <View style={styles.clientSignatureLine}>
-            <Text style={styles.clientSignatureLabel}>Contratante</Text>
+            {/* Client Signature */}
+            <View style={styles.signatureBox}>
+              <View style={styles.signatureLine}>
+                <Text style={styles.signatureName}>
+                  {data.clientName || "Contratante"}
+                </Text>
+                <Text style={styles.signatureCompany}>Contratante</Text>
+              </View>
+            </View>
           </View>
         </View>
       </Page>

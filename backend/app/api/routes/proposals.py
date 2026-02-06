@@ -13,7 +13,9 @@ from app.models import (
     ProposalItem,
     ProposalNote,
     ProposalSignature,
+    ProposalHistory,
 )
+from app.models.enums import ProposalHistoryEventType
 from app.schemas.proposals import (
     PaymentModeCreate,
     PaymentModeRead,
@@ -46,6 +48,26 @@ def fetch_proposal_or_404(db: Session, proposal_id: UUID) -> Proposal:
     if not proposal:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Proposal not found")
     return proposal
+
+
+def log_history(
+    db: Session,
+    proposal_id: UUID,
+    event_type: ProposalHistoryEventType,
+    title: str,
+    user_id: str | None = None,
+    description: str | None = None,
+    meta_data: dict | None = None,
+) -> None:
+    history = ProposalHistory(
+        proposal_id=proposal_id,
+        event_type=event_type,
+        title=title,
+        description=description,
+        meta_data=meta_data,
+        user_id=user_id or "System",
+    )
+    db.add(history)
 
 
 # Notes - Must come before /{proposal_id} routes
@@ -203,6 +225,7 @@ def create_signature(payload: ProposalSignatureCreate, db: Session = Depends(get
         signature_type=payload.signature_type,
         status=payload.status,
         govbr_identifier=payload.govbr_identifier,
+        proposal_id=payload.proposal_id,
     )
     db.add(signature)
     db.commit()
@@ -297,6 +320,15 @@ def create_proposal(payload: ProposalCreate, db: Session = Depends(get_db)) -> P
                 )
             )
 
+    log_history(
+        db,
+        proposal.id,
+        ProposalHistoryEventType.CREATE,
+        "Proposta Criada",
+        description=f"Proposta inicial criada com status {payload.status.value}",
+        user_id=payload.responsible_user,
+    )
+
     db.commit()
     db.refresh(proposal)
     return proposal
@@ -321,6 +353,14 @@ def update_proposal(
 
     proposal.updated_at = datetime.now(timezone.utc)
     db.add(proposal)
+    log_history(
+        db,
+        proposal.id,
+        ProposalHistoryEventType.UPDATE,
+        "Proposta Atualizada",
+        description="Dados gerais da proposta foram atualizados.",
+    )
+
     db.commit()
     db.refresh(proposal)
     return proposal
@@ -332,6 +372,15 @@ def change_status(proposal_id: UUID, payload: ProposalStatusPayload, db: Session
     proposal.status = payload.status
     proposal.updated_at = datetime.now(timezone.utc)
     db.add(proposal)
+    log_history(
+        db,
+        proposal.id,
+        ProposalHistoryEventType.STATUS_CHANGE,
+        f"Status alterado: {payload.status.value}",
+        description=f"Status da proposta alterado para {payload.status.value}",
+        meta_data={"from": proposal.status, "to": payload.status}
+    )
+
     db.commit()
     db.refresh(proposal)
     return proposal
@@ -364,6 +413,14 @@ def add_item(proposal_id: UUID, payload: ProposalItemCreate, db: Session = Depen
         sort_order=payload.sort_order or 0,
     )
     db.add(item)
+    log_history(
+        db,
+        proposal.id,
+        ProposalHistoryEventType.UPDATE,
+        "Item Adicionado",
+        description=f"Item '{payload.name}' adicionado à proposta.",
+    )
+
     db.commit()
     db.refresh(item)
     return item
@@ -394,6 +451,14 @@ def update_item(
         setattr(item, field, value)
 
     db.add(item)
+    log_history(
+        db,
+        proposal_id,
+        ProposalHistoryEventType.UPDATE,
+        "Item Atualizado",
+        description=f"Item '{item.name}' foi atualizado.",
+    )
+
     db.commit()
     db.refresh(item)
     return item
@@ -407,6 +472,16 @@ def update_item(
 def delete_item(proposal_id: UUID, item_id: UUID, db: Session = Depends(get_db)) -> Response:
     fetch_proposal_or_404(db, proposal_id)
     item = fetch_item_or_404(db, proposal_id, item_id)
+    item_name = item.name  # Save name before deletion
     db.delete(item)
+    
+    log_history(
+        db,
+        proposal_id,
+        ProposalHistoryEventType.UPDATE,
+        "Item Removido",
+        description=f"Item '{item_name}' removido da proposta.",
+    )
+
     db.commit()
     return Response(status_code=status.HTTP_204_NO_CONTENT)

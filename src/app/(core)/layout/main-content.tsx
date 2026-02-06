@@ -12,7 +12,7 @@ export function MainContent({ children }: { children: ReactNode }) {
   const isFullScreenApp = isGsPropostas || isDriveQr || isPatrimonio;
 
   return (
-    <main className={cn("flex-1", !isFullScreenApp && "pt-16")}>
+    <main className={cn("flex-1 flex flex-col min-h-0 overflow-hidden", !isFullScreenApp && "pt-16")}>
       {children}
     </main>
   );

@@ -1,0 +1,9 @@
+pyproject.toml
+app/__init__.py
+app/main.py
+gsproducao_backend.egg-info/PKG-INFO
+gsproducao_backend.egg-info/SOURCES.txt
+gsproducao_backend.egg-info/dependency_links.txt
+gsproducao_backend.egg-info/entry_points.txt
+gsproducao_backend.egg-info/requires.txt
+gsproducao_backend.egg-info/top_level.txt

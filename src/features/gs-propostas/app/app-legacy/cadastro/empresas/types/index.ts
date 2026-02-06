@@ -6,6 +6,8 @@ export type {
   DeleteCompanyInput,
   GetCompaniesInput,
   CompanyState,
+  AssinaturaTipo,
+  AssinaturaStatus,
 } from './company-schemas';
 export {
   companySchema,
@@ -14,4 +16,6 @@ export {
   updateCompanySchema,
   deleteCompanySchema,
   getCompaniesSchema,
+  assinaturaTipoEnum,
+  assinaturaStatusEnum,
 } from './company-schemas';

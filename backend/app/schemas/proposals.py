@@ -12,6 +12,7 @@ from app.models.enums import (
     ProposalSignatureStatus,
     ProposalSignatureType,
     ProposalStatus,
+    ProposalHistoryEventType,
 )
 
 
@@ -93,6 +94,8 @@ class ProposalRead(ProposalBase):
     created_at: datetime
     updated_at: datetime
     items: List[ProposalItemRead] = []
+    signatures: List["ProposalSignatureRead"] = []
+    history: List["ProposalHistoryRead"] = []
 
 
 class ProposalStatusPayload(BaseModel):
@@ -161,6 +164,7 @@ class ProposalSignatureBase(BaseModel):
     signature_type: ProposalSignatureType
     status: ProposalSignatureStatus = ProposalSignatureStatus.PENDING
     govbr_identifier: Optional[str] = None
+    proposal_id: UUID
 
 
 class ProposalSignatureCreate(ProposalSignatureBase):
@@ -184,3 +188,24 @@ class ProposalSignatureRead(ProposalSignatureBase):
     created_at: datetime
     updated_at: datetime
     deleted_at: Optional[datetime] = None
+
+
+class ProposalHistoryBase(BaseModel):
+    event_type: ProposalHistoryEventType
+    title: str
+    description: Optional[str] = None
+    meta_data: Optional[dict] = None
+    user_id: Optional[str] = None
+
+
+class ProposalHistoryCreate(ProposalHistoryBase):
+    pass
+
+
+class ProposalHistoryRead(ProposalHistoryBase):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    proposal_id: UUID
+    created_at: datetime
+

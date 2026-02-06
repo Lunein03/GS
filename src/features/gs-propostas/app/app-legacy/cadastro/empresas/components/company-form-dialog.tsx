@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { Building2, Loader2 } from 'lucide-react';
+import { Building2, FileSignature, Loader2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/shared/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/ui/tabs';
 import { Input } from '@/shared/ui/input';
@@ -26,7 +26,7 @@ import {
   removeNonNumeric,
   validateCPF,
 } from '@/shared/lib/validators';
-import { companyFormSchema, type Company, type CompanyFormSchema } from '../types';
+import { companyFormSchema, assinaturaTipoEnum, type Company, type CompanyFormSchema, type AssinaturaTipo } from '../types';
 
 const DEFAULT_STATE = 'RJ';
 
@@ -82,7 +82,7 @@ export function CompanyFormDialog({
 }: CompanyFormDialogProps) {
   const [isConsultingDocument, setIsConsultingDocument] = useState(false);
   const [isConsultingCep, setIsConsultingCep] = useState(false);
-  const [activeTab, setActiveTab] = useState<'principal' | 'endereco'>('principal');
+  const [activeTab, setActiveTab] = useState<'principal' | 'endereco' | 'assinatura'>('principal');
   const [isPrincipalComplete, setIsPrincipalComplete] = useState(false);
 
   const form = useForm<CompanyFormSchema>({
@@ -92,7 +92,7 @@ export function CompanyFormDialog({
       nome: undefined,
       razaoSocial: undefined,
       nomeFantasia: undefined,
-      logo: undefined,
+
       contatoNome: '',
       contatoEmail: '',
       contatoTelefone: '',
@@ -117,7 +117,7 @@ export function CompanyFormDialog({
   const razaoSocialError = getMessage(errors.razaoSocial?.message);
   const nomeError = getMessage(errors.nome?.message);
   const nomeFantasiaError = getMessage(errors.nomeFantasia?.message);
-  const logoError = getMessage(errors.logo?.message);
+
   const contatoNomeError = getMessage(errors.contatoNome?.message);
   const contatoTelefoneError = getMessage(errors.contatoTelefone?.message);
   const contatoEmailError = getMessage(errors.contatoEmail?.message);
@@ -158,7 +158,7 @@ export function CompanyFormDialog({
         nome: company.nome ?? undefined,
         razaoSocial: company.razaoSocial ?? undefined,
         nomeFantasia: company.nomeFantasia ?? undefined,
-        logo: company.logo ?? undefined,
+
         contatoNome: company.contatoNome,
         contatoEmail: company.contatoEmail,
         contatoTelefone: formatPhone(company.contatoTelefone),
@@ -180,7 +180,7 @@ export function CompanyFormDialog({
       nome: undefined,
       razaoSocial: undefined,
       nomeFantasia: undefined,
-      logo: undefined,
+
       contatoNome: '',
       contatoEmail: '',
       contatoTelefone: '',
@@ -361,9 +361,10 @@ export function CompanyFormDialog({
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'principal' | 'endereco')} className="space-y-6">
-            <TabsList className="grid w-full grid-cols-2">
+            <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="principal">Principal</TabsTrigger>
               <TabsTrigger value="endereco" disabled={!isPrincipalComplete}>Endereço</TabsTrigger>
+              <TabsTrigger value="assinatura" disabled={!isPrincipalComplete}>Assinatura</TabsTrigger>
             </TabsList>
 
             <TabsContent value="principal" className="space-y-6">
@@ -441,21 +442,7 @@ export function CompanyFormDialog({
                     </div>
                   )}
 
-                  <div className="space-y-2">
-                    <Label htmlFor="company-logo">Logo (URL)</Label>
-                    <Input
-                      id="company-logo"
-                      placeholder="https://exemplo.com/logo.png"
-                      {...form.register('logo')}
-                      disabled={isSubmitting}
-                      aria-invalid={Boolean(form.formState.errors.logo)}
-                    />
-                    {logoError && (
-                      <p className="text-sm text-destructive" role="alert">
-                        {logoError}
-                      </p>
-                    )}
-                  </div>
+
                 </div>
 
                 <div className="flex flex-col gap-4 rounded-lg bg-gradient-to-b from-primary/90 to-primary p-6 text-primary-foreground">
@@ -667,6 +654,67 @@ export function CompanyFormDialog({
                 )}
               </div>
             </TabsContent>
+
+            <TabsContent value="assinatura" className="space-y-6">
+              <div className="flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 p-4">
+                <FileSignature className="h-5 w-5 text-blue-600" />
+                <div>
+                  <p className="text-sm font-medium text-blue-800">Assinatura Digital</p>
+                  <p className="text-xs text-blue-600">Configure a assinatura digital para documentos e propostas.</p>
+                </div>
+              </div>
+
+              <div className="space-y-4 rounded-lg border p-4">
+                <span className={sectionTitleClasses}>Tipo de assinatura</span>
+                <div className="space-y-2">
+                  <Label htmlFor="company-assinatura-tipo">Tipo</Label>
+                  <Select
+                    value={form.watch('assinaturaTipo') ?? ''}
+                    onValueChange={(value) => form.setValue('assinaturaTipo', value as AssinaturaTipo, {
+                      shouldValidate: true,
+                    })}
+                    disabled={isSubmitting}
+                  >
+                    <SelectTrigger id="company-assinatura-tipo">
+                      <SelectValue placeholder="Selecione o tipo de assinatura" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="govbr">Gov.br</SelectItem>
+                      <SelectItem value="certificado">Certificado Digital (ICP-Brasil)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {form.watch('assinaturaTipo') && (
+                <div className="space-y-4 rounded-lg border p-4">
+                  <span className={sectionTitleClasses}>Dados do titular</span>
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label htmlFor="company-assinatura-cpf">CPF do Titular</Label>
+                      <Input
+                        id="company-assinatura-cpf"
+                        placeholder="000.000.000-00"
+                        {...form.register('assinaturaCpfTitular')}
+                        disabled={isSubmitting}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="company-assinatura-nome">Nome do Titular</Label>
+                      <Input
+                        id="company-assinatura-nome"
+                        placeholder="Nome completo do responsável"
+                        {...form.register('assinaturaNomeTitular')}
+                        disabled={isSubmitting}
+                      />
+                    </div>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Os dados do titular serão utilizados para validação da assinatura digital.
+                  </p>
+                </div>
+              )}
+            </TabsContent>
           </Tabs>
 
           <DialogFooter className="flex flex-col gap-2 sm:flex-row sm:justify-between">
@@ -674,11 +722,11 @@ export function CompanyFormDialog({
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
                 Fechar
               </Button>
-              {activeTab === 'endereco' && (
+              {(activeTab === 'endereco' || activeTab === 'assinatura') && (
                 <Button
                   type="button"
                   variant="ghost"
-                  onClick={() => setActiveTab('principal')}
+                  onClick={() => setActiveTab(activeTab === 'assinatura' ? 'endereco' : 'principal')}
                   disabled={isSubmitting}
                 >
                   Voltar
@@ -688,6 +736,10 @@ export function CompanyFormDialog({
 
             {activeTab === 'principal' ? (
               <Button type="button" onClick={handleContinueToAddress} disabled={isSubmitting}>
+                Continuar
+              </Button>
+            ) : activeTab === 'endereco' ? (
+              <Button type="button" onClick={() => setActiveTab('assinatura')} disabled={isSubmitting}>
                 Continuar
               </Button>
             ) : (

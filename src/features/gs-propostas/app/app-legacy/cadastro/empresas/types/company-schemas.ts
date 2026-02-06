@@ -17,6 +17,12 @@ type BrazilState = (typeof brazilStates)[number];
 
 const optionalField = (schema: z.ZodTypeAny) => schema.optional().or(z.literal('').transform(() => undefined));
 
+// Tipos de assinatura digital
+export const assinaturaTipoEnum = z.enum(['govbr', 'certificado']);
+export const assinaturaStatusEnum = z.enum(['pendente', 'verificado', 'expirado']);
+export type AssinaturaTipo = z.infer<typeof assinaturaTipoEnum>;
+export type AssinaturaStatus = z.infer<typeof assinaturaStatusEnum>;
+
 export const companySchema = z.object({
   id: z.string().uuid(),
   tipo: z.enum(['fisica', 'juridica']),
@@ -39,6 +45,13 @@ export const companySchema = z.object({
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
   deletedAt: z.coerce.date().optional().nullable(),
+  // Campos de assinatura digital
+  assinaturaTipo: assinaturaTipoEnum.nullable().optional(),
+  assinaturaStatus: assinaturaStatusEnum.nullable().optional(),
+  assinaturaCpfTitular: z.string().nullable().optional(),
+  assinaturaNomeTitular: z.string().nullable().optional(),
+  assinaturaGovbrIdentifier: z.string().nullable().optional(),
+  assinaturaValidadoEm: z.coerce.date().nullable().optional(),
 });
 
 const baseString = () => z.string().trim().min(1, INVALID_MESSAGE);
@@ -71,6 +84,10 @@ const companyFormBaseSchema = z.object({
     .min(2, INVALID_MESSAGE)
     .max(2, INVALID_MESSAGE)
     .transform((value) => value.toUpperCase() as BrazilState),
+  // Campos de assinatura digital (opcionais no formulário)
+  assinaturaTipo: optionalField(assinaturaTipoEnum),
+  assinaturaCpfTitular: optionalField(z.string().trim().max(14, INVALID_MESSAGE)),
+  assinaturaNomeTitular: optionalField(z.string().trim().max(180, INVALID_MESSAGE)),
 });
 
 const withCompanyRefinements = <TSchema extends z.ZodTypeAny>(schema: TSchema) =>
@@ -101,7 +118,8 @@ const withCompanyRefinements = <TSchema extends z.ZodTypeAny>(schema: TSchema) =
     }
 
     const phoneDigits = removeNonNumeric(typedData.contatoTelefone);
-    if (phoneDigits.length < 10 || phoneDigits.length > 11) {
+    // Aceita: 10-11 (nacional) ou 12-13 (com código +55)
+    if (phoneDigits.length < 10 || phoneDigits.length > 13) {
       ctx.addIssue({ code: z.ZodIssueCode.custom, message: INVALID_MESSAGE, path: ['contatoTelefone'] });
     }
 

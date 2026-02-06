@@ -4,7 +4,7 @@ from enum import Enum
 from typing import List, Optional
 
 import sqlalchemy as sa
-from sqlalchemy.dialects.postgresql import ARRAY, UUID
+from sqlalchemy.dialects.postgresql import ARRAY, UUID, JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
@@ -17,6 +17,7 @@ from app.models.enums import (
     ProposalSignatureStatus,
     ProposalSignatureType,
     ProposalStatus,
+    ProposalHistoryEventType,
 )
 
 
@@ -209,6 +210,17 @@ class Proposal(Base):
         passive_deletes=True,
     )
     activities: Mapped[List["Activity"]] = relationship(back_populates="proposal", passive_deletes=True)
+    history: Mapped[List["ProposalHistory"]] = relationship(
+        back_populates="proposal",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+        order_by="desc(ProposalHistory.created_at)",
+    )
+    signatures: Mapped[List["ProposalSignature"]] = relationship(
+        back_populates="proposal",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+    )
 
 
 class ProposalItem(Base):
@@ -469,6 +481,14 @@ class Empresa(Base):
         onupdate=sa.func.now(),
     )
     deleted_at: Mapped[Optional[sa.DateTime]] = mapped_column("deleted_at", sa.DateTime(timezone=True))
+    
+    # Campos de assinatura digital
+    assinatura_tipo: Mapped[Optional[str]] = mapped_column("assinatura_tipo", sa.Text)
+    assinatura_status: Mapped[Optional[str]] = mapped_column("assinatura_status", sa.Text)
+    assinatura_cpf_titular: Mapped[Optional[str]] = mapped_column("assinatura_cpf_titular", sa.Text)
+    assinatura_nome_titular: Mapped[Optional[str]] = mapped_column("assinatura_nome_titular", sa.Text)
+    assinatura_govbr_identifier: Mapped[Optional[str]] = mapped_column("assinatura_govbr_identifier", sa.Text)
+    assinatura_validado_em: Mapped[Optional[sa.DateTime]] = mapped_column("assinatura_validado_em", sa.DateTime(timezone=True))
 
 
 class Category(Base):
@@ -592,6 +612,12 @@ class ProposalSignature(Base):
         default=default_uuid,
         server_default=sa.text("gen_random_uuid()"),
     )
+    proposal_id: Mapped[uuid.UUID] = mapped_column(
+        "proposal_id",
+        UUID_PK,
+        sa.ForeignKey("proposals.id", ondelete="CASCADE"),
+        nullable=False,
+    )
     name: Mapped[str] = mapped_column("name", sa.Text, nullable=False)
     cpf: Mapped[str] = mapped_column("cpf", sa.Text, nullable=False)
     email: Mapped[str] = mapped_column("email", sa.Text, nullable=False)
@@ -630,6 +656,8 @@ class ProposalSignature(Base):
         onupdate=sa.func.now(),
     )
     deleted_at: Mapped[Optional[sa.DateTime]] = mapped_column("deleted_at", sa.DateTime(timezone=True))
+
+    proposal: Mapped[Proposal] = relationship(back_populates="signatures")
 
 
 class Item(Base):
@@ -686,3 +714,39 @@ class Item(Base):
     deleted_at: Mapped[Optional[sa.DateTime]] = mapped_column("deleted_at", sa.DateTime(timezone=True))
 
     category: Mapped[Optional[Category]] = relationship(back_populates="items")
+
+
+class ProposalHistory(Base):
+    __tablename__ = "proposal_histories"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        "id",
+        UUID_PK,
+        primary_key=True,
+        default=default_uuid,
+        server_default=sa.text("gen_random_uuid()"),
+    )
+    proposal_id: Mapped[uuid.UUID] = mapped_column(
+        "proposal_id",
+        UUID_PK,
+        sa.ForeignKey("proposals.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    event_type: Mapped[ProposalHistoryEventType] = mapped_column(
+        "event_type",
+        enum_column(ProposalHistoryEventType, "proposal_history_event_type"),
+        nullable=False,
+    )
+    title: Mapped[str] = mapped_column("title", sa.Text, nullable=False)
+    description: Mapped[Optional[str]] = mapped_column("description", sa.Text)
+    meta_data: Mapped[Optional[dict]] = mapped_column("meta_data", JSONB)
+    user_id: Mapped[Optional[str]] = mapped_column("user_id", sa.Text)
+    created_at: Mapped[Optional[sa.DateTime]] = mapped_column(
+        "created_at",
+        sa.DateTime(timezone=True),
+        nullable=False,
+        server_default=sa.func.now(),
+    )
+
+    proposal: Mapped[Proposal] = relationship(back_populates="history")
+

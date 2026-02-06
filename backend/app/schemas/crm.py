@@ -10,6 +10,8 @@ from pydantic import BaseModel, ConfigDict, EmailStr, Field
 from app.models.enums import (
     ActivityPriority,
     ActivityStatus,
+    CompanySignatureStatus,
+    CompanySignatureType,
     EmpresaTipo,
     OpportunityStatus,
 )
@@ -173,6 +175,10 @@ class CompanyBase(BaseModel):
     cidade: str
     estado: str
     ativo: int = 1
+    # Campos de assinatura digital
+    assinatura_tipo: Optional[CompanySignatureType] = None
+    assinatura_cpf_titular: Optional[str] = None
+    assinatura_nome_titular: Optional[str] = None
 
 
 class CompanyCreate(CompanyBase):
@@ -195,6 +201,10 @@ class CompanyUpdate(BaseModel):
     cidade: Optional[str] = None
     estado: Optional[str] = None
     ativo: Optional[int] = None
+    # Campos de assinatura digital
+    assinatura_tipo: Optional[CompanySignatureType] = None
+    assinatura_cpf_titular: Optional[str] = None
+    assinatura_nome_titular: Optional[str] = None
 
 
 class CompanyRead(CompanyBase):
@@ -204,3 +214,7 @@ class CompanyRead(CompanyBase):
     created_at: datetime
     updated_at: datetime
     deleted_at: Optional[datetime] = None
+    # Campos de assinatura - somente leitura
+    assinatura_status: Optional[CompanySignatureStatus] = None
+    assinatura_govbr_identifier: Optional[str] = None
+    assinatura_validado_em: Optional[datetime] = None

@@ -8,13 +8,6 @@ import {
   Clock,
   CheckCircle2,
   XCircle,
-  Building2,
-  FolderTree,
-  Package,
-  FileText,
-  CreditCard,
-  FileSignature,
-  Users,
   LayoutDashboard,
   Trophy,
   ArrowLeft,
@@ -22,6 +15,7 @@ import {
   Sun,
   PanelLeftClose,
   PanelLeftOpen,
+  Plus,
   LucideIcon,
 } from "lucide-react";
 import Image from "next/image";
@@ -185,13 +179,7 @@ export function GsPropostasSidebarAnimated() {
 
   // Memoizar verificações de rota ativa
   const isDashboardActive = useMemo(() => pathname?.includes("dashboard"), [pathname]);
-  const isEmpresasActive = useMemo(() => pathname?.includes("empresas"), [pathname]);
-  const isCategoriasActive = useMemo(() => pathname?.includes("categorias"), [pathname]);
-  const isItensActive = useMemo(() => pathname?.includes("itens"), [pathname]);
-  const isNotasActive = useMemo(() => pathname?.includes("notas"), [pathname]);
-  const isPagamentosActive = useMemo(() => pathname?.includes("pagamentos"), [pathname]);
-  const isAssinaturasActive = useMemo(() => pathname?.includes("assinaturas"), [pathname]);
-  const isClientesActive = useMemo(() => pathname?.includes("clientes"), [pathname]);
+  const isNovaPropostaActive = useMemo(() => pathname?.includes("/proposta/nova"), [pathname]);
   const isAbertasActive = useMemo(() => pathname?.includes("abertas"), [pathname]);
   const isGanhasActive = useMemo(() => pathname?.includes("ganhas"), [pathname]);
   const isPerdidasActive = useMemo(() => pathname?.includes("perdidas"), [pathname]);
@@ -266,80 +254,38 @@ export function GsPropostasSidebarAnimated() {
 
               <Separator className="w-full opacity-50" />
 
-              {/* Cadastro */}
-              <div className="space-y-1" role="group" aria-label="Menu de cadastro">
-                <div className={cn("flex h-8 w-full flex-row items-center px-3", isCollapsed && "justify-center")}>
-                  {isCollapsed ? (
-                     <Tooltip delayDuration={0}>
-                        <TooltipTrigger asChild>
-                           <FileText className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
-                        </TooltipTrigger>
-                        <TooltipContent side="right">Cadastro</TooltipContent>
-                     </Tooltip>
-                  ) : (
-                    <>
-                      <FileText className="h-4 w-4 text-muted-foreground mr-2" aria-hidden="true" />
-                      <p className="text-xs uppercase tracking-wider font-medium text-muted-foreground">
-                        Cadastro
-                      </p>
-                    </>
+              {/* Nova Proposta - Destaque */}
+              {isCollapsed ? (
+                <Tooltip delayDuration={0}>
+                  <TooltipTrigger asChild>
+                    <Link
+                      href="/gs-propostas/proposta/nova"
+                      className={cn(
+                        "flex h-10 w-full items-center justify-center rounded-md",
+                        "bg-primary text-primary-foreground hover:bg-primary/90",
+                        "transition-colors",
+                        isNovaPropostaActive && "ring-2 ring-primary/50"
+                      )}
+                    >
+                      <Plus className="h-5 w-5" />
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent side="right" className="font-medium">Nova Proposta</TooltipContent>
+                </Tooltip>
+              ) : (
+                <Link
+                  href="/gs-propostas/proposta/nova"
+                  className={cn(
+                    "flex h-10 w-full items-center rounded-md px-3 gap-2",
+                    "bg-primary text-primary-foreground hover:bg-primary/90",
+                    "transition-colors font-medium",
+                    isNovaPropostaActive && "ring-2 ring-primary/50"
                   )}
-                </div>
-
-                {!isCollapsed && (
-                  <div className="ml-2 space-y-1 border-l pl-2">
-                    <SubNavigationLink
-                      href="/gs-propostas/cadastro/empresas"
-                      isActive={isEmpresasActive}
-                      icon={Building2}
-                      label="Empresas"
-                      isCollapsed={isCollapsed}
-                    />
-                    <SubNavigationLink
-                      href="/gs-propostas/cadastro/categorias"
-                      isActive={isCategoriasActive}
-                      icon={FolderTree}
-                      label="Categorias"
-                      isCollapsed={isCollapsed}
-                    />
-                    <SubNavigationLink
-                      href="/gs-propostas/cadastro/itens"
-                      isActive={isItensActive}
-                      icon={Package}
-                      label="Itens"
-                      isCollapsed={isCollapsed}
-                    />
-                    <SubNavigationLink
-                      href="/gs-propostas/cadastro/notas"
-                      isActive={isNotasActive}
-                      icon={FileText}
-                      label="Notas"
-                      isCollapsed={isCollapsed}
-                    />
-                    <SubNavigationLink
-                      href="/gs-propostas/cadastro/pagamentos"
-                      isActive={isPagamentosActive}
-                      icon={CreditCard}
-                      label="Pagamentos"
-                      isCollapsed={isCollapsed}
-                    />
-                    <SubNavigationLink
-                      href="/gs-propostas/cadastro/assinaturas"
-                      isActive={isAssinaturasActive}
-                      icon={FileSignature}
-                      label="Assinaturas"
-                      isCollapsed={isCollapsed}
-                    />
-                    <SubNavigationLink
-                      href="/gs-propostas/cadastro/clientes"
-                      isActive={isClientesActive}
-                      icon={Users}
-                      label="Clientes"
-                      isCollapsed={isCollapsed}
-                    />
-                  </div>
-                )}
-              </div>
+                >
+                  <Plus className="h-5 w-5" />
+                  <span>Nova Proposta</span>
+                </Link>
+              )}
 
               <Separator className="w-full opacity-50" />
 

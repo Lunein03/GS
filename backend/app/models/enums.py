@@ -61,3 +61,26 @@ class EquipmentStatus(str, Enum):
 class EventStatus(str, Enum):
     PENDING = "pending"
     COMPLETED = "completed"
+
+
+class ProposalHistoryEventType(str, Enum):
+    CREATE = "create"
+    UPDATE = "update"
+    STATUS_CHANGE = "status_change"
+    EMAIL_SENT = "email_sent"
+    PDF_GENERATED = "pdf_generated"
+    VIEWED = "viewed"
+    NOTE_ADDED = "note_added"
+    NOTE_UPDATED = "note_updated"
+    NOTE_DELETED = "note_deleted"
+
+
+class CompanySignatureType(str, Enum):
+    GOVBR = "govbr"
+    CERTIFICADO = "certificado"
+
+
+class CompanySignatureStatus(str, Enum):
+    PENDING = "pendente"
+    VERIFIED = "verificado"
+    EXPIRED = "expirado"

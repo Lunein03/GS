@@ -6,7 +6,10 @@ from decimal import Decimal
 from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
-from weasyprint import HTML
+try:
+    from weasyprint import HTML
+except (ImportError, OSError):
+    HTML = None
 
 from app.schemas.documents import (
     ProposalDocumentRequest,

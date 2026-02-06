@@ -14,6 +14,7 @@ from .crm import (
     ProposalItem,
     ProposalNote,
     ProposalSignature,
+    ProposalHistory,
 )
 from .inventory import Equipment, Event, EventEquipment
 from .intranet import ExpenseReport, OvertimeRequest
@@ -32,6 +33,7 @@ __all__ = [
     "ProposalNote",
     "PaymentMode",
     "ProposalSignature",
+    "ProposalHistory",
     "Item",
     "Equipment",
     "Event",
