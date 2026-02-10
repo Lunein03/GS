@@ -3,7 +3,7 @@ import { Input } from '@/shared/ui/input';
 import { Label } from '@/shared/ui/label';
 import { Button } from '@/shared/ui/button';
 import { cn } from '@/shared/lib/utils';
-import { Loader2, Search } from 'lucide-react';
+import { Check, Loader2, Search } from 'lucide-react';
 import { toast } from 'sonner';
 import { fetchCNPJDataWithCache, isCNPJError } from '@/shared/lib/api-services';
 import { validateCPF, validateCNPJ } from '@/shared/lib/validators';
@@ -110,7 +110,7 @@ export function CpfCnpjInput({ tipo, value, onChange, onValidationComplete, erro
 	return (
 		<div className="space-y-2">
 			<Label htmlFor="cpfCnpj">{tipo === 'fisica' ? 'CPF' : 'CNPJ'} *</Label>
-			<div className="flex gap-2">
+			<div className="relative">
 				<Input
 					id="cpfCnpj"
 					value={value}
@@ -119,26 +119,34 @@ export function CpfCnpjInput({ tipo, value, onChange, onValidationComplete, erro
 					placeholder={tipo === 'fisica' ? '000.000.000-00' : '00.000.000/0000-00'}
 					maxLength={tipo === 'fisica' ? 14 : 18}
 					disabled={disabled || isConsulting}
-					className={cn("flex-1", error && 'border-red-500')}
-				/>
-				<Button
-					type="button"
-					variant="outline"
-					size="sm"
-					className="h-9 px-3 gap-1.5 shrink-0"
-					onClick={handleConsult}
-					disabled={disabled || isConsulting || !canConsult}
-					title={tipo === 'fisica' ? 'Validar CPF' : 'Consultar CNPJ'}
-				>
-					{isConsulting ? (
-						<Loader2 className="h-4 w-4 animate-spin" />
-					) : (
-						<Search className="h-4 w-4" />
+					className={cn(
+						"w-full", 
+						error && 'border-red-500',
+						tipo === 'juridica' && "pr-28" // Espaço para o botão
 					)}
-					<span className="hidden sm:inline">
-						{isConsulting ? 'Consultando...' : 'Consultar'}
-					</span>
-				</Button>
+				/>
+				{tipo === 'juridica' && (
+					<div className="absolute right-1 top-1 bottom-1">
+						<Button
+							type="button"
+							variant="ghost"
+							size="sm"
+							className="h-full px-3 gap-1.5 hover:bg-muted"
+							onClick={handleConsult}
+							disabled={disabled || isConsulting || !canConsult}
+							title="Consultar CNPJ"
+						>
+							{isConsulting ? (
+								<Loader2 className="h-3.5 w-3.5 animate-spin" />
+							) : (
+								<Search className="h-3.5 w-3.5" />
+							)}
+							<span className="text-xs font-medium">
+								{isConsulting ? 'Consultando' : 'Consultar'}
+							</span>
+						</Button>
+					</div>
+				)}
 			</div>
 			{error && <p className="text-sm text-red-600">{error}</p>}
 		</div>

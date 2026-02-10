@@ -456,7 +456,7 @@ export function NewOpportunityModal({ children }: NewOpportunityModalProps) {
                                             {fields.length === 0 && (
                                                 <tr>
                                                     <td colSpan={6} className="p-8 text-center text-muted-foreground">
-                                                        Nenhum item adicionado. Clique em "Adicionar Item" para começar.
+                                                        Nenhum item adicionado. Clique em &quot;Adicionar Item&quot; para começar.
                                                     </td>
                                                 </tr>
                                             )}
@@ -565,7 +565,7 @@ export function NewOpportunityModal({ children }: NewOpportunityModalProps) {
 
       {/* New Client Modal */}
       <Dialog open={isNewClientModalOpen} onOpenChange={setIsNewClientModalOpen}>
-        <DialogContent className="max-w-[700px] max-h-[90vh] overflow-y-auto">
+        <DialogContent className="w-[95vw] max-w-4xl max-h-[90vh] overflow-y-auto">
             <DialogTitle>Novo Cliente</DialogTitle>
             <div className="py-4">
                 <ClienteForm

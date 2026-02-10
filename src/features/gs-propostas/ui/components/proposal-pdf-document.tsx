@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
   signatureDate: {
     fontSize: 10,
     color: "#52525b",
-    marginBottom: 20,
+    marginBottom: 90,
   },
   signatureRow: {
     flexDirection: "row",
@@ -205,16 +205,15 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   signatureName: {
-    fontSize: 11,
-    fontWeight: 600,
+    fontSize: 9,
+    fontWeight: 700,
     color: "#18181b",
     textAlign: "center",
+    textTransform: "uppercase",
   },
   signatureCompany: {
     fontSize: 9,
     color: "#71717a",
-    textTransform: "uppercase",
-    letterSpacing: 2,
     marginTop: 4,
     textAlign: "center",
   },
@@ -545,7 +544,7 @@ export function ProposalPdfDocument({ data }: ProposalPdfDocumentProps) {
               {data.clientName || "Nome do Cliente"}
             </Text>
             <Text style={styles.entityDetail}>
-              {data.contactName || "Nome do Contato"}
+              {data.contactName || "Nome do Responsável"}
             </Text>
           </View>
         </View>
@@ -616,9 +615,11 @@ export function ProposalPdfDocument({ data }: ProposalPdfDocumentProps) {
             <View style={styles.signatureBox}>
               <View style={styles.signatureLine}>
                 <Text style={styles.signatureName}>
-                  {data.responsibleName || "Nome do Responsável"}
+                  {data.companyName || "Empresa"}
                 </Text>
-                <Text style={styles.signatureCompany}>{data.companyName ? toTitleCase(data.companyName) : "Empresa"}</Text>
+                <Text style={styles.signatureCompany}>
+                  {data.responsibleName ? toTitleCase(data.responsibleName) : "Responsável"}
+                </Text>
               </View>
             </View>
 
@@ -628,7 +629,9 @@ export function ProposalPdfDocument({ data }: ProposalPdfDocumentProps) {
                 <Text style={styles.signatureName}>
                   {data.clientName || "Nome do Cliente"}
                 </Text>
-                <Text style={styles.signatureCompany}>Contratante</Text>
+                <Text style={styles.signatureCompany}>
+                  {data.contactName ? toTitleCase(data.contactName) : "Nome do Responsável"}
+                </Text>
               </View>
             </View>
           </View>

@@ -31,8 +31,8 @@ export const emailSchema = z
 export const telefoneSchema = z
     .string()
     .min(10, 'Telefone deve ter no mínimo 10 dígitos')
-    .max(15, 'Telefone inválido')
-    .regex(/^\+?55\s?\(?\d{2}\)?\s?\d{4,5}-?\d{4}$/, 'Formato de telefone inválido');
+    .max(20, 'Telefone inválido')
+    .regex(/^(\+?55)?\s?\(?\d{2}\)?\s?\d{4,5}-?\d{4}$/, 'Formato de telefone inválido');
 
 // Validação de documento com lógica centralizada
 const validateDocumento = (data: any) => {

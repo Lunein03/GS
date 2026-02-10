@@ -84,7 +84,7 @@ const ProposalDocumentEditor = forwardRef<ProposalDocumentEditorRef, ProposalDoc
       date: data?.date || new Date(),
       validity: data?.validity,
       clientName: data?.clientName || "Nome do Cliente",
-      contactName: data?.contactName || "Nome do Contato",
+      contactName: data?.contactName || "Nome do Responsável",
       companyName: data?.companyName || "Nome da Empresa",
       companyCnpj: data?.companyCnpj || "CNPJ",
       companyAddress: data?.companyAddress || "Endereço da Empresa",

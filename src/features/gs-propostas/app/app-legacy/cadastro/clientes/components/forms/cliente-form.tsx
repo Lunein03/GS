@@ -75,6 +75,28 @@ const ENDERECO_FIELDS: Array<keyof FormData> = [
   'estado',
 ];
 
+const TAB_FIELDS_ORDER: Record<FormTab, Array<keyof FormData>> = {
+  principal: ['cpfCnpj', 'nome', 'cargo', 'contatoNome', 'contatoEmail', 'contatoTelefone', 'tipo', 'ativo'],
+  endereco: ['cep', 'endereco', 'numero', 'complemento', 'bairro', 'cidade', 'estado'],
+  contatos: ['contatosSecundarios'],
+};
+
+const FIELD_FOCUS_ID: Partial<Record<keyof FormData, string>> = {
+  cpfCnpj: 'cpfCnpj',
+  nome: 'nome',
+  cargo: 'cargo',
+  contatoNome: 'contatoNome',
+  contatoEmail: 'contatoEmail',
+  contatoTelefone: 'contatoTelefone',
+  cep: 'cep',
+  endereco: 'endereco',
+  numero: 'numero',
+  complemento: 'complemento',
+  bairro: 'bairro',
+  cidade: 'cidade',
+  estado: 'estado',
+};
+
 function hasMinLength(value: string | null | undefined, minLength = 1): boolean {
   return (value ?? '').trim().length >= minLength;
 }
@@ -391,9 +413,26 @@ export function ClienteForm({
     return 'contatos';
   };
 
+  const focusFirstErrorField = (formErrors: FieldErrors<FormData>, tab: FormTab) => {
+    const firstErroredField = TAB_FIELDS_ORDER[tab].find(field => Boolean(formErrors[field]));
+    if (!firstErroredField) {
+      return;
+    }
+
+    const fieldId = FIELD_FOCUS_ID[firstErroredField];
+    if (!fieldId) {
+      return;
+    }
+
+    requestAnimationFrame(() => {
+      document.getElementById(fieldId)?.focus();
+    });
+  };
+
   const handleInvalidSubmit = (formErrors: FieldErrors<FormData>) => {
     const errorTab = resolveTabFromErrors(formErrors);
     setActiveTab(errorTab);
+    focusFirstErrorField(formErrors, errorTab);
     toast.error(`Existem campos obrigatorios pendentes na etapa ${TAB_TITLES[errorTab]}.`);
   };
 
@@ -570,7 +609,11 @@ export function ClienteForm({
           </TabsList>
 
           {activeTabPending.length > 0 && activeTab !== 'contatos' && (
-            <div className="rounded-lg border border-amber-400/30 bg-amber-500/5 px-3 py-2 text-xs text-muted-foreground">
+            <div
+              className="rounded-lg border border-amber-400/30 bg-amber-500/5 px-3 py-2 text-xs text-muted-foreground"
+              role="status"
+              aria-live="polite"
+            >
               Faltam campos obrigatorios: {activeTabPending.join(', ')}.
             </div>
           )}
@@ -599,65 +642,74 @@ export function ClienteForm({
               </div>
             </div>
 
-            <CpfCnpjInput
-              tipo={tipo}
-              value={cpfCnpj}
-              onChange={value => setValue('cpfCnpj', value, { shouldDirty: true })}
-              onValidationComplete={handleDocumentValidation}
-              error={errors.cpfCnpj?.message}
-              disabled={isLoading || isSubmitting}
-            />
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-12 items-start">
+              {tipo === 'juridica' && (
+                <div className="md:col-span-6 lg:col-span-5">
+                  <CpfCnpjInput
+                    tipo={tipo}
+                    value={cpfCnpj}
+                    onChange={value => setValue('cpfCnpj', value, { shouldDirty: true })}
+                    onValidationComplete={handleDocumentValidation}
+                    error={errors.cpfCnpj?.message}
+                    disabled={isLoading || isSubmitting}
+                  />
+                </div>
+              )}
 
-            <div className="space-y-2">
-              <Label htmlFor="nome">{tipo === 'fisica' ? 'Nome Completo' : 'Nome/Empresa'} *</Label>
-              <Input
-                id="nome"
-                {...register('nome')}
-                placeholder={tipo === 'fisica' ? 'Digite o nome completo' : 'Digite o nome da empresa'}
-                disabled={isLoading || isSubmitting}
-                className={cn(errors.nome && 'border-red-500')}
-              />
-              {errors.nome && <p className="text-sm text-red-600">{errors.nome.message}</p>}
-            </div>
+              <div className={cn(
+                "space-y-2 md:col-span-6",
+                tipo === 'juridica' ? "lg:col-span-4" : "md:col-span-12 lg:col-span-5"
+              )}>
+                <Label htmlFor="nome">{tipo === 'fisica' ? 'Nome Completo' : 'Nome/Empresa'} *</Label>
+                <Input
+                  id="nome"
+                  {...register('nome')}
+                  placeholder={tipo === 'fisica' ? 'Digite o nome completo' : 'Digite o nome da empresa'}
+                  disabled={isLoading || isSubmitting}
+                  className={cn(errors.nome && 'border-red-500')}
+                />
+                {errors.nome && <p className="text-sm text-red-600">{errors.nome.message}</p>}
+              </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="cargo">Cargo</Label>
-              <Input
-                id="cargo"
-                {...register('cargo')}
-                placeholder="Digite o cargo"
-                disabled={isLoading || isSubmitting}
-              />
+              {tipo !== 'juridica' && (
+                <div className="md:col-span-6 lg:col-span-4">
+                  <CpfCnpjInput
+                    tipo={tipo}
+                    value={cpfCnpj}
+                    onChange={value => setValue('cpfCnpj', value, { shouldDirty: true })}
+                    onValidationComplete={handleDocumentValidation}
+                    error={errors.cpfCnpj?.message}
+                    disabled={isLoading || isSubmitting}
+                  />
+                </div>
+              )}
+
+              <div className="space-y-2 md:col-span-6 lg:col-span-3">
+                <Label htmlFor="cargo">Cargo</Label>
+                <Input
+                  id="cargo"
+                  {...register('cargo')}
+                  placeholder="Digite o cargo"
+                  disabled={isLoading || isSubmitting}
+                />
+              </div>
             </div>
 
             <Separator />
 
             <h3 className="text-lg font-medium">Contato Principal</h3>
 
-            <div className="space-y-2">
-              <Label htmlFor="contatoNome">Nome do Contato *</Label>
-              <Input
-                id="contatoNome"
-                {...register('contatoNome')}
-                placeholder="Digite o nome do contato"
-                disabled={isLoading || isSubmitting}
-                className={cn(errors.contatoNome && 'border-red-500')}
-              />
-              {errors.contatoNome && <p className="text-sm text-red-600">{errors.contatoNome.message}</p>}
-            </div>
-
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="contatoEmail">E-mail *</Label>
+                <Label htmlFor="contatoNome">Nome do Contato *</Label>
                 <Input
-                  id="contatoEmail"
-                  type="email"
-                  {...register('contatoEmail')}
-                  placeholder="exemplo@email.com"
+                  id="contatoNome"
+                  {...register('contatoNome')}
+                  placeholder="Digite o nome do contato"
                   disabled={isLoading || isSubmitting}
-                  className={cn(errors.contatoEmail && 'border-red-500')}
+                  className={cn(errors.contatoNome && 'border-red-500')}
                 />
-                {errors.contatoEmail && <p className="text-sm text-red-600">{errors.contatoEmail.message}</p>}
+                {errors.contatoNome && <p className="text-sm text-red-600">{errors.contatoNome.message}</p>}
               </div>
 
               <div className="space-y-2">
@@ -672,6 +724,19 @@ export function ClienteForm({
                   className={cn(errors.contatoTelefone && 'border-red-500')}
                 />
                 {errors.contatoTelefone && <p className="text-sm text-red-600">{errors.contatoTelefone.message}</p>}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="contatoEmail">E-mail *</Label>
+                <Input
+                  id="contatoEmail"
+                  type="email"
+                  {...register('contatoEmail')}
+                  placeholder="exemplo@email.com"
+                  disabled={isLoading || isSubmitting}
+                  className={cn(errors.contatoEmail && 'border-red-500')}
+                />
+                {errors.contatoEmail && <p className="text-sm text-red-600">{errors.contatoEmail.message}</p>}
               </div>
             </div>
 
@@ -713,8 +778,8 @@ export function ClienteForm({
               disabled={isLoading || isSubmitting}
             />
 
-            <div className="grid grid-cols-4 gap-4">
-              <div className="col-span-3 space-y-2">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+              <div className="space-y-2 md:col-span-3">
                 <Label htmlFor="endereco">Logradouro *</Label>
                 <Input
                   id="endereco"
@@ -778,7 +843,11 @@ export function ClienteForm({
                 <Label htmlFor="estado">Estado *</Label>
                 <Input
                   id="estado"
-                  {...register('estado')}
+                  {...register('estado', {
+                    onChange: (event) => {
+                      event.target.value = String(event.target.value ?? '').toUpperCase();
+                    },
+                  })}
                   placeholder="SP"
                   maxLength={2}
                   disabled={isLoading || isSubmitting}

@@ -262,7 +262,7 @@ export default function ClientesPage() {
           </p>
           {!filters.search && filters.tipo === 'all' && filters.status === 'all' && !filters.estado && (
             <p className="text-sm text-muted-foreground">
-              Clique em "Incluir" para adicionar seu primeiro cliente
+              Clique em &quot;Incluir&quot; para adicionar seu primeiro cliente
             </p>
           )}
         </div>
@@ -270,7 +270,7 @@ export default function ClientesPage() {
 
       {/* Dialog de Formulário */}
       <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="w-[95vw] max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
               {editingCliente ? 'Editar Cliente' : 'Cadastrar Cliente'}
