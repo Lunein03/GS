@@ -149,7 +149,10 @@ export function PropostaUnificada({
     companyPhone: initialData.companyPhone,
     responsibleName: initialData.responsibleName,
     contactName: initialData.contactName,
-    items: initialData.items,
+    items: (initialData.items || []).map(item => ({
+      ...item,
+      unit: item.unit || 'hora',
+    })),
     observations: initialData.observations,
     internalNotes: initialData.internalNotes,
   } : {
@@ -488,9 +491,11 @@ export function PropostaUnificada({
                     ...DEFAULT_PROPOSAL_DATA,
                     code: watchedData.code || '',
                     name: watchedData.name || '',
-                    date: watchedData.date as unknown as Date | undefined,
+                    // Fix: Convert string from form to Date for component
+                    date: watchedData.date ? new Date(watchedData.date) : undefined,
                     paymentMode: watchedData.paymentMode,
-                    validity: watchedData.validity as unknown as Date | undefined,
+                    // Fix: Convert string from form to Date for component
+                    validity: watchedData.validity ? new Date(watchedData.validity) : undefined,
                     clientId: watchedData.clientId,
                     clientName: watchedData.clientName,
                     companyId: watchedData.companyId,
@@ -510,7 +515,13 @@ export function PropostaUnificada({
                   }}
                   onDataChange={(data) => {
                     Object.entries(data).forEach(([key, value]) => {
-                      form.setValue(key as keyof ProposalFormData, value as string);
+                      // Fix: If value is a Date, convert to ISO string (YYYY-MM-DD)
+                      // This ensures consistency with ProposalFormData schema which expects strings
+                      if (value instanceof Date) {
+                        form.setValue(key as keyof ProposalFormData, value.toISOString().split('T')[0]);
+                      } else {
+                        form.setValue(key as keyof ProposalFormData, value as string);
+                      }
                     });
                   }}
                   onStatusChange={setCurrentStatus}
