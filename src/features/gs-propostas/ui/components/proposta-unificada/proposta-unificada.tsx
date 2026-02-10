@@ -394,6 +394,7 @@ export function PropostaUnificada({
                 description: item.description,
                 quantity: item.quantity || 0,
                 unitValue: item.unitValue || 0,
+                unit: item.unit || 'hora',
                 itemObservation: item.itemObservation
               })),
               observations: watchedData.observations

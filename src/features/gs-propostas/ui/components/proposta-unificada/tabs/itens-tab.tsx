@@ -1,10 +1,11 @@
 "use client";
 
-import { useFormContext, useFieldArray } from "react-hook-form";
+import { useFormContext, useFieldArray, Controller } from "react-hook-form";
 import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
-import { ProposalFormData } from "../types";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
+import { ProposalFormData, ITEM_UNIT_LABELS } from "../types";
 import { cn } from "@/shared/lib/utils";
 
 export function ItensTab() {
@@ -17,6 +18,11 @@ export function ItensTab() {
 
   const watchedItems = watch("items");
 
+  // Função para gerar ID único compatível com todos os navegadores
+  const generateId = () => {
+    return `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
+  };
+
   const totalGeral = watchedItems?.reduce((acc, item) => {
     const qty = Number(item.quantity) || 0;
     const val = Number(item.unitValue) || 0;
@@ -25,10 +31,11 @@ export function ItensTab() {
 
   const handleAddItem = () => {
     append({
-      id: crypto.randomUUID(),
+      id: generateId(),
       description: "Novo Item",
       quantity: 1,
       unitValue: 0,
+      unit: 'hora',
       itemObservation: ""
     });
   };
@@ -63,6 +70,7 @@ export function ItensTab() {
                 <th className="p-3 font-medium text-muted-foreground">Item</th>
                 <th className="p-3 font-medium text-muted-foreground">Descrição / Obs.</th>
                 <th className="p-3 font-medium text-muted-foreground w-24 text-center">Qtd</th>
+                <th className="p-3 font-medium text-muted-foreground w-32">Unidade</th>
                 <th className="p-3 font-medium text-muted-foreground w-32 text-right">Valor Unit.</th>
                 <th className="p-3 font-medium text-muted-foreground w-32 text-right">Total</th>
                 <th className="p-3 font-medium text-muted-foreground w-12"></th>
@@ -102,6 +110,29 @@ export function ItensTab() {
                       />
                     </td>
                     <td className="p-3 align-middle">
+                      <Controller
+                        control={control}
+                        name={`items.${index}.unit`}
+                        render={({ field }) => (
+                          <Select 
+                            value={field.value} 
+                            onValueChange={field.onChange}
+                          >
+                            <SelectTrigger className="h-8 bg-transparent border-transparent hover:border-border focus:border-primary focus:bg-background w-full transition-all">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {Object.entries(ITEM_UNIT_LABELS).map(([value, label]) => (
+                                <SelectItem key={value} value={value}>
+                                  {label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        )}
+                      />
+                    </td>
+                    <td className="p-3 align-middle">
                       <div className="relative">
                         <span className="absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground text-xs pointer-events-none">R$</span>
                         <Input 
@@ -133,7 +164,7 @@ export function ItensTab() {
               
               {fields.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="p-12 text-center text-muted-foreground">
+                  <td colSpan={8} className="p-12 text-center text-muted-foreground">
                     <div className="flex flex-col items-center gap-2">
                        <div className="p-3 bg-muted rounded-full mb-2">
                           <Plus className="w-6 h-6 opacity-30" />

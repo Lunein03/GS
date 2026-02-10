@@ -15,6 +15,14 @@ import {
 } from "@react-pdf/renderer";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import {
+  formatCNPJ,
+  formatCPF,
+  formatPhone,
+  formatCEP,
+  removeNonNumeric,
+  toTitleCase,
+} from "@/shared/lib/validators";
 
 const styles = StyleSheet.create({
   page: {
@@ -105,16 +113,18 @@ const styles = StyleSheet.create({
   metadataLabelInline: {
     fontWeight: 700,
   },
-  serviceBlock: {
-    marginBottom: 10,
-    paddingBottom: 8,
-    borderBottomWidth: 1,
+  observationsBlock: {
+    marginTop: 10,
+    paddingTop: 8,
+    borderTopWidth: 1,
     borderColor: "#d4d4d8",
+    gap: 4,
   },
-  serviceTitle: {
-    fontSize: 11,
-    fontWeight: 700,
-    marginBottom: 4,
+  observationsText: {
+    fontSize: 10,
+    color: "#52525b",
+    lineHeight: 1.6,
+    textAlign: "justify",
   },
   // Entities section
   entitiesRow: {
@@ -260,21 +270,28 @@ const styles = StyleSheet.create({
     borderRightWidth: 1,
     borderRightColor: "#d4d4d8",
   },
+  // Adjusted widths to fit "Unit" column (Total: 100%)
   itemColName: { 
-    width: "30%", 
+    width: "28%", // Reduced from 30%
     borderRightWidth: 1, 
     borderRightColor: "#d4d4d8",
     paddingRight: 4,
   },
   itemColDesc: { 
-    width: "35%", 
+    width: "30%", // Reduced from 35%
     borderRightWidth: 1, 
     borderRightColor: "#d4d4d8",
     paddingRight: 4,
     paddingLeft: 4,
   },
   itemColQty: { 
-    width: "10%", 
+    width: "9%", // Reduced from 10%
+    textAlign: "center", 
+    borderRightWidth: 1, 
+    borderRightColor: "#d4d4d8", 
+  },
+  itemColUnit: { 
+    width: "8%", // New column
     textAlign: "center", 
     borderRightWidth: 1, 
     borderRightColor: "#d4d4d8", 
@@ -314,17 +331,6 @@ const styles = StyleSheet.create({
     fontWeight: 700,
     color: "#18181b",
   },
-  itemNoteTitle: {
-    fontSize: 10,
-    fontWeight: 700,
-    marginTop: 6,
-    marginBottom: 2,
-  },
-  itemNoteText: {
-    fontSize: 9.5,
-    color: "#52525b",
-    lineHeight: 1.5,
-  },
 });
 
 export interface ProposalItem {
@@ -332,6 +338,7 @@ export interface ProposalItem {
   description: string;
   quantity: number;
   unitValue: number;
+  unit?: string;
   itemObservation?: string;
 }
 
@@ -356,6 +363,13 @@ export interface ProposalPdfData {
   items?: ProposalItem[];
   observations?: string;
 }
+
+const UNIT_LABELS: Record<string, string> = {
+  hora: 'h',
+  dia: 'd',
+  unidade: 'un',
+  evento: 'ev',
+};
 
 interface ProposalPdfDocumentProps {
   data: ProposalPdfData;
@@ -419,10 +433,35 @@ export function ProposalPdfDocument({ data }: ProposalPdfDocumentProps) {
     return format(new Date(), "dd 'de' MMMM 'de' yyyy", { locale: ptBR });
   };
 
+  const formatDocumentDisplay = (doc?: string) => {
+    if (!doc) return '';
+    const digits = removeNonNumeric(doc);
+    if (digits.length === 11) return formatCPF(digits);
+    if (digits.length === 14) return formatCNPJ(digits);
+    return doc;
+  };
+
+  const formatPhoneDisplay = (phone?: string) => {
+    if (!phone) return '';
+    const digits = removeNonNumeric(phone);
+    if (digits.length >= 10) return formatPhone(digits);
+    return phone;
+  };
+
+  const formatCepDisplay = (cep?: string) => {
+    if (!cep) return '';
+    const digits = removeNonNumeric(cep);
+    if (digits.length === 8) return formatCEP(digits);
+    return cep;
+  };
+
   const formatCompanyLocation = () => {
-    const placeParts = [data.companyNeighborhood, data.companyCity].filter(Boolean);
+    const neighborhood = data.companyNeighborhood ? toTitleCase(data.companyNeighborhood) : '';
+    const city = data.companyCity ? toTitleCase(data.companyCity) : '';
+    const placeParts = [neighborhood, city].filter(Boolean);
     const place = placeParts.join(", ");
-    const ufZip = [data.companyState, data.companyZip].filter(Boolean).join(" - ");
+    const cepFormatted = formatCepDisplay(data.companyZip);
+    const ufZip = [data.companyState?.toUpperCase(), cepFormatted].filter(Boolean).join(" - ");
 
     if (place && ufZip) return `${place} - ${ufZip}`;
     return place || ufZip;
@@ -430,14 +469,12 @@ export function ProposalPdfDocument({ data }: ProposalPdfDocumentProps) {
 
   const companyLocationLine = formatCompanyLocation();
   const companyEmailLine = data.companyEmail ? `E-mail: ${data.companyEmail}` : '';
-  const companyPhoneLine = data.companyPhone ? `Telefone: ${data.companyPhone}` : '';
+  const companyPhoneLine = data.companyPhone ? `Telefone: ${formatPhoneDisplay(data.companyPhone)}` : '';
 
-  const serviceSummary =
+  const observationsText =
     data.observations && data.observations.trim().length > 0
-      ? data.observations
-      : data.items && data.items[0]
-        ? `Prestação de serviço: ${data.items[0].description}`
-        : "Contratação de intérprete(s) de Libras conforme condições descritas abaixo.";
+      ? data.observations.trim()
+      : "Sem observações adicionais.";
 
   return (
     <Document>
@@ -450,28 +487,6 @@ export function ProposalPdfDocument({ data }: ProposalPdfDocumentProps) {
 
       {/* Header */}
       <View style={styles.header}>
-        <View style={styles.headerLeft}>
-          <View style={styles.companyBlock}>
-            <Text style={[styles.companyLine, { fontWeight: 700 }]}>
-              {data.companyName ?? "GS PRODUÇÕES E ACESSIBILIDADE"}
-            </Text>
-            {data.companyCnpj && (
-              <Text style={styles.companyLine}>CNPJ: {data.companyCnpj}</Text>
-            )}
-            {data.companyAddress && (
-              <Text style={styles.companyLine}>{data.companyAddress}</Text>
-            )}
-            {companyLocationLine ? (
-              <Text style={styles.companyLine}>{companyLocationLine}</Text>
-            ) : null}
-            {companyEmailLine ? (
-              <Text style={styles.companyLine}>{companyEmailLine}</Text>
-            ) : null}
-            {companyPhoneLine ? (
-              <Text style={styles.companyLine}>{companyPhoneLine}</Text>
-            ) : null}
-          </View>
-        </View>
         <View style={styles.headerRight}>
           <GsLogo size={42} />
         </View>
@@ -501,21 +516,15 @@ export function ProposalPdfDocument({ data }: ProposalPdfDocumentProps) {
           </Text>
         </View>
 
-        {/* Service summary */}
-        <View style={styles.serviceBlock}>
-          <Text style={styles.serviceTitle}>Prestação de Serviço</Text>
-          <Text style={styles.contentText}>{serviceSummary}</Text>
-        </View>
-
         {/* Entities */}
         <View style={styles.entitiesRow}>
           <View style={styles.entityCol}>
             <Text style={styles.sectionTitle}>Empresa</Text>
             <Text style={styles.entityName}>
-              {data.companyName ?? "GS PRODUÇÕES E ACESSIBILIDADE"}
+              {data.companyName || "Nome da Empresa"}
             </Text>
             {data.companyCnpj && (
-              <Text style={styles.entityDetail}>{data.companyCnpj}</Text>
+              <Text style={styles.entityDetail}>{formatDocumentDisplay(data.companyCnpj)}</Text>
             )}
             {data.companyAddress && (
               <Text style={styles.entityDetail}>{data.companyAddress}</Text>
@@ -532,16 +541,12 @@ export function ProposalPdfDocument({ data }: ProposalPdfDocumentProps) {
           </View>
           <View style={styles.entityCol}>
             <Text style={styles.sectionTitle}>Cliente</Text>
-            {data.clientName ? (
-              <>
-                <Text style={styles.entityName}>{data.clientName}</Text>
-                {data.contactName && (
-                  <Text style={styles.entityDetail}>{data.contactName}</Text>
-                )}
-              </>
-            ) : (
-              <Text style={styles.entityPlaceholder}>Contratante</Text>
-            )}
+            <Text style={styles.entityName}>
+              {data.clientName || "Nome do Cliente"}
+            </Text>
+            <Text style={styles.entityDetail}>
+              {data.contactName || "Nome do Contato"}
+            </Text>
           </View>
         </View>
 
@@ -556,7 +561,8 @@ export function ProposalPdfDocument({ data }: ProposalPdfDocumentProps) {
                 <View style={styles.itemsHeader}>
                   <Text style={[styles.itemsHeaderText, styles.itemColName]}>Item</Text>
                   <Text style={[styles.itemsHeaderText, styles.itemColDesc]}>Descrição</Text>
-                  <Text style={[styles.itemsHeaderText, styles.itemColQty]}>Prazo/Qtd.</Text>
+                  <Text style={[styles.itemsHeaderText, styles.itemColQty]}>Qtd.</Text>
+                  <Text style={[styles.itemsHeaderText, styles.itemColUnit]}>Unid.</Text>
                   <Text style={[styles.itemsHeaderText, styles.itemColValue]}>Valor Un.</Text>
                   <Text style={[styles.itemsHeaderText, styles.itemColTotal]}>Total</Text>
                 </View>
@@ -566,6 +572,9 @@ export function ProposalPdfDocument({ data }: ProposalPdfDocumentProps) {
                     <Text style={[styles.itemText, styles.itemColDesc]}>{item.itemObservation || ""}</Text>
                     <Text style={[styles.itemText, styles.itemColQty]}>
                       {item.quantity?.toFixed(2) ?? "0,00"}
+                    </Text>
+                    <Text style={[styles.itemText, styles.itemColUnit]}>
+                      {UNIT_LABELS[item.unit || 'hora'] || item.unit || 'h'}
                     </Text>
                     <Text style={[styles.itemText, styles.itemColValue]}>
                       {formatCurrency(item.unitValue)}
@@ -580,18 +589,18 @@ export function ProposalPdfDocument({ data }: ProposalPdfDocumentProps) {
                   <Text style={styles.totalValue}>{formatCurrency(calculateTotal())}</Text>
                 </View>
               </View>
-              {data.observations && (
-                <View>
-                  <Text style={styles.itemNoteTitle}>Observação</Text>
-                  <Text style={styles.itemNoteText}>{data.observations}</Text>
-                </View>
-              )}
             </>
           ) : (
             <Text style={styles.contentText}>
-              Adicione os itens e serviÃ§os da proposta aqui...
+              Adicione os itens e serviços da proposta aqui...
             </Text>
           )}
+        </View>
+
+        {/* Observações */}
+        <View style={styles.observationsBlock}>
+          <Text style={styles.sectionTitle}>Observações</Text>
+          <Text style={styles.observationsText}>{observationsText}</Text>
         </View>
 
 
@@ -599,7 +608,7 @@ export function ProposalPdfDocument({ data }: ProposalPdfDocumentProps) {
         {/* Signature Section */}
         <View style={styles.signatureSection} wrap={false}>
           <Text style={styles.signatureDate}>
-            Rio de Janeiro, {formatFullDate()}.
+            {data.companyCity ? toTitleCase(data.companyCity) : "Cidade"}, {formatFullDate()}.
           </Text>
 
           <View style={styles.signatureRow}>
@@ -607,9 +616,9 @@ export function ProposalPdfDocument({ data }: ProposalPdfDocumentProps) {
             <View style={styles.signatureBox}>
               <View style={styles.signatureLine}>
                 <Text style={styles.signatureName}>
-                  {data.responsibleName || "Gabriel Sampaio Verissimo"}
+                  {data.responsibleName || "Nome do Responsável"}
                 </Text>
-                <Text style={styles.signatureCompany}>GS Produções</Text>
+                <Text style={styles.signatureCompany}>{data.companyName ? toTitleCase(data.companyName) : "Empresa"}</Text>
               </View>
             </View>
 
@@ -617,7 +626,7 @@ export function ProposalPdfDocument({ data }: ProposalPdfDocumentProps) {
             <View style={styles.signatureBox}>
               <View style={styles.signatureLine}>
                 <Text style={styles.signatureName}>
-                  {data.clientName || "Contratante"}
+                  {data.clientName || "Nome do Cliente"}
                 </Text>
                 <Text style={styles.signatureCompany}>Contratante</Text>
               </View>

@@ -357,22 +357,8 @@ class ProposalPDFGenerator:
         """Build the company and client information section."""
         elements = []
         
-        company = self.data.company or CompanyData()
         client = self.data.client
-        
-        # Company column
-        company_content = [
-            Paragraph("EMPRESA", self.styles["SectionTitle"]),
-            Paragraph(company.name, self.styles["EntityName"]),
-            Paragraph(f"CNPJ: {company.cnpj}", self.styles["EntityDetail"]),
-            Paragraph(f"Endereço: {company.address}", self.styles["EntityDetail"]),
-            Paragraph(f"{company.neighborhood}, {company.city} - {company.state} - {company.zip_code}", 
-                     self.styles["EntityDetail"]),
-            Paragraph(f"E-mail: {company.email}", self.styles["EntityDetail"]),
-            Paragraph(f"Telefone: {company.phone}", self.styles["EntityDetail"]),
-        ]
-        
-        # Client column
+
         if client and client.name:
             client_content = [
                 Paragraph("CLIENTE", self.styles["SectionTitle"]),
@@ -399,11 +385,11 @@ class ProposalPDFGenerator:
                 Paragraph("CLIENTE", self.styles["SectionTitle"]),
                 Paragraph("<i>Contratante</i>", self.styles["EntityDetail"]),
             ]
-        
-        # Two-column layout
-        col_width = (self.width - 4 * cm - 1 * cm) / 2
-        entities_data = [[company_content, client_content]]
-        entities_table = Table(entities_data, colWidths=[col_width, col_width])
+
+        # Single-column layout
+        col_width = self.width - 4 * cm
+        entities_data = [[client_content]]
+        entities_table = Table(entities_data, colWidths=[col_width])
         entities_table.setStyle(TableStyle([
             ("VALIGN", (0, 0), (-1, -1), "TOP"),
         ]))

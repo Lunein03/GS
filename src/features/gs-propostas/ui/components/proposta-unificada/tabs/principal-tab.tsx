@@ -6,13 +6,13 @@
  * Esta tab gerencia os dados principais da proposta:
  * - Status (Aberto/Concluído + ações Ganhar/Perder)
  * - Dados da Proposta (Código, Nome, Pagamento, Validade)
- * - Dados da Empresa (readonly)
+ * - Dados da Empresa (seleção + edição opcional)
  * - Dados do Cliente (select + novo cliente)
  * 
  * @see docs/specs/SPEC-003-tab-principal.md
  */
 
-import { useState, useEffect, useCallback, useMemo, useRef } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
 import { Button } from "@/shared/ui/button";
@@ -24,9 +24,17 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/shared/ui/select";
-import { Loader2, UserPlus, Building2, Trophy, XCircle, Info, CircleDot } from "lucide-react";
+import { Loader2, UserPlus, Building2, Trophy, XCircle, Info, CircleDot, ChevronDown, ChevronUp, X } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
 import { toast } from "sonner";
+import {
+  formatCNPJ,
+  formatCPF,
+  formatPhone,
+  formatCEP,
+  removeNonNumeric,
+  toTitleCase,
+} from "@/shared/lib/validators";
 
 import { getClientes } from "@/features/gs-propostas/api/clients";
 import { getCompanies, createCompany } from "@/features/gs-propostas/api/companies";
@@ -42,21 +50,21 @@ import { ClientFormDialog } from "@/features/gs-propostas/app/app-legacy/cadastr
 // ============================================
 
 interface PrincipalTabProps {
-  /** Dados do formulário (controlled) */
   formData: ProposalData;
-  
-  /** Callback para atualizar dados */
   onDataChange: (data: Partial<ProposalData>) => void;
-  
-  /** Callback para mudar status */
   onStatusChange: (status: ProposalStatus) => void;
-  
-  /** Callback para navegar para tab de clientes */
   onNavigateToClients?: () => void;
-
-  /** Callback para navegar para tab de empresas */
   onNavigateToCompanies?: () => void;
 }
+
+// ============================================
+// CONSTANTS
+// ============================================
+
+const BRAZIL_STATES = [
+  'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB',
+  'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO',
+] as const;
 
 // ============================================
 // STATUS BAR COMPONENT
@@ -98,7 +106,6 @@ function StatusBar({ status, onStatusChange }: StatusBarProps) {
   
   return (
     <div className="flex items-center justify-between rounded-lg border border-white/10 bg-card/50 p-3 gap-3">
-      {/* Status Badge */}
       <div className="flex items-center gap-3">
         <span className={cn(
           "px-3 py-1 text-xs font-semibold uppercase tracking-wider rounded-full border",
@@ -111,7 +118,6 @@ function StatusBar({ status, onStatusChange }: StatusBarProps) {
         </span>
       </div>
       
-      {/* Action Buttons */}
       <div className="flex gap-2">
         <Button
           size="sm"
@@ -147,7 +153,6 @@ function StatusBar({ status, onStatusChange }: StatusBarProps) {
   );
 }
 
-
 // ============================================
 // SECTION HEADER COMPONENT
 // ============================================
@@ -176,7 +181,9 @@ function SectionHeader({ title, color, action }: SectionHeaderProps) {
   );
 }
 
-
+// ============================================
+// HELPER FUNCTIONS
+// ============================================
 
 const getCompanyDisplayName = (company: Company): string => {
   if (company.tipo === "juridica") {
@@ -185,36 +192,43 @@ const getCompanyDisplayName = (company: Company): string => {
   return company.nome || "Pessoa sem nome";
 };
 
+const formatDocValue = (doc: string): string => {
+  const digits = removeNonNumeric(doc);
+  if (digits.length === 11) return formatCPF(digits);
+  if (digits.length === 14) return formatCNPJ(digits);
+  return doc;
+};
+
+const formatPhoneValue = (phone: string): string => {
+  const digits = removeNonNumeric(phone);
+  if (digits.length >= 10) return formatPhone(digits);
+  return phone;
+};
+
+const formatCepValue = (cep: string): string => {
+  const digits = removeNonNumeric(cep);
+  if (digits.length === 8) return formatCEP(digits);
+  return cep;
+};
+
 const buildCompanyAddressLine = (company: Company): string => {
-  return `${company.endereco}, ${company.numero}${company.complemento ? ` - ${company.complemento}` : ""}`;
+  const street = company.endereco ? toTitleCase(company.endereco) : '';
+  return `${street}, ${company.numero}${company.complemento ? ` - ${company.complemento}` : ""}`;
 };
 
 const mapCompanyToFormData = (company: Company): Partial<ProposalData> => ({
   companyId: company.id,
-  companyName: getCompanyDisplayName(company),
-  companyCnpj: company.cpfCnpj,
+  companyName: toTitleCase(getCompanyDisplayName(company)),
+  companyCnpj: company.cpfCnpj ? formatDocValue(company.cpfCnpj) : '',
   companyAddress: buildCompanyAddressLine(company),
-  companyNeighborhood: company.bairro,
-  companyCity: company.cidade,
-  companyState: company.estado,
-  companyZip: company.cep,
+  companyNeighborhood: company.bairro ? toTitleCase(company.bairro) : '',
+  companyCity: company.cidade ? toTitleCase(company.cidade) : '',
+  companyState: company.estado?.toUpperCase() || '',
+  companyZip: company.cep ? formatCepValue(company.cep) : '',
   companyEmail: company.contatoEmail,
-  companyPhone: company.contatoTelefone,
-  responsibleName: company.contatoNome,
+  companyPhone: company.contatoTelefone ? formatPhoneValue(company.contatoTelefone) : '',
+  responsibleName: company.contatoNome ? toTitleCase(company.contatoNome) : '',
 });
-
-const hasCompanyDetails = (data: ProposalData): boolean => {
-  return Boolean(
-    data.companyCnpj ||
-    data.companyAddress ||
-    data.companyNeighborhood ||
-    data.companyCity ||
-    data.companyState ||
-    data.companyZip ||
-    data.companyEmail ||
-    data.companyPhone
-  );
-};
 
 // ============================================
 // MAIN COMPONENT
@@ -240,11 +254,8 @@ export function PrincipalTab({
   const [isCompanyModalOpen, setIsCompanyModalOpen] = useState(false);
   const [isSubmittingCompany, setIsSubmittingCompany] = useState(false);
   const [isClientModalOpen, setIsClientModalOpen] = useState(false);
-
-  const selectedCompany = useMemo(() => {
-    if (!formData.companyId) return null;
-    return companies.find((company) => company.id === formData.companyId) ?? null;
-  }, [companies, formData.companyId]);
+  const [isCompanyDetailsOpen, setIsCompanyDetailsOpen] = useState(false);
+  const [isCompanyAdvancedOpen, setIsCompanyAdvancedOpen] = useState(false);
   
   // ============================================
   // LOAD CLIENTS
@@ -300,7 +311,18 @@ export function PrincipalTab({
     if (!company) return;
 
     const companyIdChanged = lastCompanyIdRef.current !== formData.companyId;
-    if (companyIdChanged || !hasCompanyDetails(formData)) {
+    const companyDetailsFilled = Boolean(
+      formData.companyCnpj ||
+      formData.companyAddress ||
+      formData.companyNeighborhood ||
+      formData.companyCity ||
+      formData.companyState ||
+      formData.companyZip ||
+      formData.companyEmail ||
+      formData.companyPhone
+    );
+
+    if (companyIdChanged || !companyDetailsFilled) {
       onDataChange(mapCompanyToFormData(company));
     }
 
@@ -318,6 +340,13 @@ export function PrincipalTab({
     formData.companyPhone,
     onDataChange,
   ]);
+
+  useEffect(() => {
+    if (!formData.companyId) {
+      setIsCompanyDetailsOpen(false);
+      setIsCompanyAdvancedOpen(false);
+    }
+  }, [formData.companyId]);
   
   // ============================================
   // HANDLERS
@@ -348,25 +377,78 @@ export function PrincipalTab({
       onDataChange({
         clientId: client.id,
         clientName: client.nome,
-        contactName: client.contatoNome // Default to main contact
+        contactName: client.contatoNome
       });
       setSelectedClientContacts(contacts);
     }
   };
 
   const handleCompanySelect = (value: string) => {
-
-
     const company = companies.find((item) => item.id === value);
     if (company) {
       onDataChange(mapCompanyToFormData(company));
+      setIsCompanyDetailsOpen(false);
+      setIsCompanyAdvancedOpen(false);
     }
   };
 
-  const handleSyncCompany = () => {
-    if (selectedCompany) {
-      onDataChange(mapCompanyToFormData(selectedCompany));
+  const handleClearCompany = () => {
+    onDataChange({
+      companyId: undefined,
+      companyName: undefined,
+      companyCnpj: undefined,
+      companyAddress: undefined,
+      companyNeighborhood: undefined,
+      companyCity: undefined,
+      companyState: undefined,
+      companyZip: undefined,
+      companyEmail: undefined,
+      companyPhone: undefined,
+      responsibleName: undefined,
+    });
+    setIsCompanyDetailsOpen(false);
+    setIsCompanyAdvancedOpen(false);
+    lastCompanyIdRef.current = undefined;
+  };
+
+  const handleClearClient = () => {
+    onDataChange({
+      clientId: undefined,
+      clientName: undefined,
+      contactName: undefined,
+    });
+    setSelectedClientContacts([]);
+  };
+
+  const handleMaskedFieldChange = (field: keyof ProposalData, value: string, type: 'cnpj' | 'phone' | 'cep' | 'titlecase') => {
+    let formatted = value;
+    const digits = removeNonNumeric(value);
+    switch (type) {
+      case 'cnpj':
+        if (digits.length === 11) formatted = formatCPF(digits);
+        else if (digits.length === 14) formatted = formatCNPJ(digits);
+        break;
+      case 'phone':
+        if (digits.length >= 10) formatted = formatPhone(digits);
+        break;
+      case 'cep':
+        if (digits.length === 8) formatted = formatCEP(digits);
+        break;
+      case 'titlecase':
+        formatted = toTitleCase(value);
+        break;
     }
+    onDataChange({ [field]: formatted });
+  };
+
+  const handleToggleCompanyDetails = () => {
+    setIsCompanyDetailsOpen((prev) => {
+      const next = !prev;
+      if (!next) {
+        setIsCompanyAdvancedOpen(false);
+      }
+      return next;
+    });
   };
 
   const handleNewClient = () => {
@@ -379,7 +461,6 @@ export function PrincipalTab({
       if (result.success) {
         toast.success("Cliente cadastrado com sucesso!");
         await loadClients();
-        // Selecionar o cliente criado
         handleClientSelect(result.data.id);
         setIsClientModalOpen(false);
       } else {
@@ -402,7 +483,6 @@ export function PrincipalTab({
       if (result.success) {
         toast.success("Empresa cadastrada com sucesso!");
         setIsCompanyModalOpen(false);
-        // Recarregar lista de empresas e selecionar a nova
         await loadCompanies();
         onDataChange(mapCompanyToFormData(result.data));
       } else {
@@ -432,7 +512,6 @@ export function PrincipalTab({
       <div className="bg-card/80 p-4 sm:p-6 rounded-lg border border-white/10 shadow-lg ring-1 ring-white/5 space-y-4">
         <SectionHeader title="Dados da Proposta" color="blue" />
         
-        {/* Grid com 4 colunas iguais - items-end para alinhar inputs pela base */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
           {/* Código */}
           <div className="space-y-2">
@@ -489,8 +568,8 @@ export function PrincipalTab({
               value={{ from: proposalDate, to: proposalValidity }}
               onChange={(range) => {
                 onDataChange({
-                  date: range.from || "",
-                  validity: range.to || "",
+                  date: range.from ? new Date(range.from) : undefined,
+                  validity: range.to ? new Date(range.to) : undefined,
                 });
               }}
               placeholder="Selecione o período"
@@ -523,9 +602,42 @@ export function PrincipalTab({
             }
           />
           
-          {/* Seletor de Empresa - sempre visível */}
+          {/* Seletor de Empresa */}
           <div className="space-y-2">
-            <Label>Empresa Emissora</Label>
+            <div className="flex items-center justify-between gap-2">
+              <Label>Empresa Emissora</Label>
+              <div className="flex items-center gap-1">
+                {formData.companyId && (
+                  <>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="h-7 px-2 text-xs gap-1 text-destructive hover:text-destructive"
+                      onClick={handleClearCompany}
+                      title="Limpar seleção"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                      Limpar
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="h-7 px-2 text-xs gap-1"
+                      onClick={handleToggleCompanyDetails}
+                    >
+                      {isCompanyDetailsOpen ? "Ocultar edição" : "Editar dados"}
+                      {isCompanyDetailsOpen ? (
+                        <ChevronUp className="h-3.5 w-3.5" />
+                      ) : (
+                        <ChevronDown className="h-3.5 w-3.5" />
+                      )}
+                    </Button>
+                  </>
+                )}
+              </div>
+            </div>
             <Select 
               value={formData.companyId || ''}
               onValueChange={handleCompanySelect}
@@ -563,120 +675,146 @@ export function PrincipalTab({
             )}
           </div>
 
-          {/* Dados da empresa - só exibe quando uma empresa estiver selecionada */}
-          {formData.companyId && (
+          {/* Edição inline compacta */}
+          {formData.companyId && isCompanyDetailsOpen && (
             <div className="space-y-4 pt-2 border-t border-white/5">
-              {/* Grid 3 colunas: Nome Empresa + CNPJ + Responsável */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div className="space-y-2 lg:col-span-1">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
                   <Label htmlFor="companyName">Empresa</Label>
-                  <Input 
+                  <Input
                     id="companyName"
                     value={formData.companyName ?? ''}
-                    readOnly
-                    disabled
-                    className="bg-muted/50 text-muted-foreground cursor-not-allowed"
+                    onChange={(e) => handleFieldChange('companyName', e.target.value)}
+                    className="bg-muted/30"
                   />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="companyCnpj">CNPJ/CPF</Label>
-                  <Input 
+                  <Input
                     id="companyCnpj"
                     value={formData.companyCnpj || ''}
-                    readOnly
-                    disabled
-                    className="bg-muted/50 text-muted-foreground cursor-not-allowed"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="responsibleName">Responsável</Label>
-                  <Input 
-                    id="responsibleName"
-                    value={formData.responsibleName || ''}
-                    readOnly
-                    disabled
-                    className="bg-muted/50 text-muted-foreground cursor-not-allowed"
+                    placeholder="00.000.000/0000-00"
+                    onChange={(e) => handleFieldChange('companyCnpj', e.target.value)}
+                    onBlur={(e) => handleMaskedFieldChange('companyCnpj', e.target.value, 'cnpj')}
+                    className="bg-muted/30"
                   />
                 </div>
               </div>
 
-              {/* Grid 2 colunas: E-mail + Telefone */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="companyEmail">E-mail</Label>
-                  <Input 
-                    id="companyEmail"
-                    value={formData.companyEmail || ''}
-                    readOnly
-                    disabled
-                    className="bg-muted/50 text-muted-foreground cursor-not-allowed"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="companyPhone">Telefone</Label>
-                  <Input 
-                    id="companyPhone"
-                    value={formData.companyPhone || ''}
-                    readOnly
-                    disabled
-                    className="bg-muted/50 text-muted-foreground cursor-not-allowed"
-                  />
-                </div>
+              <div className="flex justify-end">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 px-2 text-xs gap-1"
+                  onClick={() => setIsCompanyAdvancedOpen((prev) => !prev)}
+                >
+                  {isCompanyAdvancedOpen ? "Menos campos" : "Mais campos"}
+                  {isCompanyAdvancedOpen ? (
+                    <ChevronUp className="h-3.5 w-3.5" />
+                  ) : (
+                    <ChevronDown className="h-3.5 w-3.5" />
+                  )}
+                </Button>
               </div>
 
-              {/* Grid flexível: Endereço (maior) + Bairro + Cidade + UF + CEP */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-4">
-                <div className="space-y-2 col-span-2 sm:col-span-4 lg:col-span-2">
-                  <Label htmlFor="companyAddress">Endereço</Label>
-                  <Input 
-                    id="companyAddress"
-                    value={formData.companyAddress || ''}
-                    readOnly
-                    disabled
-                    className="bg-muted/50 text-muted-foreground cursor-not-allowed"
-                  />
+              {isCompanyAdvancedOpen && (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="responsibleName">Responsável</Label>
+                      <Input
+                        id="responsibleName"
+                        value={formData.responsibleName || ''}
+                        onChange={(e) => handleFieldChange('responsibleName', e.target.value)}
+                        className="bg-muted/30"
+                      />
+                    </div>
+                    <div className="space-y-2 sm:col-span-2">
+                      <Label htmlFor="companyEmail">E-mail</Label>
+                      <Input
+                        id="companyEmail"
+                        value={formData.companyEmail || ''}
+                        onChange={(e) => handleFieldChange('companyEmail', e.target.value)}
+                        className="bg-muted/30"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="companyPhone">Telefone</Label>
+                      <Input
+                        id="companyPhone"
+                        value={formData.companyPhone || ''}
+                        placeholder="(00) 00000-0000"
+                        onChange={(e) => handleFieldChange('companyPhone', e.target.value)}
+                        onBlur={(e) => handleMaskedFieldChange('companyPhone', e.target.value, 'phone')}
+                        className="bg-muted/30"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="companyAddress">Endereço</Label>
+                      <Input
+                        id="companyAddress"
+                        value={formData.companyAddress || ''}
+                        onChange={(e) => handleFieldChange('companyAddress', e.target.value)}
+                        className="bg-muted/30"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="companyNeighborhood">Bairro</Label>
+                      <Input
+                        id="companyNeighborhood"
+                        value={formData.companyNeighborhood || ''}
+                        onChange={(e) => handleFieldChange('companyNeighborhood', e.target.value)}
+                        onBlur={(e) => handleMaskedFieldChange('companyNeighborhood', e.target.value, 'titlecase')}
+                        className="bg-muted/30"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="companyCity">Cidade</Label>
+                      <Input
+                        id="companyCity"
+                        value={formData.companyCity || ''}
+                        onChange={(e) => handleFieldChange('companyCity', e.target.value)}
+                        onBlur={(e) => handleMaskedFieldChange('companyCity', e.target.value, 'titlecase')}
+                        className="bg-muted/30"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="companyState">UF</Label>
+                      <Select
+                        value={formData.companyState || ''}
+                        onValueChange={(v) => handleFieldChange('companyState', v)}
+                      >
+                        <SelectTrigger id="companyState" className="bg-muted/30">
+                          <SelectValue placeholder="UF" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {BRAZIL_STATES.map((uf) => (
+                            <SelectItem key={uf} value={uf}>{uf}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="companyZip">CEP</Label>
+                      <Input
+                        id="companyZip"
+                        value={formData.companyZip || ''}
+                        placeholder="00000-000"
+                        onChange={(e) => handleFieldChange('companyZip', e.target.value)}
+                        onBlur={(e) => handleMaskedFieldChange('companyZip', e.target.value, 'cep')}
+                        className="bg-muted/30"
+                      />
+                    </div>
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="companyNeighborhood">Bairro</Label>
-                  <Input 
-                    id="companyNeighborhood"
-                    value={formData.companyNeighborhood || ''}
-                    readOnly
-                    disabled
-                    className="bg-muted/50 text-muted-foreground cursor-not-allowed"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="companyCity">Cidade</Label>
-                  <Input 
-                    id="companyCity"
-                    value={formData.companyCity || ''}
-                    readOnly
-                    disabled
-                    className="bg-muted/50 text-muted-foreground cursor-not-allowed"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="companyState">UF</Label>
-                  <Input 
-                    id="companyState"
-                    value={formData.companyState || ''}
-                    readOnly
-                    disabled
-                    className="bg-muted/50 text-muted-foreground cursor-not-allowed"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="companyZip">CEP</Label>
-                  <Input 
-                    id="companyZip"
-                    value={formData.companyZip || ''}
-                    readOnly
-                    disabled
-                    className="bg-muted/50 text-muted-foreground cursor-not-allowed"
-                  />
-                </div>
-              </div>
+              )}
             </div>
           )}
         </div>
@@ -701,11 +839,25 @@ export function PrincipalTab({
           />
           
           <div className="space-y-4">
-            {/* Grid de campos do Cliente - items-end para alinhar */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start">
               {/* Select de Cliente */}
               <div className="space-y-2 sm:col-span-2 lg:col-span-1">
-                <Label className="block h-5">Cliente</Label>
+                <div className="flex items-center justify-between gap-2 h-5">
+                  <Label>Cliente</Label>
+                  {formData.clientId && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="h-7 px-2 text-xs gap-1 text-destructive hover:text-destructive"
+                      onClick={handleClearClient}
+                      title="Limpar seleção"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                      Limpar
+                    </Button>
+                  )}
+                </div>
                 <Select 
                   value={formData.clientId || ''} 
                   onValueChange={handleClientSelect}

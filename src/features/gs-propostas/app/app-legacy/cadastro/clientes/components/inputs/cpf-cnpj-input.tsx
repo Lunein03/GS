@@ -1,7 +1,12 @@
-import { useCallback, type ChangeEvent } from 'react';
+import { useState, useCallback, type ChangeEvent } from 'react';
 import { Input } from '@/shared/ui/input';
 import { Label } from '@/shared/ui/label';
+import { Button } from '@/shared/ui/button';
 import { cn } from '@/shared/lib/utils';
+import { Loader2, Search } from 'lucide-react';
+import { toast } from 'sonner';
+import { fetchCNPJDataWithCache, isCNPJError } from '@/shared/lib/api-services';
+import { validateCPF, validateCNPJ } from '@/shared/lib/validators';
 
 type CpfCnpjInputProps = {
 	tipo: 'fisica' | 'juridica';
@@ -29,50 +34,9 @@ function formatDocument(tipo: 'fisica' | 'juridica', value: string): string {
 		.replace(/(\d{4})(\d{1,2})$/, '$1-$2');
 }
 
-function validateCpf(cpf: string): boolean {
-	const digits = cpf.replace(/\D/g, '');
-	if (digits.length !== 11 || /^([0-9])\1+$/.test(digits)) {
-		return false;
-	}
-
-	const calcCheckDigit = (slice: number) => {
-		const sum = digits
-			.slice(0, slice)
-			.split('')
-			.reduce((acc, curr, idx) => acc + Number(curr) * (slice + 1 - idx), 0);
-		const mod = (sum * 10) % 11;
-		return mod === 10 ? 0 : mod;
-	};
-
-	const d1 = calcCheckDigit(9);
-	const d2 = calcCheckDigit(10);
-
-	return d1 === Number(digits[9]) && d2 === Number(digits[10]);
-}
-
-function validateCnpj(cnpj: string): boolean {
-	const digits = cnpj.replace(/\D/g, '');
-	if (digits.length !== 14 || /^([0-9])\1+$/.test(digits)) {
-		return false;
-	}
-
-	const calcCheckDigit = (slice: number) => {
-		const factors = slice === 12 ? [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2] : [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
-		const sum = digits
-			.slice(0, slice)
-			.split('')
-			.reduce((acc, curr, idx) => acc + Number(curr) * factors[idx], 0);
-		const mod = sum % 11;
-		return mod < 2 ? 0 : 11 - mod;
-	};
-
-	const d1 = calcCheckDigit(12);
-	const d2 = calcCheckDigit(13);
-
-	return d1 === Number(digits[12]) && d2 === Number(digits[13]);
-}
-
 export function CpfCnpjInput({ tipo, value, onChange, onValidationComplete, error, disabled }: CpfCnpjInputProps) {
+	const [isConsulting, setIsConsulting] = useState(false);
+
 	const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
 		const formatted = formatDocument(tipo, event.target.value);
 		onChange(formatted);
@@ -81,29 +45,102 @@ export function CpfCnpjInput({ tipo, value, onChange, onValidationComplete, erro
 	const handleBlur = useCallback(() => {
 		const digits = value.replace(/\D/g, '');
 		if (digits.length === (tipo === 'fisica' ? 11 : 14)) {
-			const isValid = tipo === 'fisica' ? validateCpf(digits) : validateCnpj(digits);
-			onValidationComplete?.(isValid);
-		} else {
-			onValidationComplete?.(false);
+			const isValid = tipo === 'fisica' ? validateCPF(digits) : validateCNPJ(digits);
+			if (!isValid) {
+				onValidationComplete?.(false);
+			}
 		}
 	}, [tipo, value, onValidationComplete]);
+
+	const handleConsult = async () => {
+		const digits = value.replace(/\D/g, '');
+
+		if (tipo === 'fisica') {
+			if (digits.length !== 11) {
+				toast.error('Informe um CPF completo.');
+				return;
+			}
+			if (!validateCPF(digits)) {
+				toast.error('CPF inválido.');
+				onValidationComplete?.(false);
+				return;
+			}
+			toast.success('CPF validado com sucesso.');
+			onValidationComplete?.(true);
+			return;
+		}
+
+		if (digits.length !== 14) {
+			toast.error('Informe um CNPJ completo para consultar.');
+			return;
+		}
+
+		if (!validateCNPJ(digits)) {
+			toast.error('CNPJ inválido.');
+			onValidationComplete?.(false);
+			return;
+		}
+
+		try {
+			setIsConsulting(true);
+			const result = await fetchCNPJDataWithCache(digits);
+
+			if (isCNPJError(result)) {
+				toast.error(typeof result.error === 'string' ? result.error : 'Erro ao consultar CNPJ.');
+				onValidationComplete?.(false);
+				return;
+			}
+
+			toast.success('Dados recuperados com sucesso!');
+			onValidationComplete?.(true, result);
+		} catch (err) {
+			console.error('Erro ao consultar CNPJ:', err);
+			toast.error('Não foi possível consultar o CNPJ. Tente novamente.');
+			onValidationComplete?.(false);
+		} finally {
+			setIsConsulting(false);
+		}
+	};
+
+	const digits = value.replace(/\D/g, '');
+	const canConsult = tipo === 'fisica'
+		? digits.length === 11
+		: digits.length === 14;
 
 	return (
 		<div className="space-y-2">
 			<Label htmlFor="cpfCnpj">{tipo === 'fisica' ? 'CPF' : 'CNPJ'} *</Label>
-			<Input
-				id="cpfCnpj"
-				value={value}
-				onChange={handleChange}
-				onBlur={handleBlur}
-				placeholder={tipo === 'fisica' ? '000.000.000-00' : '00.000.000/0000-00'}
-				maxLength={tipo === 'fisica' ? 14 : 18}
-				disabled={disabled}
-				className={cn(error && 'border-red-500')}
-			/>
+			<div className="flex gap-2">
+				<Input
+					id="cpfCnpj"
+					value={value}
+					onChange={handleChange}
+					onBlur={handleBlur}
+					placeholder={tipo === 'fisica' ? '000.000.000-00' : '00.000.000/0000-00'}
+					maxLength={tipo === 'fisica' ? 14 : 18}
+					disabled={disabled || isConsulting}
+					className={cn("flex-1", error && 'border-red-500')}
+				/>
+				<Button
+					type="button"
+					variant="outline"
+					size="sm"
+					className="h-9 px-3 gap-1.5 shrink-0"
+					onClick={handleConsult}
+					disabled={disabled || isConsulting || !canConsult}
+					title={tipo === 'fisica' ? 'Validar CPF' : 'Consultar CNPJ'}
+				>
+					{isConsulting ? (
+						<Loader2 className="h-4 w-4 animate-spin" />
+					) : (
+						<Search className="h-4 w-4" />
+					)}
+					<span className="hidden sm:inline">
+						{isConsulting ? 'Consultando...' : 'Consultar'}
+					</span>
+				</Button>
+			</div>
 			{error && <p className="text-sm text-red-600">{error}</p>}
 		</div>
 	);
 }
-
-

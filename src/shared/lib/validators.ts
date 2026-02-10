@@ -173,3 +173,22 @@ export function formatPhone(phone: string): string {
   
   return phone;
 }
+
+/**
+ * Capitaliza a primeira letra de cada palavra (Title Case)
+ * Mantém preposições/artigos em minúsculo (de, da, do, dos, das, e)
+ * @param value - string para capitalizar
+ * @returns string capitalizada
+ */
+export function toTitleCase(value: string): string {
+  const lowerWords = new Set(['de', 'da', 'do', 'dos', 'das', 'e', 'em', 'com', 'para', 'por']);
+  return value
+    .toLowerCase()
+    .split(' ')
+    .map((word, index) => {
+      if (!word) return word;
+      if (index > 0 && lowerWords.has(word)) return word;
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    })
+    .join(' ');
+}

@@ -178,18 +178,31 @@ export function ClienteForm({
 
   const handleTelefoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    const clean = removeNonNumeric(value);
+    let digits = removeNonNumeric(value);
+
+    // Remove country code prefix if present (55)
+    if (digits.startsWith('55') && digits.length > 2) {
+      digits = digits.slice(2);
+    }
+
+    // Allow clearing the field
+    if (digits.length === 0) {
+      setValue('contatoTelefone', '', { shouldDirty: true });
+      return;
+    }
+
+    // Limit to 11 digits (DDD + number)
+    digits = digits.slice(0, 11);
 
     let formatted = '+55 ';
-
-    if (clean.length <= 2) {
-      formatted += clean;
-    } else if (clean.length <= 6) {
-      formatted += `(${clean.slice(0, 2)}) ${clean.slice(2)}`;
-    } else if (clean.length <= 10) {
-      formatted += `(${clean.slice(0, 2)}) ${clean.slice(2, 6)}-${clean.slice(6)}`;
+    if (digits.length <= 2) {
+      formatted += `(${digits}`;
+    } else if (digits.length <= 6) {
+      formatted += `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+    } else if (digits.length <= 10) {
+      formatted += `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
     } else {
-      formatted += `(${clean.slice(0, 2)}) ${clean.slice(2, 7)}-${clean.slice(7, 11)}`;
+      formatted += `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7, 11)}`;
     }
 
     setValue('contatoTelefone', formatted, { shouldDirty: true });

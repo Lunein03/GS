@@ -59,8 +59,12 @@ const ProposalDocumentEditor = forwardRef<ProposalDocumentEditorRef, ProposalDoc
     const panStartRef = useRef<{ x: number; y: number; left: number; top: number } | null>(null);
     const previewUrlRef = useRef<string | null>(null);
     const activePreviewUrlRef = useRef<string | null>(null);
+    const viewerBufferUrlsRef = useRef<Set<string>>(new Set());
     const liveUrlsRef = useRef<Set<string>>(new Set());
     const isFirstLoadRef = useRef(true);
+    const isMountedRef = useRef(true);
+    const isGeneratingPreviewRef = useRef(false);
+    const queuedPreviewDataRef = useRef<ProposalPdfData | null>(null);
 
     const PAGE_WIDTH = 595;
     const MIN_SCALE = 0.5;
@@ -79,23 +83,21 @@ const ProposalDocumentEditor = forwardRef<ProposalDocumentEditorRef, ProposalDoc
       status: data?.status || "Aberto",
       date: data?.date || new Date(),
       validity: data?.validity,
-      clientName: data?.clientName,
-      contactName: data?.contactName,
-      companyName: data?.companyName ?? "GS PRODUÇÕES E ACESSIBILIDADE",
-      companyCnpj: data?.companyCnpj ?? "35.282.691/0001-48",
-      companyAddress: data?.companyAddress ?? "Rua Cinco de Julho, 388, APT 103",
-      companyNeighborhood: data?.companyNeighborhood ?? "Copacabana",
-      companyCity: data?.companyCity ?? "Rio de Janeiro",
-      companyState: data?.companyState ?? "RJ",
-      companyZip: data?.companyZip ?? "22051-030",
-      companyEmail: data?.companyEmail ?? "comercial@gsproducao.com",
-      companyPhone: data?.companyPhone ?? "+55 21 96819-9637",
-      responsibleName: data?.responsibleName ?? "Gabriel Sampaio Verissimo",
+      clientName: data?.clientName || "Nome do Cliente",
+      contactName: data?.contactName || "Nome do Contato",
+      companyName: data?.companyName || "Nome da Empresa",
+      companyCnpj: data?.companyCnpj || "CNPJ",
+      companyAddress: data?.companyAddress || "Endereço da Empresa",
+      companyNeighborhood: data?.companyNeighborhood || "Bairro",
+      companyCity: data?.companyCity || "Cidade",
+      companyState: data?.companyState || "UF",
+      companyZip: data?.companyZip || "CEP",
+      companyEmail: data?.companyEmail || "email@empresa.com",
+      companyPhone: data?.companyPhone || "(00) 00000-0000",
+      responsibleName: data?.responsibleName || "Nome do Responsável",
       items: data?.items || [],
       observations: data?.observations,
     }), [data]);
-
-    const [previewData, setPreviewData] = useState<ProposalPdfData>(documentData);
 
     const exportToPdf = useCallback(async () => {
       setIsExporting(true);
@@ -120,9 +122,81 @@ const ProposalDocumentEditor = forwardRef<ProposalDocumentEditorRef, ProposalDoc
       return JSON.stringify(documentData);
     }, [documentData]);
 
+    const cleanupUnusedObjectUrls = useCallback(() => {
+      const keep = new Set<string>();
+      if (activePreviewUrlRef.current) keep.add(activePreviewUrlRef.current);
+      if (previewUrlRef.current) keep.add(previewUrlRef.current);
+      viewerBufferUrlsRef.current.forEach((url) => keep.add(url));
+
+      const urls = Array.from(liveUrlsRef.current);
+      urls.forEach((url) => {
+        if (!keep.has(url)) {
+          URL.revokeObjectURL(url);
+          liveUrlsRef.current.delete(url);
+        }
+      });
+    }, []);
+
+    const runPreviewGenerationQueue = useCallback(async () => {
+      if (isGeneratingPreviewRef.current) return;
+      isGeneratingPreviewRef.current = true;
+
+      try {
+        while (isMountedRef.current && queuedPreviewDataRef.current) {
+          const nextPreviewData = queuedPreviewDataRef.current;
+          queuedPreviewDataRef.current = null;
+
+          if (isFirstLoadRef.current) {
+            setPreviewLoading(true);
+          }
+          setPreviewError(null);
+
+          try {
+            const blob = await pdf(<ProposalPdfDocument data={nextPreviewData} />).toBlob();
+            if (!isMountedRef.current) return;
+
+            const url = URL.createObjectURL(blob);
+            liveUrlsRef.current.add(url);
+            previewUrlRef.current = url;
+            setPreviewUrl(url);
+            cleanupUnusedObjectUrls();
+            setPreviewLoading(false);
+
+            if (isFirstLoadRef.current) {
+              isFirstLoadRef.current = false;
+              setIsFirstLoad(false);
+            }
+          } catch (error) {
+            if (!isMountedRef.current) return;
+            console.error("Error rendering PDF preview:", error);
+            setPreviewError("Não foi possível gerar a pré-visualização.");
+            setPreviewLoading(false);
+
+            if (isFirstLoadRef.current) {
+              isFirstLoadRef.current = false;
+              setIsFirstLoad(false);
+            }
+          }
+        }
+      } finally {
+        isGeneratingPreviewRef.current = false;
+        if (isMountedRef.current && queuedPreviewDataRef.current) {
+          void runPreviewGenerationQueue();
+        }
+      }
+    }, [cleanupUnusedObjectUrls]);
+
+    const queuePreviewGeneration = useCallback(
+      (nextData: ProposalPdfData) => {
+        queuedPreviewDataRef.current = nextData;
+        void runPreviewGenerationQueue();
+      },
+      [runPreviewGenerationQueue]
+    );
+
     const handleRefresh = useCallback(() => {
-      setPreviewData(documentData);
-    }, [documentData]);
+      queuePreviewGeneration(documentData);
+    }, [documentData, queuePreviewGeneration]);
 
     const handleViewModeChange = useCallback(
       (mode: ViewMode) => {
@@ -137,11 +211,10 @@ const ProposalDocumentEditor = forwardRef<ProposalDocumentEditorRef, ProposalDoc
 
     useEffect(() => {
       if (autoRefresh) {
-        // Atualização em tempo real (sem debounce)
-        setPreviewData(documentData);
+        queuePreviewGeneration(documentData);
       }
       onContentChange?.(serializedData);
-    }, [serializedData, autoRefresh, onContentChange, documentData]);
+    }, [serializedData, autoRefresh, onContentChange, documentData, queuePreviewGeneration]);
 
     // Sync fullscreen state from parent
     useEffect(() => {
@@ -182,76 +255,27 @@ const ProposalDocumentEditor = forwardRef<ProposalDocumentEditorRef, ProposalDoc
       return () => observer.disconnect();
     }, [clamp, isFitToWidth]);
 
-    useEffect(() => {
-      let active = true;
-      // Só mostra loading visual na primeira carga
-      if (isFirstLoadRef.current) {
-        setPreviewLoading(true);
-      }
-      setPreviewError(null);
-
-      pdf(<ProposalPdfDocument data={previewData} />)
-        .toBlob()
-        .then((blob) => {
-          if (!active) return;
-          const url = URL.createObjectURL(blob);
-
-          liveUrlsRef.current.add(url);
-          previewUrlRef.current = url;
-          setPreviewUrl(url);
-          setPreviewLoading(false);
-          if (isFirstLoadRef.current) {
-            isFirstLoadRef.current = false;
-            setIsFirstLoad(false);
-          }
-          // Remove URLs antigas nao usadas (mantem apenas ativa e pendente)
-          const keep = new Set<string>();
-          if (activePreviewUrlRef.current) keep.add(activePreviewUrlRef.current);
-          if (previewUrlRef.current) keep.add(previewUrlRef.current);
-          const urls = Array.from(liveUrlsRef.current);
-          urls.forEach((u) => {
-            if (!keep.has(u)) {
-              URL.revokeObjectURL(u);
-              liveUrlsRef.current.delete(u);
-            }
-          });
-        })
-        .catch((error) => {
-          if (!active) return;
-          console.error("Error rendering PDF preview:", error);
-          setPreviewError("Não foi possível gerar a pré-visualização.");
-          setPreviewLoading(false);
-          if (isFirstLoadRef.current) {
-            isFirstLoadRef.current = false;
-            setIsFirstLoad(false);
-          }
-        });
-
-      return () => {
-        active = false;
-      };
-    }, [previewData]);
-
     const handleActiveUrlChange = useCallback((activeUrl: string) => {
       activePreviewUrlRef.current = activeUrl;
-      const keep = new Set<string>();
-      if (activeUrl) keep.add(activeUrl);
-      if (previewUrlRef.current) keep.add(previewUrlRef.current);
-      const urls = Array.from(liveUrlsRef.current);
-      urls.forEach((url) => {
-        if (!keep.has(url)) {
-          URL.revokeObjectURL(url);
-          liveUrlsRef.current.delete(url);
-        }
-      });
-    }, []);
+      cleanupUnusedObjectUrls();
+    }, [cleanupUnusedObjectUrls]);
+
+    const handleBufferUrlsChange = useCallback((bufferUrls: string[]) => {
+      viewerBufferUrlsRef.current = new Set(bufferUrls);
+      cleanupUnusedObjectUrls();
+    }, [cleanupUnusedObjectUrls]);
 
     useEffect(() => {
+      isMountedRef.current = true;
+      const liveUrls = liveUrlsRef.current;
       return () => {
+        isMountedRef.current = false;
+        queuedPreviewDataRef.current = null;
         // Cleanup de todas as URLs ao desmontar
-        const urls = Array.from(liveUrlsRef.current);
+        const urls = Array.from(liveUrls);
         urls.forEach((u) => URL.revokeObjectURL(u));
-        liveUrlsRef.current.clear();
+        liveUrls.clear();
+        viewerBufferUrlsRef.current.clear();
       };
     }, []);
 
@@ -392,6 +416,7 @@ const ProposalDocumentEditor = forwardRef<ProposalDocumentEditorRef, ProposalDoc
                   setPreviewError("Falha ao carregar a pré-visualização.");
                 }}
                 onActiveUrlChange={handleActiveUrlChange}
+                onBufferUrlsChange={handleBufferUrlsChange}
               />
             </div>
           )}

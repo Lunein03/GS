@@ -9,11 +9,28 @@ import * as z from "zod";
 // PROPOSAL TYPES
 // ============================================
 
+export type ItemUnit = 'hora' | 'dia' | 'unidade' | 'evento';
+
+export const ITEM_UNIT_LABELS: Record<ItemUnit, string> = {
+  hora: 'Hora(s)',
+  dia: 'Dia(s)',
+  unidade: 'Unidade(s)',
+  evento: 'Evento',
+};
+
+export const ITEM_UNIT_ABBREV: Record<ItemUnit, string> = {
+  hora: 'h',
+  dia: 'd',
+  unidade: 'un',
+  evento: 'ev',
+};
+
 export interface ProposalItem {
   id: string;
   description: string;
   quantity: number;
   unitValue: number;
+  unit?: ItemUnit;
   itemObservation?: string;
 }
 
@@ -107,6 +124,7 @@ export const proposalItemSchema = z.object({
   description: z.string().min(1, "DescriÃ§Ã£o Ã© obrigatÃ³ria"),
   quantity: z.number().min(0, "Quantidade deve ser positiva"),
   unitValue: z.number().min(0, "Valor unitÃ¡rio deve ser positivo"),
+  unit: z.enum(['hora', 'dia', 'unidade', 'evento']).optional().default('hora'),
   itemObservation: z.string().optional(),
 });
 
@@ -230,5 +248,6 @@ export const DEFAULT_PROPOSAL_ITEM: Omit<ProposalItem, 'id'> = {
   description: '',
   quantity: 1,
   unitValue: 0,
+  unit: 'hora',
 };
 
