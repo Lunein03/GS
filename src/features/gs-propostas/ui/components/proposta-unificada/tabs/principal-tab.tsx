@@ -44,6 +44,7 @@ import type { Company, CompanyFormSchema } from "@/features/gs-propostas/app/app
 import type { ProposalData, ProposalStatus } from "../types";
 import { CompanyFormDialog } from "@/features/gs-propostas/app/app-legacy/cadastro/empresas/components/company-form-dialog";
 import { ClientFormDialog } from "@/features/gs-propostas/app/app-legacy/cadastro/clientes/components/client-form-dialog";
+import { LogoUploader } from "../logo-uploader";
 
 // ============================================
 // TYPES
@@ -576,6 +577,16 @@ export function PrincipalTab({
               className="bg-muted/30"
               fromYear={2020}
               toYear={2035}
+            />
+          </div>
+
+          {/* Logo da Proposta - NEW SECTION */}
+          <div className="sm:col-span-2 lg:col-span-4 mt-2 pt-4 border-t border-white/10">
+            <LogoUploader 
+              currentLogoUrl={formData.logoUrl}
+              currentPosition={formData.logoPosition || 'left'}
+              onLogoChange={(url) => onDataChange({ logoUrl: url })}
+              onPositionChange={(pos) => onDataChange({ logoPosition: pos })}
             />
           </div>
         </div>

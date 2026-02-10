@@ -5,8 +5,7 @@ import { Button } from "@/shared/ui/button";
 import { 
   Zap, 
   RefreshCw, 
-  Maximize2, 
-  Minimize2,
+  Expand,
   ZapOff
 } from "lucide-react";
 import {
@@ -24,28 +23,20 @@ interface PreviewControlsProps {
   onAutoRefreshChange: (value: boolean) => void;
   onRefreshClick: () => void;
   onViewModeChange: (mode: ViewMode) => void;
+  onOpenModal?: () => void;
 }
 
 export function PreviewControls({
   className,
   autoRefresh,
-  viewMode,
   onAutoRefreshChange,
   onRefreshClick,
-  onViewModeChange,
+  onOpenModal,
 }: PreviewControlsProps) {
-  const handleViewModeToggle = () => {
-    if (viewMode === "normal") {
-      onViewModeChange("fullscreen");
-    } else {
-      onViewModeChange("normal");
-    }
-  };
-
   return (
     <div 
       className={cn(
-        "flex items-center gap-2 bg-background/80 backdrop-blur-sm rounded-full px-2 py-1.5 shadow-lg border border-border",
+        "flex items-center gap-1 bg-zinc-800/90 backdrop-blur-sm rounded-full px-1.5 py-1 shadow-lg",
         className
       )}
     >
@@ -56,21 +47,21 @@ export function PreviewControls({
             variant="ghost"
             size="icon"
             className={cn(
-              "h-10 w-10 rounded-full transition-all",
+              "h-8 w-8 rounded-full transition-all",
               autoRefresh 
-                ? "bg-blue-500 text-white hover:bg-blue-600 hover:text-white shadow-md" 
-                : "bg-muted text-muted-foreground hover:bg-muted/80"
+                ? "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground" 
+                : "text-zinc-400 hover:text-white hover:bg-zinc-700"
             )}
             onClick={() => onAutoRefreshChange(!autoRefresh)}
           >
             {autoRefresh ? (
-              <Zap className="h-5 w-5" />
+              <Zap className="h-4 w-4" />
             ) : (
-              <ZapOff className="h-5 w-5" />
+              <ZapOff className="h-4 w-4" />
             )}
           </Button>
         </TooltipTrigger>
-        <TooltipContent side="top">
+        <TooltipContent side="top" sideOffset={8}>
           <p>{autoRefresh ? "Atualização automática ativada" : "Atualização automática desativada"}</p>
         </TooltipContent>
       </Tooltip>
@@ -81,36 +72,35 @@ export function PreviewControls({
           <Button
             variant="ghost"
             size="icon"
-            className="h-10 w-10 rounded-full bg-muted text-muted-foreground hover:bg-muted/80"
+            className={cn(
+              "h-8 w-8 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-700 transition-all",
+              autoRefresh && "opacity-40 pointer-events-none"
+            )}
             onClick={onRefreshClick}
             disabled={autoRefresh}
           >
-            <RefreshCw className="h-5 w-5" />
+            <RefreshCw className="h-4 w-4" />
           </Button>
         </TooltipTrigger>
-        <TooltipContent side="top">
+        <TooltipContent side="top" sideOffset={8}>
           <p>Atualizar visualização</p>
         </TooltipContent>
       </Tooltip>
 
-      {/* View Mode Toggle */}
+      {/* Open in Modal */}
       <Tooltip>
         <TooltipTrigger asChild>
           <Button
             variant="ghost"
             size="icon"
-            className="h-10 w-10 rounded-full bg-muted text-muted-foreground hover:bg-muted/80"
-            onClick={handleViewModeToggle}
+            className="h-8 w-8 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-700 transition-all"
+            onClick={onOpenModal}
           >
-            {viewMode === "fullscreen" ? (
-              <Minimize2 className="h-5 w-5" />
-            ) : (
-              <Maximize2 className="h-5 w-5" />
-            )}
+            <Expand className="h-4 w-4" />
           </Button>
         </TooltipTrigger>
-        <TooltipContent side="top">
-          <p>{viewMode === "fullscreen" ? "Sair do modo expandido" : "Expandir visualização"}</p>
+        <TooltipContent side="top" sideOffset={8}>
+          <p>Abrir documento em tela cheia</p>
         </TooltipContent>
       </Tooltip>
     </div>

@@ -2,7 +2,7 @@
  * Utilitários para o componente PropostaUnificada
  */
 
-import { ProposalData, DEFAULT_PROPOSAL_DATA } from "./types";
+import { ProposalData, DEFAULT_PROPOSAL_DATA, ProposalItem } from "./types";
 
 /**
  * Gera um código de proposta baseado na data atual e um sufixo aleatório
@@ -17,7 +17,7 @@ export function generateProposalCode(): string {
   return `${yy}${mm}${dd}-${seq}`;
 }
 
-export const DEFAULT_PROPOSAL_ITEMS = [];
+export const DEFAULT_PROPOSAL_ITEMS: ProposalItem[] = [];
 
 /**
  * Cria os dados iniciais para uma nova proposta

@@ -19,6 +19,7 @@ import { PreviewControls, ViewMode } from "./preview-controls";
 import { TooltipProvider } from "@/shared/ui/tooltip";
 import { ProposalPdfDocument, ProposalPdfData } from "./proposal-pdf-document";
 import { pdf } from "@react-pdf/renderer";
+import { DocumentPreviewModal } from "./document-preview-modal";
 
 const PdfPreview = dynamic(
   () => import("./pdf-preview").then((mod) => mod.PdfPreview),
@@ -50,10 +51,11 @@ const ProposalDocumentEditor = forwardRef<ProposalDocumentEditorRef, ProposalDoc
     const [numPages, setNumPages] = useState(1);
     const [scale, setScale] = useState(1);
     const [fitScale, setFitScale] = useState(1);
-    const [isFitToWidth, setIsFitToWidth] = useState(true);
+    const [isFitToWidth, setIsFitToWidth] = useState(false);
     const [isHandMode, setIsHandMode] = useState(true);
     const [isPanning, setIsPanning] = useState(false);
     const [containerWidth, setContainerWidth] = useState(0);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
     const lastSizeRef = useRef<{ width: number; height: number }>({ width: 0, height: 0 });
     const panStartRef = useRef<{ x: number; y: number; left: number; top: number } | null>(null);
@@ -67,10 +69,10 @@ const ProposalDocumentEditor = forwardRef<ProposalDocumentEditorRef, ProposalDoc
     const queuedPreviewDataRef = useRef<ProposalPdfData | null>(null);
 
     const PAGE_WIDTH = 595;
-    const MIN_SCALE = 0.5;
+    const MIN_SCALE = 0.1;
     const MAX_SCALE = 3;
     const isPannable = isHandMode && containerWidth > 0 && PAGE_WIDTH * scale > containerWidth - 8;
-    const zoomStep = fitScale > 0 ? fitScale * 0.1 : 0.1;
+    const zoomStep = 0.1;
 
     const clamp = useCallback((value: number, min: number, max: number) => {
       return Math.min(max, Math.max(min, value));
@@ -97,6 +99,8 @@ const ProposalDocumentEditor = forwardRef<ProposalDocumentEditorRef, ProposalDoc
       responsibleName: data?.responsibleName || "Nome do Responsável",
       items: data?.items || [],
       observations: data?.observations,
+      logoUrl: data?.logoUrl,
+      logoPosition: data?.logoPosition,
     }), [data]);
 
     const exportToPdf = useCallback(async () => {
@@ -361,7 +365,7 @@ const ProposalDocumentEditor = forwardRef<ProposalDocumentEditorRef, ProposalDoc
               <Minus className="h-4 w-4" />
             </Button>
             <span className="text-xs w-12 text-center text-muted-foreground">
-              {Math.round((scale / (fitScale || 1)) * 100)}%
+              {Math.round(scale * 100)}%
             </span>
             <Button
               variant="outline"
@@ -394,36 +398,38 @@ const ProposalDocumentEditor = forwardRef<ProposalDocumentEditorRef, ProposalDoc
         </div>
 
         {/* Document Preview Area - PDF Viewer */}
-        <div
-          className={cn(
-            "flex-1 min-h-0 overflow-auto relative bg-zinc-200",
-            isPannable ? (isPanning ? "cursor-grabbing select-none" : "cursor-grab select-none") : "cursor-default"
-          )}
-          ref={containerRef}
-          onPointerDown={handlePanStart}
-          onPointerMove={handlePanMove}
-          onPointerUp={handlePanEnd}
-          onPointerCancel={handlePanEnd}
-        >
-          {previewUrl && !previewError && (
-            <div className="w-full flex flex-col items-center gap-4 py-4">
-              <PdfPreview
-                file={previewUrl}
-                scale={scale}
-                onLoadSuccess={setNumPages}
-                onLoadError={(error) => {
-                  console.error("Error loading PDF:", error);
-                  setPreviewError("Falha ao carregar a pré-visualização.");
-                }}
-                onActiveUrlChange={handleActiveUrlChange}
-                onBufferUrlsChange={handleBufferUrlsChange}
-              />
-            </div>
-          )}
+        <div className="flex-1 min-h-0 relative">
+          <div
+            className={cn(
+              "absolute inset-0 overflow-auto bg-zinc-200",
+              isPannable ? (isPanning ? "cursor-grabbing select-none" : "cursor-grab select-none") : "cursor-default"
+            )}
+            ref={containerRef}
+            onPointerDown={handlePanStart}
+            onPointerMove={handlePanMove}
+            onPointerUp={handlePanEnd}
+            onPointerCancel={handlePanEnd}
+          >
+            {previewUrl && !previewError && (
+              <div className="w-full flex flex-col items-center gap-4 py-4">
+                <PdfPreview
+                  file={previewUrl}
+                  scale={scale}
+                  onLoadSuccess={setNumPages}
+                  onLoadError={(error) => {
+                    console.error("Error loading PDF:", error);
+                    setPreviewError("Falha ao carregar a pré-visualização.");
+                  }}
+                  onActiveUrlChange={handleActiveUrlChange}
+                  onBufferUrlsChange={handleBufferUrlsChange}
+                />
+              </div>
+            )}
+          </div>
 
           {/* Loading overlay aparece APENAS na primeira carga */}
           {previewLoading && isFirstLoad && (
-            <div className="absolute inset-0 flex items-center justify-center bg-zinc-200/70">
+            <div className="absolute inset-0 flex items-center justify-center bg-zinc-200/70 z-10">
               <div className="flex flex-col items-center gap-2">
                 <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
                 <span className="text-sm text-muted-foreground">Carregando visualização...</span>
@@ -432,23 +438,31 @@ const ProposalDocumentEditor = forwardRef<ProposalDocumentEditorRef, ProposalDoc
           )}
 
           {previewError && (
-            <div className="absolute inset-0 flex items-center justify-center text-sm text-muted-foreground bg-zinc-200/70">
+            <div className="absolute inset-0 flex items-center justify-center text-sm text-muted-foreground bg-zinc-200/70 z-10">
               {previewError}
             </div>
           )}
 
-          {/* Preview Controls - Floating */}
+          {/* Preview Controls - Floating (outside scrollable area) */}
           <TooltipProvider>
             <PreviewControls
-              className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30"
+              className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20"
               autoRefresh={autoRefresh}
               viewMode={viewMode}
               onAutoRefreshChange={setAutoRefresh}
               onRefreshClick={handleRefresh}
               onViewModeChange={handleViewModeChange}
+              onOpenModal={() => setIsModalOpen(true)}
             />
           </TooltipProvider>
         </div>
+
+        {/* Document Preview Modal */}
+        <DocumentPreviewModal
+          open={isModalOpen}
+          onOpenChange={setIsModalOpen}
+          previewUrl={previewUrl}
+        />
       </div>
     );
   }

@@ -92,9 +92,9 @@ export function PatrimonioSection() {
           className="text-center"
         >
           <Link href="/patrimonio" passHref>
-            <Button 
-              size="lg" 
-              className="group text-base px-8 py-4 font-medium font-inter bg-primary hover:bg-secondary dark:hover:bg-[rgba(42,36,81,0.9)] text-primary-foreground shadow-md hover:shadow-lg transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            <Button
+              size="lg"
+              className="group shadow-md hover:shadow-lg"
             >
               Acessar Patrimônio
               <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" aria-hidden="true" />

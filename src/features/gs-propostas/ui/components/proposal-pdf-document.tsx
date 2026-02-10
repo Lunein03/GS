@@ -12,6 +12,7 @@ import {
   LinearGradient,
   Stop,
   G,
+  Image,
 } from "@react-pdf/renderer";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -45,6 +46,12 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: "#d4d4d8",
   },
+  headerContent: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    width: "100%",
+  },
   headerLeft: {
     flex: 1,
     gap: 2,
@@ -58,7 +65,7 @@ const styles = StyleSheet.create({
   headerRight: {
     textAlign: "right",
     paddingTop: 4,
-    width: 60,
+    minWidth: 60,
     alignItems: "flex-end",
   },
   title: {
@@ -361,6 +368,8 @@ export interface ProposalPdfData {
   responsibleName?: string;
   items?: ProposalItem[];
   observations?: string;
+  logoUrl?: string;
+  logoPosition?: 'left' | 'right';
 }
 
 const UNIT_LABELS: Record<string, string> = {
@@ -485,9 +494,30 @@ export function ProposalPdfDocument({ data }: ProposalPdfDocumentProps) {
         </View>
 
       {/* Header */}
+      {/* Header */}
       <View style={styles.header}>
-        <View style={styles.headerRight}>
-          <GsLogo size={42} />
+        <View style={styles.headerContent}>
+          {/* Left Side */}
+          <View style={[styles.headerLeft, { alignItems: 'flex-start' }]}>
+            {data.logoUrl && data.logoPosition === 'left' ? (
+              <Image 
+                src={data.logoUrl} 
+                style={{ height: 70, width: 180, objectFit: 'contain', objectPosition: 'left' }} 
+              />
+            ) : null}
+          </View>
+
+          {/* Right Side */}
+          <View style={styles.headerRight}>
+            {data.logoUrl && data.logoPosition === 'right' ? (
+              <Image 
+                src={data.logoUrl} 
+                style={{ height: 70, width: 180, objectFit: 'contain', objectPosition: 'right' }} 
+              />
+            ) : (
+              !data.logoUrl && <GsLogo size={42} /> 
+            )}
+          </View>
         </View>
       </View>
 

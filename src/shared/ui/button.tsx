@@ -13,6 +13,8 @@ const buttonVariants = cva(
           'bg-[#6422F2] text-white shadow-light hover:shadow-hover hover:bg-[#6422F2]/90 active:shadow-sm',
         destructive:
           'bg-[#FF3B30] text-white shadow-light hover:shadow-hover hover:bg-[#FF3B30]/90 active:shadow-sm',
+        success:
+          'bg-green-600 text-white shadow-light hover:shadow-hover hover:bg-green-700 active:shadow-sm dark:bg-green-600 dark:hover:bg-green-700',
         outline:
           'border border-[#D1D1D6] bg-white shadow-light hover:shadow-hover hover:bg-[#F2F2F7] hover:border-[#C7C7CC] active:shadow-sm dark:border-[#48484A] dark:bg-[#1C1C1E] dark:hover:bg-[#2C2C2E]',
         secondary:
@@ -21,10 +23,10 @@ const buttonVariants = cva(
         link: 'text-[#6422F2] underline-offset-4 hover:underline',
       },
       size: {
-        default: 'h-[44px] px-5 py-[10px]',
-        sm: 'h-[36px] rounded-[8px] px-4 py-[6px] text-xs',
-        lg: 'h-[52px] rounded-[16px] px-8 py-[14px] text-base',
-        icon: 'h-[44px] w-[44px] p-0',
+        default: 'h-[2.75rem] px-5 py-[0.625rem]',
+        sm: 'h-[2.25rem] rounded-[8px] px-4 py-[0.375rem] text-xs',
+        lg: 'h-[3.25rem] rounded-[16px] px-8 py-[0.875rem] text-base',
+        icon: 'h-[2.75rem] w-[2.75rem] p-0',
       },
     },
     defaultVariants: {

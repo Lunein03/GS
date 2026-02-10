@@ -190,3 +190,5 @@ $RECYCLE.BIN/
 public/videos/*.mp4
 _temp_videos/
 tmp-edge-profile/
+
+tmpclaude-*-cwd

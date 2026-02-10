@@ -82,6 +82,7 @@ import {
   DEFAULT_PROPOSAL_DATA 
 } from "./types";
 import { generateProposalCode, DEFAULT_PROPOSAL_ITEMS } from "./utils";
+import { proposalsApi } from "@/features/gs-propostas/api/proposals";
 
 // ============================================
 // TAB CONFIGURATION
@@ -155,6 +156,8 @@ export function PropostaUnificada({
     })),
     observations: initialData.observations,
     internalNotes: initialData.internalNotes,
+    logoUrl: initialData.logoUrl,
+    logoPosition: initialData.logoPosition || 'left',
   } : {
     code: generateProposalCode(),
     name: DEFAULT_PROPOSAL_DATA.name,
@@ -170,9 +173,11 @@ export function PropostaUnificada({
     companyEmail: DEFAULT_PROPOSAL_DATA.companyEmail,
     companyPhone: DEFAULT_PROPOSAL_DATA.companyPhone,
     responsibleName: DEFAULT_PROPOSAL_DATA.responsibleName,
-    items: DEFAULT_PROPOSAL_ITEMS,
+    items: [],
     observations: DEFAULT_PROPOSAL_DATA.observations,
     internalNotes: DEFAULT_PROPOSAL_DATA.internalNotes,
+    logoUrl: undefined,
+    logoPosition: 'left',
   };
   
   const form = useForm<ProposalFormData>({
@@ -212,80 +217,39 @@ export function PropostaUnificada({
   }, [isDirty, onClose, router]);
   
   const handleSave = useCallback(() => {
-    return handleSubmit(async (data) => {
+    return handleSubmit(async (data: any) => {
+      const formData = data as ProposalFormData;
       setIsSubmitting(true);
       try {
-        const payload = {
-          code: data.code,
-          title: data.name,
-          client_name: data.clientName || "Cliente Desconhecido", // Fallback compliant with backend
-          client_email: null, // Add if captured
-          client_phone: null, // Add if captured
-          company_name: data.companyName,
-          status: status === 'draft' ? 'draft' : status, // Backend expects uppercase usually but pydantic handles string mapping often. Let's check enum.
-          valid_until: data.validity ? new Date(data.validity).toISOString() : null,
-          total_value: (data.items || []).reduce((acc: number, item: any) => acc + (item.quantity * item.unitValue), 0),
-          items: (data.items || []).map((item: any) => ({
-            type: "service", // Default type
-            name: item.description, // Mapping description to name as per backend generic item
-            description: item.itemObservation || "",
-            quantity: item.quantity,
-            unit_price: item.unitValue,
-            total: item.quantity * item.unitValue
-          })),
-          responsible_user: data.responsibleName
-        };
+        let savedProposal;
 
-        const url = proposalId 
-          ? `http://localhost:8000/proposals/${proposalId}`
-          : `http://localhost:8000/proposals/`;
-        
-        const method = proposalId ? 'PATCH' : 'POST';
-
-        const response = await fetch(url, {
-          method,
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-
-        if (!response.ok) {
-          const err = await response.json();
-          throw new Error(err.detail || "Falha ao salvar proposta");
+        if (proposalId) {
+          savedProposal = await proposalsApi.update(proposalId, formData);
+        } else {
+          savedProposal = await proposalsApi.create(formData);
         }
-
-        const savedProposal = await response.json();
         
         toast.success(proposalId ? "Proposta atualizada!" : "Proposta criada com sucesso!");
 
-        // If it was a new proposal, we need to update the URL or at least the local state
-        // In this component design, we might rely on the parent to update the ID, or validly just onSaveSuccess
-        
         if (onSaveSuccess) {
           onSaveSuccess({
             ...DEFAULT_PROPOSAL_DATA,
-            ...data,
+            ...formData,
             id: savedProposal.id,
-            items: data.items || [],
-            validity: data.validity ? new Date(data.validity) : undefined,
-            status: savedProposal.status, // Update status from backend response
+            items: formData.items || [],
+            date: formData.date ? new Date(formData.date) : undefined,
+            validity: formData.validity ? new Date(formData.validity) : undefined,
+            status: (savedProposal.status as ProposalData['status']) || 'draft',
           });
         }
-        
-        // If created new, we might want to reload or set the ID locally if we weren't redirecting
-        if (!proposalId && savedProposal.id) {
-           // We can't easily update the prop proposalId, but we can potentially notify the user or router
-           // For now, assuming onSaveSuccess handles the "next step" or context update
-           // Or we could force a router replace to add the ID to query params
-        }
-
       } catch (error: any) {
         console.error("Erro ao salvar proposta:", error);
         toast.error(`Erro ao salvar: ${error.message}`);
       } finally {
         setIsSubmitting(false);
       }
-    })();
-  }, [handleSubmit, proposalId, onSaveSuccess, status]);
+    });
+  }, [handleSubmit, proposalId, onSaveSuccess]);
   
   const handleExportPdf = useCallback(() => {
     if (editorRef.current) {
@@ -400,7 +364,9 @@ export function PropostaUnificada({
                 unit: item.unit || 'hora',
                 itemObservation: item.itemObservation
               })),
-              observations: watchedData.observations
+              observations: watchedData.observations,
+              logoUrl: watchedData.logoUrl,
+              logoPosition: watchedData.logoPosition
             }}
             isFullscreen={isPreviewFullscreen}
             onFullscreenChange={setIsPreviewFullscreen}
@@ -512,6 +478,8 @@ export function PropostaUnificada({
                     contactName: watchedData.contactName,
                     items: watchedData.items || [],
                     status: status,
+                    logoUrl: watchedData.logoUrl,
+                    logoPosition: watchedData.logoPosition,
                   }}
                   onDataChange={(data) => {
                     Object.entries(data).forEach(([key, value]) => {

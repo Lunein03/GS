@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Instagram, Mail, Phone } from 'lucide-react';
 import Image from 'next/image';
+import { Button } from '@/shared/ui/button';
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -79,15 +80,16 @@ export function Footer() {
             <p className="text-foreground/70 text-sm mb-4">
               Encontrou algum problema na intranet?
             </p>
-            <a
-              href="https://wa.me/5521968793611?text=Olá%2C%20encontrei%20um%20bug%20na%20intranet%3A%20"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-medium px-6 py-3 rounded-lg transition-all duration-300 hover:scale-105 shadow-lg"
-            >
-              <Phone className="h-5 w-5" />
-              Reportar via WhatsApp
-            </a>
+            <Button asChild variant="success" className="shadow-lg">
+              <a
+                href="https://wa.me/5521968793611?text=Olá%2C%20encontrei%20um%20bug%20na%20intranet%3A%20"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Phone className="h-5 w-5" />
+                Reportar via WhatsApp
+              </a>
+            </Button>
             <ul className="space-y-4 mt-6">
               <li className="flex flex-col gap-1 mt-2 items-center md:items-start">
                 <div className="flex items-center gap-3">
@@ -95,7 +97,7 @@ export function Footer() {
                     href="https://instagram.com/_gsproducoess"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-foreground hover:text-primary transition-all duration-300 hover:scale-110"
+                    className="text-foreground hover:text-primary transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded"
                     aria-label="Instagram"
                   >
                     <Instagram size={24} />
@@ -104,7 +106,7 @@ export function Footer() {
                     href="https://linkedin.com/in/gs-produções-a92abb351"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-foreground hover:text-primary transition-all duration-300 hover:scale-110"
+                    className="text-foreground hover:text-primary transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded"
                     aria-label="LinkedIn"
                     title="LinkedIn"
                   >

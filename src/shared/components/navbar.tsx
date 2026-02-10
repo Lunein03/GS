@@ -80,11 +80,11 @@ export function Navbar() {
           </Button> */}
           <button
             type="button"
-            className="md:hidden inline-flex h-10 w-10 items-center justify-center rounded-md border border-border"
+            className="md:hidden inline-flex h-12 w-12 items-center justify-center rounded-md border border-border hover:bg-accent transition-colors"
             onClick={handleToggle}
             aria-label={isOpen ? 'Fechar menu' : 'Abrir menu'}
           >
-            {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
         </div>
       </div>
