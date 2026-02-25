@@ -76,6 +76,7 @@
     "eslint-config-next": "13.5.1",
     "framer-motion": "^11.18.2",
     "html2canvas": "^1.4.1",
+    "image-size": "^2.0.2",
     "input-otp": "^1.2.4",
     "jspdf": "^4.0.0",
     "jsqr": "^1.4.0",

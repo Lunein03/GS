@@ -40,7 +40,7 @@ type ApiClient = {
   contato_nome: string;
   contato_email: string;
   contato_telefone: string;
-  ativo: number;
+  ativo: number | string | boolean;
   created_at: string;
   updated_at: string;
   deleted_at?: string | null;
@@ -69,6 +69,11 @@ type ClientesResult = {
   pagination: ClientesPagination;
 };
 
+type SetClienteStatusInput = {
+  id: string;
+  ativo: 0 | 1;
+};
+
 const success = <T>(data: T): ActionResponse<T> => ({
   success: true,
   data,
@@ -83,6 +88,12 @@ const failure = <T>(
 });
 
 const sanitizeDocument = (doc: string): string => doc.replace(/\D/g, '');
+const normalizeAtivo = (value: ApiClient['ativo']): 0 | 1 => {
+  if (value === true || value === '1' || value === 1) {
+    return 1;
+  }
+  return 0;
+};
 
 const mapClient = (client: ApiClient): Cliente => ({
   id: client.id,
@@ -100,7 +111,7 @@ const mapClient = (client: ApiClient): Cliente => ({
   contatoNome: client.contato_nome,
   contatoEmail: client.contato_email,
   contatoTelefone: client.contato_telefone,
-  ativo: client.ativo,
+  ativo: normalizeAtivo(client.ativo),
   createdAt: new Date(client.created_at),
   updatedAt: new Date(client.updated_at),
   deletedAt: client.deleted_at ? new Date(client.deleted_at) : undefined,
@@ -154,12 +165,16 @@ export async function getClientes(
     const normalized = response.map(mapClient);
 
     const filtered = normalized.filter((client) => {
+      if (client.deletedAt) {
+        return false;
+      }
+
       if (parsed.data.tipo && parsed.data.tipo !== client.tipo) {
         return false;
       }
 
       if (parsed.data.status) {
-        const active = client.ativo === 1;
+        const active = normalizeAtivo(client.ativo) === 1;
         if (parsed.data.status === 'ativo' && !active) {
           return false;
         }
@@ -327,6 +342,47 @@ export async function updateCliente(
   }
 }
 
+export async function setClienteStatus(
+  input: SetClienteStatusInput,
+): Promise<ActionResponse<Cliente>> {
+  try {
+    const current = await fetchApi<ApiClient>(`${BASE_PATH}/${input.id}`);
+
+    const payload = {
+      tipo: current.tipo,
+      cpf_cnpj: current.cpf_cnpj,
+      nome: current.nome ?? '',
+      cargo: current.cargo ?? null,
+      cep: current.cep,
+      endereco: current.endereco,
+      numero: current.numero,
+      complemento: current.complemento ?? null,
+      bairro: current.bairro,
+      cidade: current.cidade,
+      estado: current.estado,
+      contato_nome: current.contato_nome,
+      contato_email: current.contato_email,
+      contato_telefone: current.contato_telefone,
+      ativo: input.ativo,
+    };
+
+    const client = await fetchApi<ApiClient>(`${BASE_PATH}/${input.id}`, {
+      method: 'PUT',
+      body: JSON.stringify(payload),
+    });
+
+    const mapped = mapClient(client);
+    mapped.contatosSecundarios = await fetchContacts(input.id);
+    return success(mapped);
+  } catch (error) {
+    if (error instanceof HttpError && error.status === 404) {
+      return failure('Cliente nao encontrado.', 'NOT_FOUND');
+    }
+    const message = error instanceof Error ? error.message : 'Erro ao atualizar status do cliente.';
+    return failure(message);
+  }
+}
+
 export async function deleteCliente(
   input: DeleteClienteInput,
 ): Promise<ActionResponse<{ id: string }>> {
@@ -352,7 +408,9 @@ export async function checkDocumentExists(
     const clients = await fetchApi<ApiClient[]>(BASE_PATH);
     const match = clients.find(
       (client) =>
-        client.cpf_cnpj === sanitized && (!input.excludeId || client.id !== input.excludeId),
+        !client.deleted_at &&
+        client.cpf_cnpj === sanitized &&
+        (!input.excludeId || client.id !== input.excludeId),
     );
 
     return success({

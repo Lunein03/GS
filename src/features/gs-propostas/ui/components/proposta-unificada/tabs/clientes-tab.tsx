@@ -18,6 +18,7 @@ import {
   Loader2, 
   Eye, 
   Edit2, 
+  Trash2,
   CheckCircle2,
   User,
   Building2,
@@ -46,6 +47,16 @@ import {
   DialogTitle,
 } from "@/shared/ui/dialog";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/shared/ui/alert-dialog";
+import {
   Table,
   TableBody,
   TableCell,
@@ -59,8 +70,10 @@ import { cn } from "@/shared/lib/utils";
 // API
 import {
   getClientes,
+  deleteCliente,
   createCliente,
   updateCliente,
+  setClienteStatus,
   getContatosSecundarios,
   createContatoSecundario,
 } from "@/features/gs-propostas/api/clients";
@@ -71,7 +84,6 @@ import type {
   Cliente, 
   FilterState, 
   ClienteFormData,
-  UpdateClienteInput
 } from "@/features/gs-propostas/app/app-legacy/cadastro/clientes/types/cliente";
 
 // ============================================
@@ -197,6 +209,8 @@ export function ClientesTab({
   const [editingClient, setEditingClient] = useState<Cliente | undefined>();
   const [localSelectedId, setLocalSelectedId] = useState<string | undefined>(selectedClientId);
   const [searchDebounce, setSearchDebounce] = useState('');
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [clientToDelete, setClientToDelete] = useState<Cliente | null>(null);
   
   // ============================================
   // COMPUTED
@@ -349,42 +363,53 @@ export function ClientesTab({
     setEditingClient(undefined);
   };
 
+  const handleDeleteClick = (client: Cliente, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setClientToDelete(client);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!clientToDelete) {
+      return;
+    }
+
+    try {
+      const result = await deleteCliente({ id: clientToDelete.id });
+      if (!result.success) {
+        toast.error(result.error.message ?? 'Erro ao excluir cliente');
+        return;
+      }
+
+      if (localSelectedId === clientToDelete.id) {
+        setLocalSelectedId(undefined);
+        onClientSelect(null);
+      }
+
+      toast.success('Cliente excluido com sucesso!');
+      setDeleteDialogOpen(false);
+      setClientToDelete(null);
+      await loadClients();
+    } catch (error) {
+      console.error('Erro ao excluir cliente:', error);
+      toast.error('Erro ao excluir cliente. Tente novamente.');
+    }
+  };
+
   const handleToggleStatus = async (client: Cliente, e: React.MouseEvent) => {
     e.stopPropagation();
     
     try {
-      const newStatus = client.ativo === 1 ? 0 : 1;
+      const currentStatus = Number(client.ativo) === 1 ? 1 : 0;
+      const newStatus = currentStatus === 1 ? 0 : 1;
       const actionLabel = newStatus === 1 ? 'ativado' : 'desativado';
 
-      // Construct payload compatible with UpdateClienteInput
-      // effectively excluding created/updated/deletedAt and mapping fields
-      const payload: UpdateClienteInput = {
-        id: client.id,
-        tipo: client.tipo,
-        cpfCnpj: client.cpfCnpj,
-        nome: client.nome,
-        cargo: client.cargo || undefined,
-        cep: client.cep,
-        endereco: client.endereco,
-        numero: client.numero,
-        complemento: client.complemento || undefined,
-        bairro: client.bairro,
-        cidade: client.cidade,
-        estado: client.estado,
-        contatoNome: client.contatoNome,
-        contatoEmail: client.contatoEmail,
-        contatoTelefone: client.contatoTelefone,
-        ativo: newStatus,
-        // We preserve existing secondary contacts logic if necessary, 
-        // but updateClienteSchema handles optional contatosSecundarios
-      };
-      
-      const result = await updateCliente(payload as any);
+      const result = await setClienteStatus({ id: client.id, ativo: newStatus });
       
       if (result.success) {
         toast.success(`Cliente ${actionLabel} com sucesso!`);
         // Refresh list keeping current page/filters
-        loadClients();
+        await loadClients();
       } else {
         toast.error(result.error?.message || `Erro ao alterar status do cliente`);
       }
@@ -401,7 +426,7 @@ export function ClientesTab({
   return (
     <div className="space-y-4">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-card p-4 rounded-lg border border-border">
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-card p-4 rounded-lg border border-border">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
             <Users className="h-5 w-5 text-primary" />
@@ -423,8 +448,8 @@ export function ClientesTab({
       </div>
       
       {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        <div className="relative flex-1">
+      <div className="flex flex-wrap gap-3">
+        <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Buscar por nome, CPF/CNPJ, email..."
@@ -457,8 +482,8 @@ export function ClientesTab({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todos</SelectItem>
-            <SelectItem value="active">Ativos</SelectItem>
-            <SelectItem value="inactive">Inativos</SelectItem>
+            <SelectItem value="ativo">Ativos</SelectItem>
+            <SelectItem value="inativo">Inativos</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -491,15 +516,15 @@ export function ClientesTab({
       
       {/* Clients Table */}
       {!isLoading && clients.length > 0 && (
-        <div className="bg-card rounded-lg border border-border overflow-hidden">
-          <Table>
+        <div className="bg-card rounded-lg border border-border overflow-x-auto">
+          <Table className="min-w-[700px]">
             <TableHeader>
               <TableRow className="bg-muted/50">
                 <TableHead className="w-12"></TableHead>
                 <TableHead>Nome</TableHead>
-                <TableHead className="hidden sm:table-cell">Tipo</TableHead>
-                <TableHead className="hidden md:table-cell">CPF/CNPJ</TableHead>
-                <TableHead className="hidden lg:table-cell">Contato</TableHead>
+                <TableHead>Tipo</TableHead>
+                <TableHead>CPF/CNPJ</TableHead>
+                <TableHead>Contato</TableHead>
                 <TableHead className="w-[100px] text-center">Status</TableHead>
                 <TableHead className="w-24 text-right">Ações</TableHead>
               </TableRow>
@@ -529,15 +554,15 @@ export function ClientesTab({
                       <span className="font-medium truncate">{client.nome}</span>
                     </div>
                   </TableCell>
-                  <TableCell className="hidden sm:table-cell">
+                  <TableCell>
                     <Badge variant="outline" className="text-xs">
                       {client.tipo === 'juridica' ? 'PJ' : 'PF'}
                     </Badge>
                   </TableCell>
-                  <TableCell className="hidden md:table-cell text-muted-foreground">
+                  <TableCell className="text-muted-foreground">
                     {client.cpfCnpj}
                   </TableCell>
-                  <TableCell className="hidden lg:table-cell text-muted-foreground">
+                  <TableCell className="text-muted-foreground">
                     {client.contatoTelefone}
                   </TableCell>
                   <TableCell className="text-center">
@@ -566,9 +591,20 @@ export function ClientesTab({
                         <Eye className="h-3.5 w-3.5" />
                       </Button>
                       {!readOnly && (
-                        <Button 
-                          size="icon" 
-                          variant="ghost" 
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="h-7 w-7 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                          onClick={(e) => handleDeleteClick(client, e)}
+                          title="Excluir"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </Button>
+                      )}
+                      {!readOnly && (
+                        <Button
+                          size="icon"
+                          variant="ghost"
                           className="h-7 w-7"
                           onClick={(e) => {
                             e.stopPropagation();
@@ -643,6 +679,30 @@ export function ClientesTab({
           />
         </DialogContent>
       </Dialog>
+
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmar exclusao</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja excluir o cliente <strong>{clientToDelete?.nome}</strong>?
+              <br />
+              O cliente sera desativado e nao aparecera mais nesta lista.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setDeleteDialogOpen(false)}>
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              className="bg-destructive hover:bg-destructive/90"
+            >
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

@@ -157,19 +157,20 @@ export function PdfPreview({
   );
 
   return (
-    <div className="relative w-full flex flex-col items-center">
+    <div className="relative w-full h-full flex flex-col items-center">
       {buffers.map((buffer) => {
         const isActive = buffer.token === activeToken;
         return (
         <div
           key={buffer.token}
-          className={isActive ? "w-full" : "absolute top-0 left-0 w-full"}
+          className={isActive ? "w-full flex justify-center" : "absolute top-0 left-0 w-full flex justify-center"}
           style={{
             opacity: isActive ? 1 : 0,
             pointerEvents: isActive ? "auto" : "none",
           }}
         >
           <PdfDocument
+            className="flex flex-col items-center"
             file={buffer.url}
             onLoadSuccess={({ numPages }) => handleBufferLoadSuccess(buffer.token, buffer.url, numPages)}
             onLoadError={(error) => handleBufferLoadError(buffer.token, error)}
@@ -183,7 +184,7 @@ export function PdfPreview({
                 scale={scale}
                 renderTextLayer={false}
                 renderAnnotationLayer={false}
-                className="shadow-md bg-white mb-4"
+                className="shadow-md bg-white mb-4 [&_canvas]:max-w-none"
               />
             ))}
           </PdfDocument>

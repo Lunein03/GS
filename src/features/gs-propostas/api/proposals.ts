@@ -48,7 +48,6 @@ export const proposalsApi = {
         notes: data.internalNotes,
         observations: data.observations, // Verificar mapeamento
         logo_url: data.logoUrl,
-        logo_position: data.logoPosition,
         client_id: data.clientId,
         company_id: data.companyId,
       })
@@ -109,7 +108,6 @@ export const proposalsApi = {
         notes: data.internalNotes,
         observations: data.observations,
         logo_url: data.logoUrl,
-        logo_position: data.logoPosition,
         client_id: data.clientId,
         company_id: data.companyId,
         updated_at: new Date().toISOString()

@@ -24,9 +24,6 @@ import {
   removeNonNumeric,
   toTitleCase,
 } from "@/shared/lib/validators";
-import { resolveLogoImageSource, resolveLogoRender } from "./proposta-unificada/logo-presets";
-
-const HEADER_LOGO_SIZE = 44;
 
 const styles = StyleSheet.create({
   page: {
@@ -60,15 +57,10 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   logoContainer: {
-    width: HEADER_LOGO_SIZE,
-    height: HEADER_LOGO_SIZE,
+    width: 44,
+    height: 44,
     justifyContent: "center",
     alignItems: "center",
-  },
-  logoImage: {
-    width: HEADER_LOGO_SIZE,
-    height: HEADER_LOGO_SIZE,
-    objectFit: "contain",
   },
   headerRight: {
     textAlign: "right",
@@ -377,6 +369,7 @@ export interface ProposalPdfData {
   items?: ProposalItem[];
   observations?: string;
   logoUrl?: string;
+  logoPosition?: 'left' | 'right';
 }
 
 const UNIT_LABELS: Record<string, string> = {
@@ -391,17 +384,7 @@ interface ProposalPdfDocumentProps {
 }
 
 // Logo component using react-pdf's Svg primitives
-function GsLogo({
-  size = 70,
-  opacity = 1,
-  idPrefix = "gs-logo",
-}: {
-  size?: number;
-  opacity?: number;
-  idPrefix?: string;
-}) {
-  const gradientId = `${idPrefix}-gradient`;
-
+function GsLogo({ size = 70, opacity = 1 }: { size?: number; opacity?: number }) {
   return (
     <Svg
       viewBox="0 0 54.33 47.14"
@@ -409,76 +392,28 @@ function GsLogo({
       opacity={opacity}
     >
       <Defs>
-        <LinearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="100%">
+        <LinearGradient id="gs-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
           <Stop offset="0%" stopColor="#6620F2" />
           <Stop offset="100%" stopColor="#31EBCB" />
         </LinearGradient>
       </Defs>
       <G>
         <Path
-          fill={`url(#${gradientId})`}
+          fill="url(#gs-gradient)"
           d="M15.4,46.22l2.71-2.71,3.62-3.63h-10.16c-.39,0-.7.3-.71.67v4.01c0,1.41,1.16,2.57,2.58,2.57.78,0,1.49-.36,1.96-.91Z"
         />
         <Path
-          fill={`url(#${gradientId})`}
+          fill="url(#gs-gradient)"
           d="M28.97,25.38l-3.62,3.63-2.05,2.05c-.88.87-2.05,1.57-3.35,1.57-4.24,0-8.47,0-12.71,0-3.98,0-7.24-3.26-7.24-7.24v-14.53C0,6.88,3.26,3.62,7.24,3.62h28.97s-3.62,3.63-3.62,3.63l-2.05,2.05c-.88.87-2.05,1.57-3.35,1.57H7.24s0,0,0,0v14.51h10.87s10.87,0,10.87,0h0Z"
         />
         <Path
-          fill={`url(#${gradientId})`}
+          fill="url(#gs-gradient)"
           d="M25.35,21.76l3.62-3.63,2.05-2.05c.88-.87,2.05-1.57,3.35-1.57,4.24,0,8.47,0,12.71,0,3.98,0,7.24,3.26,7.24,7.24v14.53c0,3.98-3.26,7.24-7.24,7.24h-28.97s3.62-3.63,3.62-3.63l2.05-2.05c.88-.87,2.05-1.57,3.35-1.57h19.95s0,0,0,0v-14.51h-10.87s-10.87,0-10.87,0h0Z"
         />
         <Path
-          fill={`url(#${gradientId})`}
+          fill="url(#gs-gradient)"
           d="M38.93.91l-2.71,2.71-3.62,3.63h10.16c.39,0,.7-.3.71-.67V2.57c0-1.41-1.16-2.57-2.58-2.57-.78,0-1.49.36-1.96.91h0Z"
         />
-      </G>
-    </Svg>
-  );
-}
-
-// Logo 2 component using react-pdf's Svg primitives
-function GsLogo2({
-  size = 70,
-  opacity = 1,
-  idPrefix = "gs-logo-2",
-}: {
-  size?: number;
-  opacity?: number;
-  idPrefix?: string;
-}) {
-  const gradient12Id = `${idPrefix}-12`;
-  const gradient13Id = `${idPrefix}-13`;
-
-  return (
-    <Svg
-      viewBox="0 0 54.32 47.13"
-      style={{ width: size, height: size * (47.13 / 54.32) }}
-      opacity={opacity}
-    >
-      <Defs>
-        <LinearGradient id={gradient12Id} x1="10.12" y1="43.5" x2="32.38" y2="43.5" gradientUnits="userSpaceOnUse">
-          <Stop offset="0" stopColor="#6620f2"/>
-          <Stop offset=".22" stopColor="#5057e5"/>
-          <Stop offset=".49" stopColor="#3894d7"/>
-          <Stop offset=".72" stopColor="#27c0cd"/>
-          <Stop offset=".9" stopColor="#1cdbc7"/>
-          <Stop offset="1" stopColor="#19e6c5"/>
-        </LinearGradient>
-        <LinearGradient id={gradient13Id} x1="32.6" y1="3.62" x2="77.71" y2="3.62" gradientUnits="userSpaceOnUse">
-          <Stop offset="0" stopColor="#6620f2"/>
-          <Stop offset=".14" stopColor="#5252e6"/>
-          <Stop offset=".31" stopColor="#3e86da"/>
-          <Stop offset=".47" stopColor="#2eafd1"/>
-          <Stop offset=".61" stopColor="#22cdca"/>
-          <Stop offset=".73" stopColor="#1bdfc6"/>
-          <Stop offset=".82" stopColor="#19e6c5"/>
-        </LinearGradient>
-      </Defs>
-      <G>
-        <Path fill={`url(#${gradient12Id})`} d="M15.4,46.22l2.71-2.71,3.62-3.63h-10.16c-.39,0-.7.3-.71.67v4.01c0,1.41,1.16,2.57,2.58,2.57.78,0,1.49-.36,1.96-.91Z"/>
-        <Path fill="#18181b" d="M28.97,25.38l-3.62,3.63-2.05,2.05c-.88.87-2.05,1.57-3.35,1.57H7.24c-3.98,0-7.24-3.26-7.24-7.24v-14.53C0,6.88,3.26,3.62,7.24,3.62h28.97l-3.62,3.63-2.05,2.05c-.88.87-2.05,1.57-3.35,1.57H7.24v14.51h21.74-.01Z"/>
-        <Path fill="#18181b" d="M25.35,21.76l3.62-3.63,2.05-2.05c.88-.87,2.05-1.57,3.35-1.57h12.71c3.98,0,7.24,3.26,7.24,7.24v14.53c0,3.98-3.26,7.24-7.24,7.24h-28.97l3.62-3.63,2.05-2.05c.88-.87,2.05-1.57,3.35-1.57h19.95v-14.51h-21.74,0Z"/>
-        <Path fill={`url(#${gradient13Id})`} d="M38.93.91l-2.71,2.71-3.62,3.63h10.16c.39,0,.7-.3.71-.67V2.57c0-1.41-1.16-2.57-2.58-2.57-.78,0-1.49.36-1.96.91h0Z"/>
       </G>
     </Svg>
   );
@@ -548,7 +483,6 @@ export function ProposalPdfDocument({ data }: ProposalPdfDocumentProps) {
     data.observations && data.observations.trim().length > 0
       ? data.observations.trim()
       : "Sem observações adicionais.";
-  const logoRender = resolveLogoRender(data.logoUrl);
 
   return (
     <Document>
@@ -556,29 +490,33 @@ export function ProposalPdfDocument({ data }: ProposalPdfDocumentProps) {
       <Page size="A4" style={styles.page}>
         {/* Watermark */}
         <View style={styles.watermark}>
-          <GsLogo size={240} opacity={0.05} idPrefix="gs-watermark" />
+          <GsLogo size={240} opacity={0.05} />
         </View>
 
       {/* Header */}
+      {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerContent}>
-          <View style={styles.headerLeft}></View>
+          {/* Left Side */}
+          <View style={[styles.headerLeft, { alignItems: 'flex-start' }]}>
+            {data.logoUrl && data.logoPosition === 'left' ? (
+              <Image 
+                src={data.logoUrl} 
+                style={{ height: 70, width: 180, objectFit: 'contain', objectPosition: 'left' }} 
+              />
+            ) : null}
+          </View>
+
+          {/* Right Side */}
           <View style={styles.headerRight}>
-            <View style={styles.logoContainer}>
-              {logoRender.variant === "symbol" ? (
-                <GsLogo size={HEADER_LOGO_SIZE} idPrefix="gs-header-symbol" />
-              ) : logoRender.variant === "text" ? (
-                <GsLogo2 size={HEADER_LOGO_SIZE} idPrefix="gs-header-text" />
-              ) : logoRender.variant === "image" && logoRender.src ? (
-                // eslint-disable-next-line jsx-a11y/alt-text
-                <Image
-                  src={resolveLogoImageSource(logoRender.src)}
-                  style={styles.logoImage}
-                />
-              ) : (
-                <GsLogo size={HEADER_LOGO_SIZE} idPrefix="gs-header-fallback" />
-              )}
-            </View>
+            {data.logoUrl && data.logoPosition === 'right' ? (
+              <Image 
+                src={data.logoUrl} 
+                style={{ height: 70, width: 180, objectFit: 'contain', objectPosition: 'right' }} 
+              />
+            ) : (
+              !data.logoUrl && <GsLogo size={42} /> 
+            )}
           </View>
         </View>
       </View>

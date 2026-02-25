@@ -37,7 +37,7 @@ export default async function DashboardPage() {
   return (
     <GsPropostasHeroBackground>
       <div className="flex flex-col gap-8 relative z-10 w-full">
-        <header className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between pt-8 pb-4">
+        <header className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between pt-2 pb-4">
           <div>
             <h1 className="text-3xl font-medium tracking-tight">GS Propostas · Dashboard</h1>
             <p className="text-muted-foreground">

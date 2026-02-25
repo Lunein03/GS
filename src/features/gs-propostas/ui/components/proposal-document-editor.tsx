@@ -51,7 +51,7 @@ const ProposalDocumentEditor = forwardRef<ProposalDocumentEditorRef, ProposalDoc
     const [numPages, setNumPages] = useState(1);
     const [scale, setScale] = useState(1);
     const [fitScale, setFitScale] = useState(1);
-    const [isFitToWidth, setIsFitToWidth] = useState(false);
+    const [isFitToWidth, setIsFitToWidth] = useState(true);
     const [isHandMode, setIsHandMode] = useState(true);
     const [isPanning, setIsPanning] = useState(false);
     const [containerWidth, setContainerWidth] = useState(0);
@@ -69,6 +69,7 @@ const ProposalDocumentEditor = forwardRef<ProposalDocumentEditorRef, ProposalDoc
     const queuedPreviewDataRef = useRef<ProposalPdfData | null>(null);
 
     const PAGE_WIDTH = 595;
+    const PAGE_HEIGHT = 842;
     const MIN_SCALE = 0.1;
     const MAX_SCALE = 3;
     const isPannable = isHandMode && containerWidth > 0 && PAGE_WIDTH * scale > containerWidth - 8;
@@ -247,7 +248,9 @@ const ProposalDocumentEditor = forwardRef<ProposalDocumentEditorRef, ProposalDoc
         if (hasChanged) {
           lastSizeRef.current = { width, height };
           setContainerWidth(width);
-          const nextFitScale = clamp((width - 32) / PAGE_WIDTH, MIN_SCALE, MAX_SCALE);
+          const widthScale = (width - 32) / PAGE_WIDTH;
+          const heightScale = (height - 32) / PAGE_HEIGHT;
+          const nextFitScale = clamp(Math.min(widthScale, heightScale), MIN_SCALE, MAX_SCALE);
           setFitScale(nextFitScale);
           if (isFitToWidth) {
             setScale(nextFitScale);
@@ -299,8 +302,11 @@ const ProposalDocumentEditor = forwardRef<ProposalDocumentEditorRef, ProposalDoc
         setScale(fitScale);
       } else {
         const width = lastSizeRef.current.width || containerRef.current?.clientWidth || 0;
-        if (!width) return;
-        setScale(clamp((width - 32) / PAGE_WIDTH, MIN_SCALE, MAX_SCALE));
+        const height = lastSizeRef.current.height || containerRef.current?.clientHeight || 0;
+        if (!width || !height) return;
+        const widthScale = (width - 32) / PAGE_WIDTH;
+        const heightScale = (height - 32) / PAGE_HEIGHT;
+        setScale(clamp(Math.min(widthScale, heightScale), MIN_SCALE, MAX_SCALE));
       }
     }, [clamp, fitScale]);
 

@@ -332,7 +332,7 @@ export function EmpresasTab({
   return (
     <div className="space-y-4">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-card p-4 rounded-lg border border-border">
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-card p-4 rounded-lg border border-border">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
             <Building2 className="h-5 w-5 text-primary" />
@@ -392,15 +392,15 @@ export function EmpresasTab({
       
       {/* Companies Table */}
       {!isLoading && companies.length > 0 && (
-        <div className="bg-card rounded-lg border border-border overflow-hidden">
-          <Table>
+        <div className="bg-card rounded-lg border border-border overflow-x-auto">
+          <Table className="min-w-[600px]">
             <TableHeader>
               <TableRow className="bg-muted/50">
                 <TableHead className="w-12"></TableHead>
                 <TableHead>Nome</TableHead>
-                <TableHead className="hidden sm:table-cell">Tipo</TableHead>
-                <TableHead className="hidden md:table-cell">CPF/CNPJ</TableHead>
-                <TableHead className="hidden lg:table-cell">Contato</TableHead>
+                <TableHead>Tipo</TableHead>
+                <TableHead>CPF/CNPJ</TableHead>
+                <TableHead>Contato</TableHead>
                 <TableHead className="w-20">Ações</TableHead>
               </TableRow>
             </TableHeader>
@@ -425,15 +425,15 @@ export function EmpresasTab({
                       <span className="font-medium truncate">{getCompanyDisplayName(company)}</span>
                     </div>
                   </TableCell>
-                  <TableCell className="hidden sm:table-cell">
+                  <TableCell>
                     <Badge variant="outline" className="text-xs">
                       {company.tipo === 'juridica' ? 'PJ' : 'PF'}
                     </Badge>
                   </TableCell>
-                  <TableCell className="hidden md:table-cell text-muted-foreground">
+                  <TableCell className="text-muted-foreground">
                     {getCompanyDocument(company)}
                   </TableCell>
-                  <TableCell className="hidden lg:table-cell text-muted-foreground">
+                  <TableCell className="text-muted-foreground">
                     {company.contatoNome}
                   </TableCell>
                   <TableCell>

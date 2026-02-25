@@ -63,7 +63,6 @@ export interface ProposalData {
   createdAt?: Date;
   updatedAt?: Date;
   logoUrl?: string;
-  logoPosition?: 'left' | 'right';
 }
 
 export type ProposalStatus = 'draft' | 'open' | 'sent' | 'won' | 'lost';
@@ -154,7 +153,6 @@ export const proposalFormSchema = z.object({
   observations: z.string().optional(),
   internalNotes: z.string().optional(),
   logoUrl: z.string().optional(),
-  logoPosition: z.enum(['left', 'right']).optional().default('left'),
 }).superRefine((data, ctx) => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -246,7 +244,6 @@ export const DEFAULT_PROPOSAL_DATA: ProposalData = {
   responsibleName: '',
   observations: '',
   internalNotes: '',
-  logoPosition: 'left',
 };
 
 export const DEFAULT_PROPOSAL_ITEM: Omit<ProposalItem, 'id'> = {

@@ -1,180 +1,72 @@
-
 "use client";
 
-import { useState, useRef } from "react";
-import { Button } from "@/shared/ui/button";
 import { Label } from "@/shared/ui/label";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/shared/ui/select";
-import { Loader2, Upload, X, Image as ImageIcon } from "lucide-react";
-import { toast } from "sonner";
-import { supabase } from "@/shared/lib/supabase-client";
 import { cn } from "@/shared/lib/utils";
+import {
+  LOGO_PRESET_OPTIONS,
+  getLogoSelectValue,
+  mapSelectValueToLogoUrl,
+} from "./logo-presets";
 
 interface LogoUploaderProps {
   currentLogoUrl?: string;
-  currentPosition?: 'left' | 'right';
   onLogoChange: (url: string | undefined) => void;
-  onPositionChange: (position: 'left' | 'right') => void;
-  proposalId?: string;
 }
 
-export function LogoUploader({
-  currentLogoUrl,
-  currentPosition = 'left',
-  onLogoChange,
-  onPositionChange,
-  proposalId,
-}: LogoUploaderProps) {
-  const [isUploading, setIsUploading] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+function LogoThumb({ src, alt, sizeClass }: { src: string; alt: string; sizeClass?: string }) {
+  return (
+    <span
+      className={cn(
+        "flex items-center justify-center rounded-sm bg-zinc-900/90 ring-1 ring-white/10",
+        sizeClass ?? "h-5 w-5"
+      )}
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={src} alt={alt} className="h-full w-full object-contain p-1" />
+    </span>
+  );
+}
 
-  const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    // Validate file type
-    if (!file.type.startsWith('image/')) {
-      toast.error('Por favor, selecione uma imagem válida (PNG, JPG, etc).');
-      return;
-    }
-
-    // Validate size (max 2MB)
-    if (file.size > 2 * 1024 * 1024) {
-      toast.error('O arquivo deve ter no máximo 2MB.');
-      return;
-    }
-
-    setIsUploading(true);
-    try {
-      // 1. Upload to Supabase Storage
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${proposalId || 'temp'}-${Date.now()}.${fileExt}`;
-      const filePath = `logos/${fileName}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from('proposal-logos')
-        .upload(filePath, file);
-
-      if (uploadError) throw uploadError;
-
-      // 2. Get Public URL
-      const { data: { publicUrl } } = supabase.storage
-        .from('proposal-logos')
-        .getPublicUrl(filePath);
-
-      onLogoChange(publicUrl);
-      toast.success('Logo enviada com sucesso!');
-    } catch (error: any) {
-      console.error('Erro no upload da logo:', error);
-      toast.error(`Falha ao enviar logo: ${error.message}`);
-    } finally {
-      setIsUploading(false);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
-    }
-  };
-
-  const handleRemove = () => {
-    onLogoChange(undefined);
-  };
+export function LogoUploader({ currentLogoUrl, onLogoChange }: LogoUploaderProps) {
+  const selectedValue = getLogoSelectValue(currentLogoUrl);
 
   return (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4">
+      <div className="flex items-center justify-between px-1">
         <Label className="text-sm font-medium">Logo do Documento</Label>
       </div>
 
-      <div className="flex gap-4 items-center">
-        {/* Preview Area */}
-        <div 
-          className={cn(
-            "relative w-20 h-20 rounded-lg border-2 border-dashed flex items-center justify-center overflow-hidden shrink-0 transition-all group",
-            currentLogoUrl 
-              ? "border-primary/50 bg-background" 
-              : "border-muted-foreground/20 hover:border-primary/50 hover:bg-muted/50 cursor-pointer"
-          )}
-          onClick={() => {
-            // Se não tem logo, clica no input. Se tem logo, só clica se não for no botão remover (que é tratado separadamente)
-            if (!currentLogoUrl) fileInputRef.current?.click();
-          }}
-          title={currentLogoUrl ? "Logo atual" : "Clique para fazer upload"}
-        >
-          {currentLogoUrl ? (
-            <>
-              {/* Image */}
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img 
-                src={currentLogoUrl} 
-                alt="Logo Preview" 
-                className="w-full h-full object-contain p-1 cursor-pointer"
-                onClick={() => fileInputRef.current?.click()} // Permite trocar clicando na imagem
-              />
-              
-              {/* Overlay Remove Button */}
-              <div className="absolute top-0.5 right-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                 <Button
-                  variant="destructive"
-                  size="icon"
-                  className="h-5 w-5 rounded-full shadow-sm"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleRemove();
-                  }}
-                  title="Remover logo"
-                >
-                  <X className="w-3 h-3" />
-                </Button>
-              </div>
-            </>
-          ) : (
-            <div className="flex flex-col items-center gap-1 text-muted-foreground pointer-events-none">
-              {isUploading ? (
-                <Loader2 className="w-5 h-5 animate-spin" />
-              ) : (
-                <>
-                  <Upload className="w-5 h-5 opacity-50" />
-                  <span className="text-[9px] uppercase font-semibold">Upload</span>
-                </>
+      <div className="grid grid-cols-3 gap-3 pl-1 max-w-sm">
+        {LOGO_PRESET_OPTIONS.map((logo) => {
+          const isSelected = selectedValue === logo.selectValue;
+          return (
+            <button
+              key={logo.id}
+              type="button"
+              onClick={() => onLogoChange(mapSelectValueToLogoUrl(logo.selectValue))}
+              className={cn(
+                "group aspect-square rounded-lg border bg-muted/20 p-2 text-left transition-colors",
+                "hover:border-primary/60 hover:bg-muted/40",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60",
+                isSelected
+                  ? "border-primary ring-1 ring-primary/40 bg-primary/10"
+                  : "border-white/10"
               )}
-            </div>
-          )}
-          
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={handleUpload}
-            disabled={isUploading}
-          />
-        </div>
-
-        {/* Controls - Side by Side */}
-        <div className="flex-1 flex flex-col gap-2 max-w-sm">
-           <div className="space-y-1">
-             <Label className="text-xs text-muted-foreground">Posição</Label>
-             <Select 
-               value={currentPosition} 
-               onValueChange={(v) => onPositionChange(v as 'left' | 'right')}
-             >
-               <SelectTrigger className="h-8 text-xs bg-muted/30 w-full">
-                 <SelectValue placeholder="Selecione" />
-               </SelectTrigger>
-               <SelectContent>
-                 <SelectItem value="left">Esquerda (Padrão)</SelectItem>
-                 <SelectItem value="right">Direita</SelectItem>
-               </SelectContent>
-             </Select>
-           </div>
-          
-          <div className="text-[10px] text-muted-foreground/70 flex gap-3">
-            <span>PNG, JPG</span>
-            <span>•</span>
-            <span>Máx: 2MB</span>
-          </div>
-        </div>
+              aria-pressed={isSelected}
+              title={logo.label}
+            >
+              <div className="flex h-full flex-col items-center justify-center gap-2">
+                <LogoThumb src={logo.previewSrc} alt={logo.label} sizeClass="h-10 w-10" />
+                <span className="text-[11px] font-medium text-center leading-tight">
+                  {logo.label.replace(" (Imagem PNG)", "").replace(" (SVG)", "")}
+                </span>
+              </div>
+            </button>
+          );
+        })}
       </div>
+
+
     </div>
   );
 }

@@ -106,48 +106,48 @@ function StatusBar({ status, onStatusChange }: StatusBarProps) {
   };
   
   return (
-    <div className="flex items-center justify-between rounded-lg border border-white/10 bg-card/50 p-3 gap-3">
-      <div className="flex items-center gap-3">
+    <div className="flex flex-wrap items-center justify-between rounded-lg border border-white/10 bg-card/50 p-3 gap-3">
+      <div className="flex flex-wrap items-center gap-3">
         <span className={cn(
           "px-3 py-1 text-xs font-semibold uppercase tracking-wider rounded-full border",
           statusConfig.className
         )}>
           {statusConfig.label}
         </span>
-        <span className="text-xs text-muted-foreground hidden sm:inline">
+        <span className="text-xs text-muted-foreground">
           {isOpen ? 'Aguardando fechamento' : isWon ? 'Proposta finalizada com sucesso' : 'Proposta não convertida'}
         </span>
       </div>
       
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2 ml-auto">
         <Button
           size="sm"
           variant="outline"
-          className="h-7 text-xs border-amber-500/30 text-amber-400 hover:bg-amber-500/10 hover:text-amber-300"
+          className="h-7 text-xs border-amber-500/30 text-amber-400 hover:bg-amber-500/10 hover:text-amber-300 gap-1"
           onClick={handleOpen}
           disabled={isOpen}
         >
-          <CircleDot className="w-3.5 h-3.5 mr-1" />
-          <span className="hidden sm:inline">Aberta</span>
+          <CircleDot className="w-3.5 h-3.5" />
+          <span>Aberta</span>
         </Button>
         <Button 
           size="sm" 
           variant="outline"
-          className="h-7 text-xs border-red-500/30 text-red-400 hover:bg-red-500/10 hover:text-red-300"
+          className="h-7 text-xs border-red-500/30 text-red-400 hover:bg-red-500/10 hover:text-red-300 gap-1"
           onClick={handleLose}
           disabled={isLost}
         >
-          <XCircle className="w-3.5 h-3.5 mr-1" />
-          <span className="hidden sm:inline">Perder</span>
+          <XCircle className="w-3.5 h-3.5" />
+          <span>Perder</span>
         </Button>
         <Button 
           size="sm" 
-          className="h-7 text-xs bg-emerald-600 hover:bg-emerald-700 text-white"
+          className="h-7 text-xs bg-emerald-600 hover:bg-emerald-700 text-white gap-1"
           onClick={handleWin}
           disabled={isWon}
         >
-          <Trophy className="w-3.5 h-3.5 mr-1" />
-          <span className="hidden sm:inline">Ganhar</span>
+          <Trophy className="w-3.5 h-3.5" />
+          <span>Ganhar</span>
         </Button>
       </div>
     </div>
@@ -513,7 +513,7 @@ export function PrincipalTab({
       <div className="bg-card/80 p-4 sm:p-6 rounded-lg border border-white/10 shadow-lg ring-1 ring-white/5 space-y-4">
         <SectionHeader title="Dados da Proposta" color="blue" />
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4 items-end">
           {/* Código */}
           <div className="space-y-2">
             <Label htmlFor="code" className="block h-5">Código</Label>
@@ -581,19 +581,17 @@ export function PrincipalTab({
           </div>
 
           {/* Logo da Proposta - NEW SECTION */}
-          <div className="sm:col-span-2 lg:col-span-4 mt-2 pt-4 border-t border-white/10">
+          <div className="col-span-full mt-2 pt-4 border-t border-white/10">
             <LogoUploader 
               currentLogoUrl={formData.logoUrl}
-              currentPosition={formData.logoPosition || 'left'}
               onLogoChange={(url) => onDataChange({ logoUrl: url })}
-              onPositionChange={(pos) => onDataChange({ logoPosition: pos })}
             />
           </div>
         </div>
       </div>
       
       {/* Dados da Empresa e Cliente */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-6">
         {/* Empresa */}
         <div className="bg-card/80 p-4 sm:p-6 rounded-lg border border-white/10 shadow-lg ring-1 ring-white/5 space-y-4">
           <SectionHeader 
@@ -689,7 +687,7 @@ export function PrincipalTab({
           {/* Edição inline compacta */}
           {formData.companyId && isCompanyDetailsOpen && (
             <div className="space-y-4 pt-2 border-t border-white/5">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="companyName">Empresa</Label>
                   <Input
@@ -731,7 +729,7 @@ export function PrincipalTab({
 
               {isCompanyAdvancedOpen && (
                 <div className="space-y-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="responsibleName">Responsável</Label>
                       <Input
@@ -741,7 +739,7 @@ export function PrincipalTab({
                         className="bg-muted/30"
                       />
                     </div>
-                    <div className="space-y-2 sm:col-span-2">
+                    <div className="space-y-2 md:col-span-2 flex-1 min-w-[200px]">
                       <Label htmlFor="companyEmail">E-mail</Label>
                       <Input
                         id="companyEmail"
@@ -752,7 +750,7 @@ export function PrincipalTab({
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="companyPhone">Telefone</Label>
                       <Input
@@ -775,7 +773,7 @@ export function PrincipalTab({
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-[repeat(auto-fit,minmax(140px,1fr))] gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="companyNeighborhood">Bairro</Label>
                       <Input
@@ -850,9 +848,9 @@ export function PrincipalTab({
           />
           
           <div className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start">
+            <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4 items-start">
               {/* Select de Cliente */}
-              <div className="space-y-2 sm:col-span-2 lg:col-span-1">
+              <div className="space-y-2">
                 <div className="flex items-center justify-between gap-2 h-5">
                   <Label>Cliente</Label>
                   {formData.clientId && (
@@ -907,7 +905,7 @@ export function PrincipalTab({
               </div>
               
               {/* Select de Contato */}
-              <div className="space-y-2 sm:col-span-2 lg:col-span-1">
+              <div className="space-y-2">
                 <Label className="block h-5">Contato</Label>
                 <Select 
                   value={formData.contactName || ''} 
