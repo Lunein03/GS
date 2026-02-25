@@ -36,7 +36,7 @@ export function LogoUploader({ currentLogoUrl, onLogoChange }: LogoUploaderProps
         <Label className="text-sm font-medium">Logo do Documento</Label>
       </div>
 
-      <div className="grid grid-cols-3 gap-3 pl-1 max-w-sm">
+      <div className="flex flex-wrap gap-2 pl-1">
         {LOGO_PRESET_OPTIONS.map((logo) => {
           const isSelected = selectedValue === logo.selectValue;
           return (
@@ -45,22 +45,16 @@ export function LogoUploader({ currentLogoUrl, onLogoChange }: LogoUploaderProps
               type="button"
               onClick={() => onLogoChange(mapSelectValueToLogoUrl(logo.selectValue))}
               className={cn(
-                "group aspect-square rounded-lg border bg-muted/20 p-2 text-left transition-colors",
-                "hover:border-primary/60 hover:bg-muted/40",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60",
+                "group flex items-center justify-center rounded-md p-0.5 transition-all outline-none",
+                "focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-1 focus-visible:ring-offset-background",
                 isSelected
-                  ? "border-primary ring-1 ring-primary/40 bg-primary/10"
-                  : "border-white/10"
+                  ? "ring-2 ring-primary bg-primary/10"
+                  : "ring-1 ring-border/50 hover:ring-border hover:bg-muted/40"
               )}
               aria-pressed={isSelected}
               title={logo.label}
             >
-              <div className="flex h-full flex-col items-center justify-center gap-2">
-                <LogoThumb src={logo.previewSrc} alt={logo.label} sizeClass="h-10 w-10" />
-                <span className="text-[11px] font-medium text-center leading-tight">
-                  {logo.label.replace(" (Imagem PNG)", "").replace(" (SVG)", "")}
-                </span>
-              </div>
+              <LogoThumb src={logo.previewSrc} alt={logo.label} sizeClass="h-10 w-10" />
             </button>
           );
         })}

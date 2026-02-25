@@ -315,7 +315,7 @@ export function PropostaUnificada({
         <ResizablePanelGroup direction="horizontal">
           {/* Left: Document Preview */}
           {isPreviewVisible && !isPreviewFullscreen && (
-            <ResizablePanel defaultSize={50} minSize={30} maxSize={70} className="border-r border-border flex flex-col min-h-0 relative">
+            <ResizablePanel defaultSize={35} minSize={25} maxSize={80} className="border-r border-border flex flex-col min-h-0 relative">
               {/* Preview Header */}
               <div className="h-10 border-b border-border bg-muted/30 flex items-center justify-between px-3 shrink-0">
                 <span className="text-xs font-medium text-muted-foreground">Visualização do Documento</span>
@@ -429,7 +429,7 @@ export function PropostaUnificada({
 
           {/* Right: Tabs */}
           {!isPreviewFullscreen && (
-            <ResizablePanel defaultSize={50} minSize={30} className="flex flex-col bg-background min-h-0 relative">
+            <ResizablePanel defaultSize={65} minSize={20} className="flex flex-col bg-background min-h-0 relative">
               <Tabs 
                 value={activeTab} 
                 onValueChange={(v) => setActiveTab(v as TabKey)} 
