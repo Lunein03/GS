@@ -20,17 +20,17 @@ export default async function OpenOpportunitiesPage() {
   return (
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div className="flex items-center gap-3">
-          <Clock className="h-8 w-8 text-blue-500" />
+        <div className="flex items-center gap-2.5">
+          <Clock className="h-6 w-6 text-blue-500" />
           <div>
-            <h1 className="text-3xl font-medium tracking-tight">Oportunidades Abertas</h1>
-            <p className="text-muted-foreground">
+            <h1 className="text-2xl font-medium tracking-tight">Oportunidades Abertas</h1>
+            <p className="text-sm text-muted-foreground">
               {opportunities.length} oportunidade{opportunities.length !== 1 ? 's' : ''} em aberto
             </p>
           </div>
         </div>
         <NewOpportunityModal>
-          <Button size="lg">
+          <Button>
             <Plus className="w-4 h-4 mr-2" />
             Nova Proposta
           </Button>

@@ -9,8 +9,10 @@ export function GsPropostasLayout({ children }: GsPropostasLayoutProps) {
     <SidebarProvider storageKey="gs-propostas-sidebar-collapsed">
       <div className="flex h-screen overflow-hidden">
         <GsPropostasSidebarAnimated />
-        <main className="flex-1 flex flex-col overflow-hidden bg-background transition-all duration-200 ease-out">
-          {children}
+        <main className="flex-1 flex flex-col overflow-y-auto bg-background transition-all duration-200 ease-out">
+          <div className="w-full max-w-[1400px] mx-auto px-6 py-4 flex-1">
+            {children}
+          </div>
         </main>
       </div>
     </SidebarProvider>

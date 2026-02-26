@@ -36,16 +36,16 @@ export default async function DashboardPage() {
 
   return (
     <GsPropostasHeroBackground>
-      <div className="flex flex-col gap-8 relative z-10 w-full">
-        <header className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between pt-2 pb-4">
+      <div className="flex flex-col gap-6 relative z-10 w-full">
+        <header className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between pt-1 pb-2">
           <div>
-            <h1 className="text-3xl font-medium tracking-tight">GS Propostas · Dashboard</h1>
-            <p className="text-muted-foreground">
+            <h1 className="text-2xl font-medium tracking-tight">GS Propostas · Dashboard</h1>
+            <p className="text-sm text-muted-foreground">
               Visão geral do pipeline comercial e performance.
             </p>
           </div>
           <NewOpportunityModal>
-            <Button size="lg" className="shadow-lg">
+            <Button className="shadow-md">
               <Plus className="w-4 h-4 mr-2" />
               Nova Proposta
             </Button>
@@ -62,7 +62,7 @@ export default async function DashboardPage() {
 
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold tracking-tight">Pipeline de Oportunidades</h2>
+            <h2 className="text-lg font-semibold tracking-tight">Pipeline de Oportunidades</h2>
           </div>
           <Suspense fallback={<KanbanSkeleton />}>
             <OpportunityKanbanBoard initialData={opportunities} />
