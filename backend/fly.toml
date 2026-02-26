@@ -1,4 +1,4 @@
-app = "gs-backend"
+app = "gsproducao-backend"
 primary_region = "gru"
 
 [build]
