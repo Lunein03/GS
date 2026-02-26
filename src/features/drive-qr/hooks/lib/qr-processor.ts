@@ -32,7 +32,15 @@ export async function scanQrCode(file: File): Promise<string | null> {
 }
 
 export function isGoogleDriveLink(url: string): boolean {
-  const patterns = [/drive\.google\.com/i, /docs\.google\.com/i];
+  const patterns = [
+    /drive\.google\.com/i,
+    /docs\.google\.com/i,
+    /google\.com\/file/i,
+    /google\.com\/open/i,
+    /google\.com\/url\?/i,
+    /googleusercontent\.com/i,
+    /goo\.gl\//i,
+  ];
   return patterns.some((pattern) => pattern.test(url));
 }
 

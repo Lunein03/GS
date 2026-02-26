@@ -7,7 +7,7 @@ import { useToast } from '@/shared/ui/use-toast';
 import { generateId } from '@/shared/lib/utils';
 
 import { fetchDriveMetadata } from './lib/drive-client';
-import { detectAudioByNameOrUrl, isGoogleDriveLink, scanQrCode } from './lib/qr-processor';
+import { detectAudioByNameOrUrl, scanQrCode } from './lib/qr-processor';
 import type { DriveQrResult } from '../domain/types';
 
 export const DriveQrContext = createContext<DriveQrContextValue | undefined>(undefined);
@@ -80,12 +80,13 @@ export function DriveQrProvider({ children }: DriveQrProviderProps) {
             continue;
           }
 
-          if (!isGoogleDriveLink(qrContent)) {
+          const isValidUrl = /^https?:\/\//i.test(qrContent);
+          if (!isValidUrl) {
             errorCount += 1;
             updateResult(resultId, {
               status: 'error',
               link: qrContent,
-              errorMessage: 'O QR code não aponta para um link do Google Drive.',
+              errorMessage: 'O QR code não contém uma URL válida.',
             });
             continue;
           }

@@ -18,7 +18,9 @@ export default async function WonOpportunitiesPage() {
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex-1 overflow-y-auto">
+      <div className="w-full max-w-[1400px] mx-auto px-6 py-4">
+        <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="flex items-center gap-2.5">
           <CheckCircle className="h-6 w-6 text-green-500" />
@@ -41,6 +43,8 @@ export default async function WonOpportunitiesPage() {
         opportunities={opportunities} 
         emptyMessage="Nenhuma oportunidade ganha encontrada."
       />
+    </div>
+      </div>
     </div>
   );
 }

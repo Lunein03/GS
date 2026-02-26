@@ -1,4 +1,10 @@
 /** @type {import('next').NextConfig} */
+const backendOrigin = (
+  process.env.API_ORIGIN ||
+  process.env.BACKEND_URL ||
+  "http://localhost:9000"
+).replace(/\/+$/, "");
+
 const nextConfig = {
   reactStrictMode: true,
   // Output standalone para Docker (gera servidor Node.js otimizado)
@@ -32,6 +38,14 @@ const nextConfig = {
   },
   experimental: {
     optimizeCss: true,
+  },
+  async rewrites() {
+    return [
+      {
+        source: "/api/v1/:path*",
+        destination: `${backendOrigin}/api/v1/:path*`,
+      },
+    ];
   },
   turbopack: {},
   // Configuracao aplicada apenas ao pipeline Webpack legado

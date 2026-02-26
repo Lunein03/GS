@@ -18,7 +18,9 @@ export default async function OpenOpportunitiesPage() {
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex-1 overflow-y-auto">
+      <div className="w-full max-w-[1400px] mx-auto px-6 py-4">
+        <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="flex items-center gap-2.5">
           <Clock className="h-6 w-6 text-blue-500" />
@@ -41,6 +43,8 @@ export default async function OpenOpportunitiesPage() {
         opportunities={opportunities} 
         emptyMessage="Nenhuma oportunidade em aberto encontrada."
       />
+    </div>
+      </div>
     </div>
   );
 }

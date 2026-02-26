@@ -76,6 +76,16 @@ def create_opportunity(payload: OpportunityCreate, db: Session = Depends(get_db)
     return opportunity
 
 
+@router.get("/opportunities/statuses")
+def list_opportunity_statuses() -> list[dict[str, str]]:
+    return [
+        {"id": OpportunityStatus.OPEN.value, "title": "Abertas", "color": "text-blue-500"},
+        {"id": OpportunityStatus.IN_PROGRESS.value, "title": "Em progresso", "color": "text-amber-500"},
+        {"id": OpportunityStatus.WON.value, "title": "Ganhas", "color": "text-emerald-500"},
+        {"id": OpportunityStatus.LOST.value, "title": "Perdidas", "color": "text-rose-500"},
+    ]
+
+
 @router.get("/opportunities/{opportunity_id}", response_model=OpportunityRead)
 def get_opportunity(opportunity_id: UUID, db: Session = Depends(get_db)) -> Opportunity:
     opportunity = db.get(Opportunity, opportunity_id)

@@ -383,6 +383,16 @@ export function EventsContent() {
       0,
     );
 
+    const escapeHtml = (unsafe: string | null | undefined) => {
+      if (!unsafe) return '';
+      return String(unsafe)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    };
+
     const rows = current.equipmentAllocations
       .map((allocation) => {
         const item = equipment.find((eq) => eq.id === allocation.equipmentId);
@@ -392,28 +402,23 @@ export function EventsContent() {
 
         return `
           <tr>
-            <td>${item.code}</td>
-            <td>${item.name}</td>
-            <td>${item.category}</td>
+            <td>${escapeHtml(item.code)}</td>
+            <td>${escapeHtml(item.name)}</td>
+            <td>${escapeHtml(item.category)}</td>
             <td>${allocation.quantity}</td>
-            <td>${item.brand ?? '-'}</td>
-            <td>${EQUIPMENT_STATUS_LABEL[item.status]}</td>
+            <td>${escapeHtml(item.brand) || '-'}</td>
+            <td>${escapeHtml(EQUIPMENT_STATUS_LABEL[item.status])}</td>
           </tr>
         `;
       })
       .join('');
 
-    const printWindow = window.open('', '_blank');
-    if (!printWindow) {
-      return;
-    }
-
-    printWindow.document.write(`
+    const htmlContent = `
       <!DOCTYPE html>
       <html lang="pt-BR">
         <head>
           <meta charSet="utf-8" />
-          <title>Lista de equipamentos - ${current.name}</title>
+          <title>Lista de equipamentos - ${escapeHtml(current.name)}</title>
           <style>
             body { font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif; background: #ffffff; color: #111827; padding: 40px; }
             h1 { font-size: 24px; font-weight: 600; color: #0f172a; border-bottom: 2px solid #0f172a; padding-bottom: 12px; margin-bottom: 24px; }
@@ -426,12 +431,12 @@ export function EventsContent() {
             .footer { margin-top: 40px; font-size: 12px; color: #6b7280; }
           </style>
         </head>
-        <body>
-          <h1>Lista de equipamentos - ${current.name}</h1>
+        <body onload="window.print()">
+          <h1>Lista de equipamentos - ${escapeHtml(current.name)}</h1>
           <div class="info">
             <p class="info-item"><strong>Período:</strong> ${new Date(current.startDate).toLocaleDateString('pt-BR')} até ${new Date(current.endDate).toLocaleDateString('pt-BR')}</p>
-            <p class="info-item"><strong>Local:</strong> ${current.location}</p>
-            ${current.notes ? `<p class="info-item"><strong>Observações:</strong> ${current.notes}</p>` : ''}
+            <p class="info-item"><strong>Local:</strong> ${escapeHtml(current.location)}</p>
+            ${current.notes ? `<p class="info-item"><strong>Observações:</strong> ${escapeHtml(current.notes)}</p>` : ''}
             <p class="info-item"><strong>Total de equipamentos:</strong> ${current.equipmentAllocations.length}</p>
             <p class="info-item"><strong>Total de unidades:</strong> ${totalUnits}</p>
           </div>
@@ -456,11 +461,15 @@ export function EventsContent() {
           </div>
         </body>
       </html>
-    `);
+    `;
 
-    printWindow.document.close();
-    printWindow.focus();
-    printWindow.print();
+    const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const printWindow = window.open(url, '_blank');
+    
+    if (printWindow) {
+      printWindow.focus();
+    }
   };
 
   const handleOpenEdit = (eventItem: InventoryEvent) => {

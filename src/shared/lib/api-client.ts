@@ -40,7 +40,7 @@ const DEFAULT_BASE_URL = (() => {
 
   return (
     process.env.NEXT_PUBLIC_API_BASE_URL ??
-    "http://localhost:9000/api/v1"
+    "/api/v1"
   );
 })();
 

@@ -12,7 +12,11 @@ def create_app() -> FastAPI:
 
     # Configure CORS (make it flexible for LAN/dev usage)
     allow_origin_regex = (
-        r"http://192\.168\.\d{1,3}\.\d{1,3}(:\d+)?"
+        r"http://("
+        r"192\.168\.\d{1,3}\.\d{1,3}|"
+        r"10\.\d{1,3}\.\d{1,3}\.\d{1,3}|"
+        r"172\.(1[6-9]|2\d|3[0-1])\.\d{1,3}\.\d{1,3}"
+        r")(:\d+)?"
         if settings.allow_lan_cors
         else None
     )
@@ -28,8 +32,8 @@ def create_app() -> FastAPI:
     @app.on_event("startup")
     def startup() -> None:
         # Ensure tables exist when running without Alembic (development convenience).
-        # Only if database is configured
-        if engine is not None:
+        # Only for local development and only if database is configured.
+        if engine is not None and settings.environment == "development":
             Base.metadata.create_all(bind=engine)
 
     @app.get("/health", tags=["health"])

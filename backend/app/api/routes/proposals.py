@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_db
@@ -206,17 +206,29 @@ def fetch_signature_or_404(db: Session, signature_id: UUID) -> ProposalSignature
 
 
 @router.get("/signatures", response_model=list[ProposalSignatureRead])
-def list_signatures(db: Session = Depends(get_db)) -> list[ProposalSignature]:
-    return (
+def list_signatures(
+    proposal_id: UUID | None = Query(default=None),
+    db: Session = Depends(get_db),
+) -> list[ProposalSignature]:
+    query = (
         db.query(ProposalSignature)
-        .filter(ProposalSignature.deleted_at.is_(None))
-        .order_by(ProposalSignature.created_at.desc())
-        .all()
+        .filter(
+            ProposalSignature.deleted_at.is_(None),
+            ProposalSignature.proposal_id.is_not(None),
+        )
     )
+    if proposal_id:
+        query = query.filter(ProposalSignature.proposal_id == proposal_id)
+
+    return query.order_by(ProposalSignature.created_at.desc()).all()
 
 
 @router.post("/signatures", response_model=ProposalSignatureRead, status_code=status.HTTP_201_CREATED)
 def create_signature(payload: ProposalSignatureCreate, db: Session = Depends(get_db)) -> ProposalSignature:
+    proposal = db.get(Proposal, payload.proposal_id)
+    if not proposal:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Proposal not found")
+
     signature = ProposalSignature(
         name=payload.name,
         cpf=payload.cpf,

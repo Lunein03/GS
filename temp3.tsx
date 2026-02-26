@@ -25,6 +25,14 @@ import {
   toTitleCase,
 } from "@/shared/lib/validators";
 
+const COLORS = {
+  bg: "#ffffff",
+  textPrimary: "#0f172a",
+  textSecondary: "#475569",
+  border: "#cbd5e1",
+  bgSubtle: "#f8fafc",
+};
+
 const styles = StyleSheet.create({
   page: {
     fontFamily: "Helvetica",
@@ -32,8 +40,8 @@ const styles = StyleSheet.create({
     paddingTop: 32,
     paddingBottom: 60,
     paddingHorizontal: 46,
-    backgroundColor: "#ffffff",
-    color: "#18181b",
+    backgroundColor: COLORS.bg,
+    color: COLORS.textPrimary,
   },
   // Header
   header: {
@@ -44,7 +52,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     paddingBottom: 10,
     borderBottomWidth: 1,
-    borderColor: "#d4d4d8",
+    borderColor: COLORS.border,
   },
   headerContent: {
     flexDirection: "row",
@@ -71,12 +79,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: 700,
-    color: "#18181b",
+    color: COLORS.textPrimary,
     marginBottom: 2,
   },
   subtitle: {
     fontSize: 12,
-    color: "#6b7280",
+    color: COLORS.textSecondary,
     fontWeight: 500,
   },
   companyBlock: {
@@ -93,29 +101,29 @@ const styles = StyleSheet.create({
   docTitle: {
     fontSize: 20,
     fontWeight: 700,
-    color: "#1f2937",
+    color: COLORS.textPrimary,
   },
   docSubtitle: {
     fontSize: 12,
-    color: "#4b5563",
+    color: COLORS.textSecondary,
     fontWeight: 500,
     marginTop: 2,
   },
   companyLine: {
     fontSize: 10,
-    color: "#4b5563",
+    color: COLORS.textSecondary,
   },
   // Metadata section
   metadataBlock: {
     borderBottomWidth: 1,
-    borderColor: "#d4d4d8",
+    borderColor: COLORS.border,
     paddingVertical: 8,
     marginBottom: 8,
     gap: 2,
   },
   metadataLine: {
     fontSize: 10.5,
-    color: "#111827",
+    color: COLORS.textPrimary,
   },
   metadataLabelInline: {
     fontWeight: 700,
@@ -124,12 +132,12 @@ const styles = StyleSheet.create({
     marginTop: 10,
     paddingTop: 8,
     borderTopWidth: 1,
-    borderColor: "#d4d4d8",
+    borderColor: COLORS.border,
     gap: 4,
   },
   observationsText: {
     fontSize: 10,
-    color: "#52525b",
+    color: COLORS.textSecondary,
     lineHeight: 1.6,
     textAlign: "justify",
   },
@@ -141,7 +149,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderTopWidth: 1,
     borderBottomWidth: 1,
-    borderColor: "#d4d4d8",
+    borderColor: COLORS.border,
   },
   entityCol: {
     flex: 1,
@@ -149,23 +157,23 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 12,
     fontWeight: 700,
-    color: "#18181b",
+    color: COLORS.textPrimary,
     marginBottom: 6,
   },
   entityName: {
     fontSize: 11,
     fontWeight: 700,
-    color: "#18181b",
+    color: COLORS.textPrimary,
     marginBottom: 2,
   },
   entityDetail: {
     fontSize: 10,
-    color: "#52525b",
+    color: COLORS.textSecondary,
     marginBottom: 2,
   },
   entityPlaceholder: {
     fontSize: 10,
-    color: "#a1a1aa",
+    color: COLORS.textSecondary,
   },
   // Content section
   contentSection: {
@@ -175,12 +183,12 @@ const styles = StyleSheet.create({
   contentTitle: {
     fontSize: 12,
     fontWeight: 600,
-    color: "#18181b",
+    color: COLORS.textPrimary,
     marginBottom: 8,
   },
   contentText: {
     fontSize: 10,
-    color: "#52525b",
+    color: COLORS.textSecondary,
     lineHeight: 1.6,
     textAlign: "justify",
   },
@@ -191,7 +199,7 @@ const styles = StyleSheet.create({
   },
   signatureDate: {
     fontSize: 10,
-    color: "#52525b",
+    color: COLORS.textSecondary,
     marginBottom: 90,
   },
   signatureRow: {
@@ -208,105 +216,101 @@ const styles = StyleSheet.create({
     maxWidth: 240,
     alignSelf: "center",
     borderTopWidth: 1,
-    borderColor: "#d4d4d8",
+    borderColor: COLORS.border,
     paddingTop: 10,
   },
   signatureName: {
     fontSize: 9,
     fontWeight: 700,
-    color: "#18181b",
+    color: COLORS.textPrimary,
     textAlign: "center",
     textTransform: "uppercase",
   },
   signatureCompany: {
     fontSize: 9,
-    color: "#71717a",
+    color: COLORS.textSecondary,
     marginTop: 4,
     textAlign: "center",
   },
   // Watermark
   watermark: {
     position: "absolute",
-    // Centered on A4 (595x842 pt): (595-260)/2 ≈ 168, (842-260)/2 ≈ 291
     top: 291,
     left: 168,
     width: 260,
     height: 260,
-    opacity: 0.05, // 5% keeps readability
+    opacity: 0.05,
   },
-
   // Items table
   itemsSection: {
     marginBottom: 18,
     gap: 6,
   },
-
   itemsTable: {
     width: "100%",
     marginTop: 10,
     borderWidth: 1,
-    borderColor: "#d4d4d8",
+    borderColor: COLORS.border,
     borderRadius: 3,
   },
   itemsHeader: {
     flexDirection: "row",
-    backgroundColor: "#f5f5f5",
+    backgroundColor: COLORS.bgSubtle,
     paddingVertical: 6,
     paddingHorizontal: 6,
     borderBottomWidth: 1,
-    borderColor: "#d4d4d8",
+    borderColor: COLORS.border,
     borderLeftWidth: 1,
-    borderLeftColor: "#d4d4d8",
+    borderLeftColor: COLORS.border,
     borderRightWidth: 1,
-    borderRightColor: "#d4d4d8",
+    borderRightColor: COLORS.border,
   },
   itemsHeaderText: {
     fontSize: 9.5,
     fontWeight: 700,
-    color: "#111827",
+    color: COLORS.textPrimary,
   },
   itemRow: {
     flexDirection: "row",
     paddingVertical: 6,
     paddingHorizontal: 6,
     borderBottomWidth: 1,
-    borderColor: "#d4d4d8",
+    borderColor: COLORS.border,
     borderLeftWidth: 1,
-    borderLeftColor: "#d4d4d8",
+    borderLeftColor: COLORS.border,
     borderRightWidth: 1,
-    borderRightColor: "#d4d4d8",
+    borderRightColor: COLORS.border,
   },
-  // Adjusted widths to fit "Unit" column (Total: 100%)
   itemColName: { 
-    width: "28%", // Reduced from 30%
+    width: "28%",
     borderRightWidth: 1, 
-    borderRightColor: "#d4d4d8",
+    borderRightColor: COLORS.border,
     paddingRight: 4,
   },
   itemColDesc: { 
-    width: "30%", // Reduced from 35%
+    width: "30%",
     borderRightWidth: 1, 
-    borderRightColor: "#d4d4d8",
+    borderRightColor: COLORS.border,
     paddingRight: 4,
     paddingLeft: 4,
   },
   itemColQty: { 
-    width: "9%", // Reduced from 10%
+    width: "9%",
     textAlign: "center", 
     borderRightWidth: 1, 
-    borderRightColor: "#d4d4d8", 
+    borderRightColor: COLORS.border, 
   },
   itemColUnit: { 
-    width: "8%", // New column
+    width: "8%",
     textAlign: "center", 
     borderRightWidth: 1, 
-    borderRightColor: "#d4d4d8", 
+    borderRightColor: COLORS.border, 
   },
   itemColValue: { 
     width: "12.5%", 
     textAlign: "right", 
     borderRightWidth: 1, 
-    borderRightColor: "#d4d4d8",
+    borderRightColor: COLORS.border,
     paddingRight: 4, 
   },
   itemColTotal: { 
@@ -316,7 +320,7 @@ const styles = StyleSheet.create({
   },
   itemText: {
     fontSize: 9.5,
-    color: "#111827",
+    color: COLORS.textPrimary,
   },
   // Footer/Total
   totalRow: {
@@ -324,18 +328,18 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     paddingVertical: 8,
     paddingHorizontal: 8,
-    backgroundColor: "#f9fafb",
+    backgroundColor: COLORS.bgSubtle,
   },
   totalLabel: {
     fontSize: 11,
     fontWeight: 600,
-    color: "#18181b",
+    color: COLORS.textPrimary,
     marginRight: 8,
   },
   totalValue: {
     fontSize: 11,
     fontWeight: 700,
-    color: "#18181b",
+    color: COLORS.textPrimary,
   },
 });
 

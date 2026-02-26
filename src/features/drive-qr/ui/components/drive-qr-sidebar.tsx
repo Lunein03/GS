@@ -143,8 +143,7 @@ export function DriveQrSidebar() {
   const [mounted, setMounted] = useState(false)
   const [currentHash, setCurrentHash] = useState('')
   const pathname = usePathname()
-  const { theme, resolvedTheme, setTheme } = useTheme()
-  const themeMode = resolvedTheme ?? theme
+  const { theme, setTheme } = useTheme()
 
   useEffect(() => {
     setMounted(true)
@@ -198,10 +197,16 @@ export function DriveQrSidebar() {
               <div className="flex items-center gap-2 px-2 overflow-hidden flex-1">
                 <div className="relative h-8 w-7 shrink-0">
                   <Image
-                    src={themeMode === 'dark' ? '/images/gs-logo-2.svg' : '/images/SVG/gs-logo.svg'}
+                    src="/images/gs-logo.svg"
                     alt="GS Producoes"
                     fill
-                    className="object-contain"
+                    className="object-contain dark:hidden"
+                  />
+                  <Image
+                    src="/images/gs-logo-2.svg"
+                    alt="GS Producoes"
+                    fill
+                    className="object-contain hidden dark:block"
                   />
                 </div>
                 <motion.div

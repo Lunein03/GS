@@ -36,7 +36,9 @@ export default async function DashboardPage() {
 
   return (
     <GsPropostasHeroBackground>
-      <div className="flex flex-col gap-6 relative z-10 w-full">
+      <div className="flex-1 overflow-y-auto">
+        <div className="w-full max-w-[1400px] mx-auto px-6 py-4">
+          <div className="flex flex-col gap-6 relative z-10 w-full">
         <header className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between pt-1 pb-2">
           <div>
             <h1 className="text-2xl font-medium tracking-tight">GS Propostas · Dashboard</h1>
@@ -69,6 +71,8 @@ export default async function DashboardPage() {
           </Suspense>
         </div>
       </div>
+    </div>
+  </div>
     </GsPropostasHeroBackground>
   );
 }
