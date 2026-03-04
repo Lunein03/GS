@@ -153,7 +153,9 @@ export function HeroSection() {
               Bem-vindo à intranet da GS Produções. Desde 2019, atuamos com produção e acessibilidade em diversas frentes, transformando ideias em experiências inclusivas para todas as pessoas, promovendo participação, pertencimento e equidade.
               </p>
               <p className="text-lg md:text-xl mb-8 text-foreground leading-[1.6] font-inter text-justify">
-              Este é o nosso espaço interno de trabalho — aqui você acessa os módulos, formulários e ferramentas do dia a dia da equipe. Faça login para começar.
+              {isAuthenticated
+                ? 'Este é o nosso espaço interno de trabalho — aqui você acessa os módulos, formulários e ferramentas do dia a dia da equipe. Navegue pelos módulos abaixo.'
+                : 'Este é o nosso espaço interno de trabalho — aqui você acessa os módulos, formulários e ferramentas do dia a dia da equipe. Faça login para começar.'}
               </p>
               {/* CTA Button */}
               {!isLoading && (
