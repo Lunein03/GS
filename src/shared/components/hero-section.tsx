@@ -3,11 +3,16 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
+import { LogIn, ArrowDown } from "lucide-react";
 
 import { BackgroundNoiseOverlay } from "@/shared/ui/background-snippets-noise-effect11";
+import { Button } from "@/shared/ui/button";
+import { useAuth } from "@/features/auth/hooks/use-auth";
 
 export function HeroSection() {
   const [isVisible, setIsVisible] = useState(false);
+  const { isAuthenticated, isLoading } = useAuth();
 
   useEffect(() => {
     setIsVisible(true);
@@ -141,17 +146,40 @@ export function HeroSection() {
               className="h-full flex flex-col justify-center"
             >
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-semibold mb-8 leading-[1.1] tracking-[-0.02em] text-center text-foreground font-inter">
-                <span className="font-inter">Quem </span>
-                <span className="font-inter">somos</span>
+                <span className="font-inter">Intranet </span>
+                <span className="font-inter">GS Produções</span>
               </h1>
               <p className="text-lg md:text-xl mb-6 text-foreground leading-[1.6] font-inter text-justify">
-              Desde 2019, atuamos com produção e acessibilidade em diversas frentes, com o objetivo de tornar projetos e espaços verdadeiramente acessíveis, transformando ideias em experiências inclusivas para todas as pessoas, promovendo participação, pertencimento e equidade.
+              Bem-vindo à intranet da GS Produções. Desde 2019, atuamos com produção e acessibilidade em diversas frentes, transformando ideias em experiências inclusivas para todas as pessoas, promovendo participação, pertencimento e equidade.
               </p>
-              {/* <div className="mb-2"></div> */}
               <p className="text-lg md:text-xl mb-8 text-foreground leading-[1.6] font-inter text-justify">
-              Acreditamos que a acessibilidade deve estar presente desde o início de cada projeto, esse é o nosso propósito e a razão da nossa existência, com uma comunicação pensada para todas as pessoas, porque um mundo acessível não é apenas um sonho, é a realidade que estamos construindo.
+              Este é o nosso espaço interno de trabalho — aqui você acessa os módulos, formulários e ferramentas do dia a dia da equipe. Faça login para começar.
               </p>
-            </motion.div>
+              {/* CTA Button */}
+              {!isLoading && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+                  transition={{ duration: 0.6, delay: 0.6 }}
+                  className="flex justify-center lg:justify-start"
+                >
+                  {isAuthenticated ? (
+                    <Button asChild size="lg" className="group">
+                      <a href="#modules">
+                        Ver módulos
+                        <ArrowDown className="ml-2 h-4 w-4 transition-transform group-hover:translate-y-1" />
+                      </a>
+                    </Button>
+                  ) : (
+                    <Button asChild size="lg" className="group">
+                      <Link href="/login">
+                        <LogIn className="mr-2 h-4 w-4" />
+                        Acessar Plataforma
+                      </Link>
+                    </Button>
+                  )}
+                </motion.div>
+              )}            </motion.div>
           </div>
           
           <div className="w-full lg:w-3/5 lg:ml-16">

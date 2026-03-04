@@ -1,5 +1,5 @@
 
-import { createClient } from '@supabase/supabase-js';
+import { createBrowserClient } from '@supabase/ssr';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
 const supabaseKey =
@@ -7,4 +7,4 @@ const supabaseKey =
   process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY ||
   'placeholder';
 
-export const supabase = createClient(supabaseUrl, supabaseKey);
+export const supabase = createBrowserClient(supabaseUrl, supabaseKey);

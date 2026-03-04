@@ -101,14 +101,8 @@ export function AssinaturasTab({ proposalId }: AssinaturasTabProps) {
     
     try {
       setIsLoading(true);
-      // Using the global signatures list filtered by logic or expecting backend to support filtering
-      // Since the backend route generic list_signatures returns ALL, we should ideally have filtering.
-      // However, looking at the backend code, list_signatures returns ALL non-deleted signatures. 
-      // There is NO filter by proposal_id in 'list_signatures' in proposals.py!
-      // We must filter client-side for now or Fix the backend.
-      // Let's filter client-side as a temporary fix, but ideally backend should accept query param.
-      
-      const response = await fetch(`http://localhost:8000/proposals/signatures`);
+      // Fetch all signatures and filter client-side by proposal_id
+      const response = await fetch(`/api/v1/proposals/signatures`);
       if (!response.ok) throw new Error('Failed to fetch');
       const data = await response.json();
       
@@ -136,7 +130,7 @@ export function AssinaturasTab({ proposalId }: AssinaturasTabProps) {
 
     setIsSubmitting(true);
     try {
-      const response = await fetch('http://localhost:8000/proposals/signatures', {
+      const response = await fetch('/api/v1/proposals/signatures', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -165,7 +159,7 @@ export function AssinaturasTab({ proposalId }: AssinaturasTabProps) {
     if (!confirm("Tem certeza que deseja remover esta assinatura?")) return;
     
     try {
-      const response = await fetch(`http://localhost:8000/proposals/signatures/${id}`, { method: 'DELETE' });
+      const response = await fetch(`/api/v1/proposals/signatures/${id}`, { method: 'DELETE' });
       if (!response.ok) throw new Error("Falha ao deletar");
       
       setSignatures(prev => prev.filter(s => s.id !== id));

@@ -1,0 +1,26 @@
+import { NextRequest } from 'next/server';
+import { apiSuccess } from '../../_lib/response';
+import { handleApiError } from '../../_lib/errors';
+import { validateBody } from '../../_lib/validate';
+import { createClientSchema } from './schemas';
+import * as service from './service';
+
+export async function GET(req: NextRequest) {
+  try {
+    const search = req.nextUrl.searchParams.get('search') ?? undefined;
+    const data = await service.listClients(search);
+    return apiSuccess(data);
+  } catch (error) {
+    return handleApiError(error);
+  }
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    const body = await validateBody(req, createClientSchema);
+    const data = await service.createClient(body);
+    return apiSuccess(data, 201);
+  } catch (error) {
+    return handleApiError(error);
+  }
+}

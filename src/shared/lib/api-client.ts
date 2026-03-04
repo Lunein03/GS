@@ -23,6 +23,7 @@ export interface FetchApiConfig extends RequestInit {
   maxRetries?: number;
   /** Delay inicial para retry em ms (padrão: 1000) */
   retryDelay?: number;
+
   /** Se deve fazer retry em erros 5xx (padrão: true) */
   retryOn5xx?: boolean;
   /** Se deve fazer log de erros (padrão: true) */
@@ -34,7 +35,7 @@ const DEFAULT_BASE_URL = (() => {
     return (
       process.env.API_BASE_URL ??
       process.env.NEXT_PUBLIC_API_BASE_URL ??
-      "http://localhost:9000/api/v1"
+      "http://localhost:3000/api/v1"
     );
   }
 
@@ -43,7 +44,6 @@ const DEFAULT_BASE_URL = (() => {
     "/api/v1"
   );
 })();
-
 export function resolveApiUrl(path: string): string {
   if (/^https?:\/\//i.test(path)) {
     return path;

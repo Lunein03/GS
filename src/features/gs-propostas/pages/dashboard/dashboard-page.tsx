@@ -16,7 +16,7 @@ export default async function DashboardPage() {
   // Fetch data in parallel
   const [opportunities, clientsResponse] = await Promise.all([
     listOpportunities().catch(() => []),
-    getClientes({ page: 1, pageSize: 1 }).catch(() => ({ success: false, data: { pagination: { total: 0 } } } as any)),
+    getClientes({ page: 1, pageSize: 1 }).catch(() => ({ success: false, data: { pagination: { total: 0 } } })),
   ]);
 
   // Calculate stats

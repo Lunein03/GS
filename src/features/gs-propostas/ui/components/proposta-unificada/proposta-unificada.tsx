@@ -180,7 +180,7 @@ export function PropostaUnificada({
   };
   
   const form = useForm<ProposalFormData>({
-    resolver: zodResolver(proposalFormSchema),
+    resolver: zodResolver(proposalFormSchema) as any,
     defaultValues,
   });
   
@@ -216,8 +216,8 @@ export function PropostaUnificada({
   }, [isDirty, onClose, router]);
   
   const handleSave = useCallback(() => {
-    return handleSubmit(async (data: any) => {
-      const formData = data as ProposalFormData;
+    return handleSubmit(async (data) => {
+      const formData = data as unknown as ProposalFormData;
       setIsSubmitting(true);
       try {
         let savedProposal;
@@ -241,9 +241,10 @@ export function PropostaUnificada({
             status: (savedProposal.status as ProposalData['status']) || 'draft',
           });
         }
-      } catch (error: any) {
-        console.error("Erro ao salvar proposta:", error);
-        toast.error(`Erro ao salvar: ${error.message}`);
+      } catch (error) {
+        const err = error as Error;
+        console.error("Erro ao salvar proposta:", err);
+        toast.error(`Erro ao salvar: ${err.message}`);
       } finally {
         setIsSubmitting(false);
       }
@@ -538,7 +539,7 @@ export function PropostaUnificada({
                           if (value instanceof Date) {
                             form.setValue(key as keyof ProposalFormData, value.toISOString().split('T')[0]);
                           } else {
-                            form.setValue(key as keyof ProposalFormData, value as string | number);
+                            form.setValue(key as keyof ProposalFormData, value as any);
                           }
                         });
                       }}

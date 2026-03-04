@@ -192,3 +192,5 @@ _temp_videos/
 tmp-edge-profile/
 
 tmpclaude-*-cwd
+.venv/
+tmp-edge-profile/

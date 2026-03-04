@@ -1,14 +1,7 @@
 /** @type {import('next').NextConfig} */
-const backendOrigin = (
-  process.env.API_ORIGIN ||
-  process.env.BACKEND_URL ||
-  "http://localhost:9000"
-).replace(/\/+$/, "");
 
 const nextConfig = {
   reactStrictMode: true,
-  // Output standalone para Docker (gera servidor Node.js otimizado)
-  output: 'standalone',
   // Garante que @react-pdf/renderer seja empacotado em vez de externalizado,
   // evitando erros do Turbopack com ESM externo.
   transpilePackages: ['@react-pdf/renderer'],
@@ -38,14 +31,6 @@ const nextConfig = {
   },
   experimental: {
     optimizeCss: true,
-  },
-  async rewrites() {
-    return [
-      {
-        source: "/api/v1/:path*",
-        destination: `${backendOrigin}/api/v1/:path*`,
-      },
-    ];
   },
   turbopack: {},
   // Configuracao aplicada apenas ao pipeline Webpack legado

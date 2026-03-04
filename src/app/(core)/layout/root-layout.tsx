@@ -9,6 +9,7 @@ import { ParallaxBackground } from '@/shared/ui/parallax-background';
 import { ConditionalNavbar } from './conditional-navbar';
 import { ConditionalFooter } from './conditional-footer';
 import { MainContent } from './main-content';
+import { AuthProvider } from '@/features/auth/hooks/auth-provider';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -64,12 +65,14 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body className={`${inter.variable} font-sans overflow-x-hidden`}>
         <QueryProvider>
           <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
-            <ParallaxBackground />
-            <div className="flex min-h-screen flex-col overflow-x-hidden">
-              <ConditionalNavbar />
-              <MainContent>{children}</MainContent>
-              <ConditionalFooter />
-            </div>
+            <AuthProvider>
+              <ParallaxBackground />
+              <div className="flex min-h-screen flex-col overflow-x-hidden">
+                <ConditionalNavbar />
+                <MainContent>{children}</MainContent>
+                <ConditionalFooter />
+              </div>
+            </AuthProvider>
           </ThemeProvider>
         </QueryProvider>
       </body>

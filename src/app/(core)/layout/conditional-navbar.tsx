@@ -2,16 +2,14 @@
 
 import { usePathname } from 'next/navigation'
 import { Navbar } from '@/shared/components/navbar'
+import { isHiddenLayoutRoute } from './route-config'
 
 export function ConditionalNavbar() {
   const pathname = usePathname()
-  
-  const hideNavbarOnModules = ['/patrimonio', '/drive-qr', '/gs-propostas']
-  const shouldHideNavbar = hideNavbarOnModules.some((routePrefix) => pathname?.startsWith(routePrefix))
-  
-  if (shouldHideNavbar) {
+
+  if (isHiddenLayoutRoute(pathname)) {
     return null
   }
-  
+
   return <Navbar />
 }
